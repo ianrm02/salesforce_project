@@ -36,7 +36,7 @@ def testClassifier():
         "Argentia",
         "Russa",
         "Thailad",
-        "Egyt",
+        "Egy",
         "Cuba",
         "Nigeri",
         "Switzeland",

@@ -17,10 +17,10 @@ class Classifier:
         #Filter System:
         userCountry_f = userFilter(filterRule={}, appliesTo='C')
         exactCountry_f = exactFilter(appliesTo='C')
-        fuzzyCountry_f = fuzzyFilter(appliesTo='C', order=1)
+        fuzzyCountry_f = fuzzyFilter(appliesTo='C', order=2)
         userState_f = userFilter(filterRule={}, appliesTo='S')
         exactState_f = exactFilter(appliesTo='S')
-        fuzzyState_f = fuzzyFilter(appliesTo='S', order=1)
+        fuzzyState_f = fuzzyFilter(appliesTo='S', order=2)
         userAddress_f = userFilter(filterRule={}, appliesTo='A')
         proccessing_f = ProcessingFilter()
 

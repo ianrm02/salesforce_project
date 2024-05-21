@@ -15,7 +15,10 @@ class Filter:
         self.appliesTo = None
 
     def _parseUserInput(self, userIn: str)->str:
-        return re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper()).strip()
+        #TODO still does not yet account for the user input being a database row. Can't work on this till we connect the sample DB to the classifier
+        
+        text = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper()).strip()
+        return text 
 
 
     def applyFilter(rowInput: str):
@@ -83,13 +86,18 @@ class fuzzyFilter(Filter):
             if dist <= self.order:
                 hits.append((self.ruleSet[common_spelling], dist))
         
+        hits = list(set(hits)) #to remove duplicates
+
         if len(hits) == 0:
             return (None, 0)
         elif len(hits) == 1:
             return (hits[0][0], order_confidences[hits[0][1]-1])
         elif len(hits) > 1:
             hits = sorted(hits, key= lambda x: x[1])
-            return (hits[0][0], order_confidences[hits[0][1]-1])
+            min_hits_val = hits[0][1]
+            min_hits = [spelling for spelling in hits if spelling[1] == min_hits_val]
+            min_hits = sorted(min_hits, key=lambda x: x[0])
+            return (min_hits[0][0], order_confidences[hits[0][1]-1])
         else:
             return (None, 0)
     
