@@ -53,43 +53,15 @@ class Classifier:
         probable_country = None
         confidence = 0
 
-        num_filters = 0
+        #num_filters = 0
         for filter in self.filters:
             if confidence == 100:
                 break
-            num_filters += 1
-            #print(type(filter))
-            (probable_country, confidence) = filter.applyFilter(rowInput)
+            #num_filters += 1
+            (new_probable_country, new_confidence) = filter.applyFilter(rowInput)
+            if new_confidence > confidence:
+                probable_country = new_probable_country
+                confidence = new_confidence
         
-        print(f"{rowInput.strip()} mapped to {probable_country} with {confidence}% confidence (through {num_filters} filters).")
-
         return probable_country, confidence
-
-
-def testClassifierInit():
-    pass
-
-
-def testClassifier():
-    clf = Classifier()
-    sample_inputs = [
-        "France",
-        "Colombia",
-        "USA",
-        "U.S.A.",
-        "   Argentina",
-        "Intentional Failure",
-    ]
-
-    print(f"")
-    print(f"Testing simple inputs on the newly implemented Classifier.applyFilterStack() method...")
-    print(f"")
-
-    for sample in sample_inputs:
-        probable_country, confidence = clf.applyFilterStack(sample)
-
-    print(f"Done.")
-
-
-testClassifier()
 

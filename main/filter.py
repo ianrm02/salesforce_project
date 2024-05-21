@@ -61,7 +61,7 @@ class exactFilter(Filter):
         
 
 class fuzzyFilter(Filter):
-    def __init__(self, appliesTo, order=1):
+    def __init__(self, appliesTo, order=2):
         self.appliesTo = appliesTo
         self.order = order
         if self.appliesTo == 'C':
@@ -76,12 +76,22 @@ class fuzzyFilter(Filter):
 
     def applyFilter(self, rowInput: str):
         hits = []
+        #TODO turn order confidences into a config variable
+        order_confidences = [90, 80, 70, 50] #ie 1 order is 90% confidence
         for common_spelling in list(self.ruleSet.keys()):
             dist = calc_fuzzy_dist(common_spelling, self._parseUserInput(rowInput))
             if dist <= self.order:
                 hits.append((self.ruleSet[common_spelling], dist))
         
-        return hits, 50
+        if len(hits) == 0:
+            return (None, 0)
+        elif len(hits) == 1:
+            return (hits[0][0], order_confidences[hits[0][1]-1])
+        elif len(hits) > 1:
+            hits = sorted(hits, key= lambda x: x[1])
+            return (hits[0][0], order_confidences[hits[0][1]-1])
+        else:
+            return (None, 0)
     
 
 class ProcessingFilter(Filter):

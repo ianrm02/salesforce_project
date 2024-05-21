@@ -271,6 +271,7 @@ COMMON_ALTERNATES = {
     'MALAYSIA': 'MY',
     'MALDIVIAN': 'MV',
     'REPUBLIC OF MALDIVES': 'MV',
+    'UK': 'GB',
     'MALIAN': 'ML',
     'REPUBLIC OF MALI': 'ML',
     'MALTA': 'MT',
