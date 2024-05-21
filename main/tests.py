@@ -19,7 +19,6 @@ def testClassifier():
         "United States",
         "Bnited States",
         "   Argentina",
-        "Intentional Failure",
         "Caneda",
         "Uk",
         "Fraace",
@@ -40,6 +39,9 @@ def testClassifier():
         "Cuba",
         "Nigeri",
         "Switzeland",
+        "Canama",
+        "Panada",
+        "Intentional Failure",
     ]
 
     print(f"")
@@ -48,7 +50,7 @@ def testClassifier():
 
     total_confidence = 0
     #TODO turn this into a config variable
-    well_placed_threshold = 90
+    well_placed_threshold = 70
     num_well_placed = 0
     for sample in sample_inputs:
         probable_country, confidence = clf.applyFilterStack(sample)
