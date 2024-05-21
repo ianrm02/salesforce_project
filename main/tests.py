@@ -1,5 +1,6 @@
 from classifier import Classifier
 from fuzzy_distance import calc_fuzzy_dist
+import config
 
 def testClassifierInit():
     pass
@@ -49,18 +50,16 @@ def testClassifier():
     print(f"")
 
     total_confidence = 0
-    #TODO turn this into a config variable
-    well_placed_threshold = 70
     num_well_placed = 0
     for sample in sample_inputs:
         probable_country, confidence = clf.applyFilterStack(sample)
         total_confidence += confidence
-        if confidence >= well_placed_threshold: num_well_placed += 1
+        if confidence >= config.WELL_PLACED_CONFIDENCE_THRESHOLD: num_well_placed += 1
         print(f"{sample.strip()} mapped to {probable_country} with {confidence}% confidence.")
 
     print(f"")
     print(f"OVERALL CONFIDENCE: {total_confidence/len(sample_inputs):.2f}")
-    print(f"Percentage of Input Mapped with at least {well_placed_threshold}% Confidence: {num_well_placed/len(sample_inputs)*100:.2f}")
+    print(f"Percentage of Input mapped with at least {config.WELL_PLACED_CONFIDENCE_THRESHOLD}% Confidence: {num_well_placed/len(sample_inputs)*100:.2f}")
 
     print(f"")
     print(f"Done.")

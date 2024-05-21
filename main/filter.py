@@ -38,10 +38,11 @@ class userFilter(Filter):
 
 
     def applyFilter(self, rowInput: str):
-        if self.ruleSet.__contains__(self._parseUserInput(rowInput)):
-            return (self.ruleSet[rowInput], 100)
+        parsedIn = self._parseUserInput(rowInput)
+        if self.ruleSet.__contains__(parsedIn):
+            return (self.ruleSet[parsedIn], 100)
         else:
-            return (None, 0) 
+            return (None, 0)
 
 
 class exactFilter(Filter):
@@ -51,16 +52,15 @@ class exactFilter(Filter):
             self.ruleSet = common_alternates_db.COMMON_ALTERNATES
         elif self.appliesTo == 'S':
             self.ruleSet = {} #TODO
-        elif self.appliesTo == 'A':
-            self.ruleSet = {} #TODO
+        #we don't have ISO Codes for addresses, just C (counries) and S (states), so anything else should throw an error
         else:
             raise Exception("Invalid Filter")
 
 
     def applyFilter(self, rowInput: str):
-        parsedOutput = self._parseUserInput(rowInput)
-        if self.ruleSet.__contains__(parsedOutput):
-            return (self.ruleSet[parsedOutput], 100)
+        parsedIn = self._parseUserInput(rowInput)
+        if self.ruleSet.__contains__(parsedIn):
+            return (self.ruleSet[parsedIn], 100)
         else:
             return (None, 0)
         
@@ -107,10 +107,10 @@ class fuzzyFilter(Filter):
             #Base case when the input is shorter than but has no typos when compared to a longer common spelling 
             # ie Nigeri to Nigeria or Niger, we decide to assume if you are trying to enter the word with which your input
             # has the most similar characters, in order. We however are not strong in this assumption, so we return with only 60% confidence
-            return (self.ruleSet[possibles[0]], 60)
+            return (self.ruleSet[possibles[0]], config.NON_TYPO_MISMATCH_LENGTH_CONFIDENCE)
 
         #If we get to here, we are not confident but we think you might be trying to guess something similar
-        return (self.ruleSet[self.hits[0][0]], 30)
+        return (self.ruleSet[self.hits[0][0]], config.MULTIPLE_SIMILAR_HITS_FALLBACK_CONFIDENCE)
     
 
     def applyFilter(self, rowInput: str):
