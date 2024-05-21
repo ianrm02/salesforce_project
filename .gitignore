@@ -3,3 +3,5 @@
 /Bin
 .project
 .vs_code
+venv
+env
