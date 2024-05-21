@@ -1,4 +1,4 @@
-import re
+import re #regular expressions to detokenize
 import config
 
 def _txt_file_to_list(dataset_path: str, dataset_file: str, encoding='utf-8'):
