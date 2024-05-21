@@ -59,6 +59,7 @@ class exactFilter(Filter):
         else:
             return (None, 0)
         
+
 class fuzzyFilter(Filter):
     def __init__(self, appliesTo, order=1):
         self.appliesTo = appliesTo
@@ -82,8 +83,14 @@ class fuzzyFilter(Filter):
         
         return hits, 50
     
+
 class ProcessingFilter(Filter):
-    pass
+    def __init__(self):
+        pass
+
+
+    def applyFilter(self, rowInput: str):
+        return (None, 0)
 
         
 
