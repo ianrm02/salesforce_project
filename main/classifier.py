@@ -15,11 +15,17 @@ class Classifier:
         self.standard_country_df = load_standards.load_standards_from_config(config.STANDARDS_PATH)
 
         #Filter System:
-        userCountry_f = userCountryFilter(filterRule={})
-        exactCountry_f = countryExactFilter()
+        userCountry_f = userFilter(filterRule={}, appliesTo='C')
+        exactCountry_f = exactFilter(appliesTo='C')
+        fuzzyCountry_f = fuzzyFilter(appliesTo='C', order=1)
+        userState_f = userFilter(filterRule={}, appliesTo='S')
+        exactState_f = exactFilter(appliesTo='S')
+        fuzzyState_f = fuzzyFilter(appliesTo='S', order=1)
+        userAddress_f = userFilter(filterRule={}, appliesTo='A')
+        proccessing_f = ProcessingFilter(filterRule={})
 
         self.filters = [
-            userCountry_f, exactCountry_f
+            userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
         ]
 
 
@@ -47,15 +53,15 @@ class Classifier:
         probable_country = None
         confidence = 0
 
-        while confidence != 100:
-            num_filters = 0
-            for filter in self.filters:
-                num_filters += 1
-                #print(type(filter))
-                (probable_country, confidence) = filter.applyFilter(rowInput)
-            break
+        num_filters = 0
+        for filter in self.filters:
+            if confidence == 100:
+                break
+            num_filters += 1
+            #print(type(filter))
+            (probable_country, confidence) = filter.applyFilter(rowInput)
         
-        print(f"{rowInput.strip()} mapped to {probable_country} with {confidence}% confidence (through {num_filters} filters).\n")
+        print(f"{rowInput.strip()} mapped to {probable_country} with {confidence}% confidence (through {num_filters} filters).")
 
         return probable_country, confidence
 
@@ -72,10 +78,17 @@ def testClassifier():
         "USA",
         "U.S.A.",
         "   Argentina",
+        "Intentional Failure",
     ]
+
+    print(f"")
+    print(f"Testing simple inputs on the newly implemented Classifier.applyFilterStack() method...")
+    print(f"")
 
     for sample in sample_inputs:
         probable_country, confidence = clf.applyFilterStack(sample)
+
+    print(f"Done.")
 
 
 testClassifier()
