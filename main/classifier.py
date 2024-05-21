@@ -22,7 +22,7 @@ class Classifier:
         exactState_f = exactFilter(appliesTo='S')
         fuzzyState_f = fuzzyFilter(appliesTo='S', order=1)
         userAddress_f = userFilter(filterRule={}, appliesTo='A')
-        proccessing_f = ProcessingFilter(filterRule={})
+        proccessing_f = ProcessingFilter()
 
         self.filters = [
             userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
