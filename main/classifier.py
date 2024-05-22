@@ -1,8 +1,10 @@
 import input_standardization
-import load_standards
-import re
 import config
 from filter import *
+
+import re
+import pandas as pd
+import numpy as np
 
 class Classifier:
     filters = []
@@ -12,7 +14,7 @@ class Classifier:
     def __init__(self):
         #TODO check for valid loading of files, throw errors if not
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
-        self.standard_country_df = load_standards.load_standards_from_config(config.STANDARDS_PATH)
+        self.standard_country_df = self._load_iso_standard()
 
         #Filter System:
         userCountry_f = userFilter(filterRule={}, appliesTo='C')
@@ -27,6 +29,11 @@ class Classifier:
         self.filters = [
             userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
         ]
+
+    #currently only handles 3166-1
+    def _load_iso_standard(working_standard: str = "ISO3166_1.csv"):
+        standard_df = pd.read_csv(working_standard, keep_default_na=False)
+        return standard_df
 
 
     #TODO Might be obsolete, but leaving in just in case. Test for later.
@@ -46,7 +53,8 @@ class Classifier:
             5. Exact State Filter
             6. Fuzzy State Filter.
             ----- UI Break: State
-            7. Processing Filter
+            7. User Address Filter
+            8. Processing Filter
             ----- UI Break: Address
             ----- UI Confirm Screen
         """
