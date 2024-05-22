@@ -52,7 +52,16 @@
 
               <h2>Approve address entries</h2>
 
-              
+              <ul>
+              {% for item in ccodes %}
+                <button class="accordion">{{item}}</button>
+                <div class="panel">    
+                  <button class="accordion">Invalid State</button>
+                  <div class="panel">
+                  </div>
+                </div>
+              {% endfor %}
+              </ul>
 
               <button class="accordion">AR</button>
               <div class="panel">    
