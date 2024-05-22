@@ -46,6 +46,10 @@ def testClassifier():
         "Intentional Failure",
     ]
 
+    sample_inputs = [
+        "alagoas", #brazilian state
+    ]
+
     print(f"")
     print(f"Testing simple inputs on the newly implemented Classifier.applyFilterStack() method...")
     print(f"")
@@ -53,10 +57,10 @@ def testClassifier():
     total_confidence = 0
     num_well_placed = 0
     for sample in sample_inputs:
-        probable_country, confidence = clf.applyFilterStack(sample)
+        probable_mapping, confidence = clf.applyFilterStack(sample)
         total_confidence += confidence
         if confidence >= config.WELL_PLACED_CONFIDENCE_THRESHOLD: num_well_placed += 1
-        print(f"{sample.strip()} mapped to {probable_country} with {confidence}% confidence.")
+        print(f"{sample.strip()} mapped to {probable_mapping} with {confidence}% confidence.")
 
     print(f"")
     print(f"OVERALL CONFIDENCE: {total_confidence/len(sample_inputs):.2f}")

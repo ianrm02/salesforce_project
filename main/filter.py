@@ -1,7 +1,10 @@
-import common_alternates_db
-import re
+import common_country_alternates
+import common_state_alternates
 from fuzzy_distance import calc_fuzzy_dist
 import config
+
+import re
+
 
 class InvalidFilter(Exception):
     pass
@@ -9,17 +12,25 @@ class InvalidFilter(Exception):
 
 class Filter:
     ruleSet = {}
-    appliesTo = None #Enumerable: C S or A
+    appliesTo = None #Enumerable: C S or A for country state address respectively
 
     def __init__(self, filterRule={}):
         self.ruleSet = filterRule #expects a hashmap
         self.appliesTo = None
 
-    def _parseUserInput(self, userIn: str)->str:
-        #TODO still does not yet account for the user input being a database row. Can't work on this till we connect the sample DB to the classifier
-        # Will rely on the self.appliesTo field to determine which column of the input to extract from. 
-        # the filters should be grouped and ordered all of the c, then all of s, then all of a filters.
-        text = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper()).strip()
+    def _parseUserInput(self, userIn)->str:
+        """
+            Input: userIn as a tuple of strings ('[ADDRESS FIELD]', '[STATE FIELD]', '[COUNTRY FIELD]')
+        """
+        if self.appliesTo == 'C':
+            relevantText = userIn[2]
+        elif self.appliesTo == 'S':
+            relevantText = userIn[1]
+        elif self.appliesTo == 'A':
+            relevantText = userIn[0]
+
+
+        text = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", relevantText.upper()).strip()
         return text 
 
 
@@ -49,9 +60,9 @@ class exactFilter(Filter):
     def __init__(self, appliesTo):
         self.appliesTo = appliesTo
         if self.appliesTo == 'C':
-            self.ruleSet = common_alternates_db.COMMON_ALTERNATES
+            self.ruleSet = common_country_alternates.COMMON_COUNTRY_ATERNATES
         elif self.appliesTo == 'S':
-            self.ruleSet = {} #TODO
+            self.ruleSet = common_state_alternates.COMMON_STATE_ALTERNATES
         #we don't have ISO Codes for addresses, just C (counries) and S (states), so anything else should throw an error
         else:
             raise Exception("Invalid Filter")
@@ -72,9 +83,9 @@ class fuzzyFilter(Filter):
         self.hits = []
         self.min_hits_val = None
         if self.appliesTo == 'C':
-            self.ruleSet = common_alternates_db.COMMON_ALTERNATES
+            self.ruleSet = common_country_alternates.COMMON_COUNTRY_ATERNATES
         elif self.appliesTo == 'S':
-            self.ruleSet = {} #TODO
+            self.ruleSet = common_state_alternates.COMMON_STATE_ALTERNATES
         elif self.appliesTo == 'A':
             self.ruleSet = {} #TODO
         else:
@@ -90,8 +101,9 @@ class fuzzyFilter(Filter):
 
         possibles = [full[1] for full in min_hits]
 
+
         for i, char in enumerate(self.rowInput):
-            if len(possibles) == 1:
+            if len(possibles) == 1: #only 1 probable hit remaining
                 return (self.ruleSet[possibles[0]], config.ORDER_CONFIDENCES[self.min_hits_val-1])
             temp_possibles = []
             for hit in possibles:

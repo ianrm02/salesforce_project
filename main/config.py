@@ -2,7 +2,7 @@
 DATASET_PATH = "datasets/"
 WORKING_DATASET = 'example_set_full.txt'
 PREPROCESS_DATA_FILE = 'standardizedOut.csv'
-STANDARDS_PATH = "standards/"
+ISO_3166_1_PATH = 'main/iso3166_1.csv'
 
 #formats
 OUTPUT_FORMAT = "alpha-2"

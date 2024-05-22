@@ -5,3 +5,4 @@
 .vs_code
 venv
 env
+__pycache__

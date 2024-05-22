@@ -1,138 +1,15 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask import request
 
 # create instance of flask
 app = Flask(__name__)
 
+country_codes = ['AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BQ', 'BA', 'BW', 'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'CV', 'KH', 'CM', 'CA', 'KY', 'CF', 'TD', 'CL', 'CN', 'CX', 'CC', 'CO', 'KM', 'CG', 'CD', 'CK', 'CR', 'CI', 'HR', 'CU', 'CW', 'CY', 'CZ', 'DK', 'DJ', 'DM', 'DO', 'EC', 'EG', 'SV', 'GQ', 'ER', 'EE', 'SZ', 'ET', 'FK', 'FO', 'FJ', 'FI', 'FR', 'GF', 'PF', 'TF', 'GA', 'GM', 'GE', 'DE', 'GH', 'GI', 'GR', 'GL', 'GD', 'GP', 'GU', 'GT', 'GG', 'GN', 'GW', 'GY', 'HT', 'HM', 'VA', 'HN', 'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IM', 'IL', 'IT', 'JM', 'JP', 'JE', 'JO', 'KZ', 'KE', 'KI', 'KP', 'KR', 'KW', 'KG', 'LA', 'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT', 'LU', 'MO', 'MG', 'MW', 'MY', 'MV', 'ML', 'MT', 'MH', 'MQ', 'MR', 'MU', 'YT', 'MX', 'FM', 'MD', 'MC', 'MN', 'ME', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'NC', 'NZ', 'NI', 'NE', 'NG', 'NU', 'NF', 'MK', 'MP', 'NO', 'OM', 'PK', 'PW', 'PS', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PL', 'PT', 'PR', 'QA', 'RE', 'RO', 'RU', 'RW', 'BL', 'SH', 'KN', 'LC', 'MF', 'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'RS', 'SC', 'SL', 'SG', 'SX', 'SK', 'SI', 'SB', 'SO', 'ZA', 'GS', 'SS', 'ES', 'LK', 'SD', 'SR', 'SJ', 'SE', 'CH', 'SY', 'TW', 'TJ', 'TZ', 'TH', 'TL', 'TG', 'TK', 'TO', 'TT', 'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU', 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'ZM', 'ZW']
+
 # connect URL endpoints
 @app.route("/") # define path component
 def index():
-    return """<!DOCTYPE html>
-              <html>
-              <head>
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-              body {font-family: "Lato", sans-serif;}
-              
-              p {font-family: "Lato", sans-serif;}
-              
-              table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-              }
-
-              td, th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-              }
-
-              tr:nth-child(even) {
-                background-color: #dddddd;
-              }
-              
-              .accordion {
-                background-color: #eee;
-                color: #444;
-                cursor: pointer;
-                padding: 18px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-size: 15px;
-                transition: 0.4s;
-              }
-
-              .active, .accordion:hover {
-                background-color: #ccc; 
-              }
-
-              .panel {
-                padding: 0 18px;
-                display: none;
-                background-color: white;
-                overflow: hidden;
-              }
-              </style>
-              </head>
-              <body>
-
-              <h2>Approve address entries</h2>
-
-              <button class="accordion">AR</button>
-              <div class="panel">    
-                <button class="accordion">Invalid State</button>
-                <div class="panel">
-                </div>
-              </div>
-
-              <button class="accordion">US</button>
-              <div class="panel">
-                <table>
-                    <tr>
-                      <th>Address</th>
-                      <th>Confidence</th>
-                      <th>Country</th>
-                      <th>State</th>
-                    </tr>
-                    <tr>
-                      <td>123 Argument ln.</td>
-                      <td>60%</td>
-                      <td>
-                        <form action="" method="get">
-                          <select name="countries" id="countries">
-                            <option value="US">US</option>
-                            <option value="CN">CN</option>
-                            <option value="CA">CA</option>
-                          </select>
-                          <input type="submit" value="Confirm">
-                        </form>
-                      </td>
-                      <td>
-                        <form action="" method="get">
-                          <select name="states" id="states">
-                            <option value="CO">CO</option>
-                            <option value="CA">CA</option>
-                            <option value="TX">TX</option>
-                          </select>
-                          <input type="submit" value="Confirm">
-                        </form>
-                      </td>
-                    </tr>
-                  </table>
-                  <input type="text" name="country">
-                  <input type="submit" value="Convert">
-                  <br>
-                  <br>
-              </div>
-
-              <button class="accordion">CA</button>
-              <div class="panel">
-                
-              </div>
-
-              <script>
-              var acc = document.getElementsByClassName("accordion");
-              var i;
-
-              for (i = 0; i < acc.length; i++) {
-                acc[i].addEventListener("click", function() {
-                  this.classList.toggle("active");
-                  var panel = this.nextElementSibling;
-                  if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                  } else {
-                    panel.style.display = "block";
-                  }
-                });
-              }
-              </script>
-
-              </body>
-              </html>
-              """
+    return render_template('test.html', ccodes = country_codes)
 
 if __name__ == "__main__":
     # country_input = input("Country: ")
