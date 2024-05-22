@@ -16,3 +16,15 @@ def _detokenize_addresses(address_list: list[str]):
 
 def generateStandardizedInput(dataset_path: str, dataset_file: str, encoding='utf-8'):
     return _detokenize_addresses(_txt_file_to_list(dataset_path, dataset_file, encoding))
+
+
+def _all_caps_dict(dictToConv: dict):
+    capitalized_dict = {}
+    for key, value in dictToConv.items():
+        if isinstance(key, str):
+            key = key.upper()
+        if isinstance(value, str):
+            value = value.upper()
+        capitalized_dict[key] = value
+    return capitalized_dict
+

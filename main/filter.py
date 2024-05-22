@@ -84,6 +84,7 @@ class fuzzyFilter(Filter):
         self.min_hits_val = None
         if self.appliesTo == 'C':
             self.ruleSet = common_country_alternates.COMMON_COUNTRY_ATERNATES
+        elif self.appliesTo == 'S':
             self.ruleSet = common_state_alternates.COMMON_STATE_ALTERNATES
         elif self.appliesTo == 'A':
             self.ruleSet = {} #TODO
