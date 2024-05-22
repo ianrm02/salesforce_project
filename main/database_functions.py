@@ -4,9 +4,9 @@ import csv
 
 # add to config file later! need to deal with gitignore, etc.
 #from database_config import DBNAME, USER, PASSWORD, HOST
-DBNAME = 'large_size_database'
+DBNAME = 'bobby_db'
 USER = 'postgres'
-PASSWORD = '1234'
+PASSWORD = 'bobby'
 HOST = 'localhost'
 
 LAST_ID = 1
@@ -92,7 +92,7 @@ def get_next_n(n):
     conn, cur = connect_to_db()
 
     for i in range(LAST_ID, LAST_ID+n):
-        cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
+        cur.execute("SELECT address, country, state FROM Addresses WHERE id=%s;", (i,))
         result = cur.fetchall()[0]
         results.append(result)
     
@@ -138,7 +138,7 @@ def insert_n_entries(n):
 def upload_csv_to_db(filename):
     conn, cur = connect_to_db()
 
-    with open(filename, newline='') as csvfile:
+    with open(filename, newline='', encoding="utf8") as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
             address = row[0]
@@ -154,6 +154,20 @@ def upload_csv_to_db(filename):
         conn.commit()
 
     close_db(cur, conn)
+
+
+def get_db_size():
+    try:
+        conn, cur = connect_to_db()
+
+        cur.execute("SELECT COUNT(*) FROM Addresses;")
+        size = cur.fetchall()[0][0]
+        close_db(cur, conn)
+        
+        return size
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 #insert_n_entries(1_000_000)
 re_id_database()

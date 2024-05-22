@@ -77,3 +77,6 @@ class Classifier:
                 confidence = new_confidence
         
         return probable_mapping, confidence
+    
+    def batch_process(self, placeholderInput):
+        pass
