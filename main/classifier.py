@@ -1,8 +1,9 @@
 import input_standardization
 import load_standards
-import re
 import config
 from filter import *
+
+import re
 
 class Classifier:
     filters = []
@@ -46,7 +47,8 @@ class Classifier:
             5. Exact State Filter
             6. Fuzzy State Filter.
             ----- UI Break: State
-            7. Processing Filter
+            7. User Address Filter
+            8. Processing Filter
             ----- UI Break: Address
             ----- UI Confirm Screen
         """
