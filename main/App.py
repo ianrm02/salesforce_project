@@ -9,6 +9,7 @@ class App(object):
 
     def __init__(self):
         self.clf = Classifier()
+        self.db_handler = None #for when we turn the database functions into a db handler class
         self._total_db_size = get_db_size()
         self._batch_size = config.BATCH_SIZE
 
@@ -24,7 +25,7 @@ class App(object):
             self.clf.batch_process(get_next_n(remainder))
             self._entries_processed += remainder
 
-        if self._entries_processed == self._total_db_size: print("All entries proccessed.")
+        #if self._entries_processed == self._total_db_size: print("All entries proccessed.")
     
 
 app = App()
