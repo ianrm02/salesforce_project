@@ -44,7 +44,6 @@ class Classifier:
     def _parseUserInput(userIn: str)->str:
         return re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper())
 
-
     def applyFilterStack(self, rowInput:str):
         #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
         """
