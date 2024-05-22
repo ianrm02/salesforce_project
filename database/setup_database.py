@@ -1,4 +1,5 @@
-from database import connect_to_db, close_db, upload_csv_to_db
+import pg8000
+from database_functions import connect_to_db, close_db, upload_csv_to_db, get_next_n
 
 def create_default_table():
     conn, cur = connect_to_db()
@@ -15,3 +16,5 @@ def create_default_table():
 
 create_default_table()
 upload_csv_to_db('377_items.txt')
+result = get_next_n(377)
+print(len(result))
