@@ -1,13 +1,7 @@
 import pg8000
 import time
 import csv
-
-# add to config file later! need to deal with gitignore, etc.
-#from database_config import DBNAME, USER, PASSWORD, HOST
-DBNAME = 'bobby_db'
-USER = 'postgres'
-PASSWORD = 'bobby'
-HOST = 'localhost'
+from config import DBNAME, USER, PASSWORD, HOST
 
 LAST_ID = 1
 
@@ -90,13 +84,17 @@ def get_next_n(n):
     results = []
 
     conn, cur = connect_to_db()
+    count = 0
 
     for i in range(LAST_ID, LAST_ID+n):
-        cur.execute("SELECT address, country, state FROM Addresses WHERE id=%s;", (i,))
-        result = cur.fetchall()[0]
+        cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
+        result = cur.fetchone()
+        if result is None:
+            break
         results.append(result)
+        count += 1
     
-    LAST_ID += n
+    LAST_ID += count
 
     close_db(cur, conn)
 

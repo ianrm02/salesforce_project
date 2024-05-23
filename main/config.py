@@ -14,3 +14,9 @@ NON_TYPO_MISMATCH_LENGTH_CONFIDENCE = 60
 WELL_PLACED_CONFIDENCE_THRESHOLD = 70
 
 BATCH_SIZE = 10
+
+#database config
+DBNAME = 'bobby_db'
+USER = 'postgres'
+PASSWORD = 'bobby'
+HOST = 'localhost'
