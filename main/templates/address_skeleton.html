@@ -15,7 +15,7 @@
 
               td, th {
                 border: 1px solid #dddddd;
-                text-align: left;
+                text-align: center;
                 padding: 8px;
               }
 
@@ -85,23 +85,22 @@
                       <td>
                         <form action="" method="get">
                           <select name="countries" id="countries">
-                            <option disabled selected value> -- select an option -- </option>
+                            <option disabled selected value> -- select an country -- </option>
                             <option value="US">US</option>
                             <option value="CN">CN</option>
                             <option value="CA">CA</option>
                           </select>
-                          <input type="submit" value="Confirm">
                         </form>
                       </td>
                       <td>
+                        <!--Only allow states based on country picked-->
                         <form action="" method="get">
                           <select name="states" id="states">
-                            <option disabled selected value> -- select an option -- </option>
+                            <option disabled selected value> -- select an state -- </option>
                             <option value="CO">CO</option>
                             <option value="CA">CA</option>
                             <option value="TX">TX</option>
                           </select>
-                          <input type="submit" value="Confirm">
                         </form>
                       </td>
                     </tr>

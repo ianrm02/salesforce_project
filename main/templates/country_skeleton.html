@@ -15,7 +15,7 @@
 
               td, th {
                 border: 1px solid #dddddd;
-                text-align: left;
+                text-align: center;
                 padding: 8px;
               }
 
@@ -65,7 +65,84 @@
 
               <button class="accordion">AR</button>
               <div class="panel">    
-                <p>Example table</p>
+                <table>
+                    <tr>
+                      <th>String</th>
+                      <th>Occurence</th>
+                      <th>Confidence</th>
+                      <th>Approved</th>
+                      <th>Custom</th>
+                    </tr>
+                    <!--Populate table based on database-->
+                    <tr>
+                      <td><!--String variable here--> Arroz</td>
+                      <td><!--Occurence variable here--> 1</td>
+                      <td><!--Confidence variable here--> 10%</td>
+                      <td><!--Custom Dropdown here-->
+                        <form action="" method="get">
+                          <input type="checkbox" id="approve" name="approve" value="approved">
+                        </form>
+                      </td>
+                      <td><!--Populate the dropdown based on standardized country-->
+                        <form action="" method="get">
+                          <select name="states" id="states">
+                            <option disabled selected value> -- select an country -- </option>
+                            <option value="US">US</option>
+                            <option value="CA">CA</option>
+                            <option value="DE">DE</option>
+                            <option value="AR">AR</option>
+                            <option value="FR">AR</option>
+                          </select>
+                        </form>
+                      </td>
+                    </tr>
+
+                    <tr>
+                        <td><!--String variable here--> ArGE</td>
+                        <td><!--Occurence variable here--> 30</td>
+                        <td><!--Confidence variable here--> 10%</td>
+                        <td><!--Custom Dropdown here-->
+                          <form action="" method="get">
+                            <input type="checkbox" id="approve" name="approve" value="approved">
+                          </form>
+                        </td>
+                        <td><!--Populate the dropdown based on standardized country; sort based on confidence-->
+                          <form action="" method="get">
+                            <select name="states" id="states">
+                              <option disabled selected value> -- select an country -- </option>
+                              <option value="US">US</option>
+                              <option value="CA">CA</option>
+                              <option value="DE">DE</option>
+                              <option value="AR">AR</option>
+                              <option value="FR">AR</option>
+                            </select>
+                          </form>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td><!--String variable here--> arentin</td>
+                        <td><!--Occurence variable here--> 12</td>
+                        <td><!--Confidence variable here--> 70%</td>
+                        <td><!--Custom Dropdown here-->
+                          <form action="" method="get">
+                            <input type="checkbox" id="approve" name="approve" value="approved">
+                          </form>
+                        </td>
+                        <td><!--Populate the dropdown based on standardized country-->
+                          <form action="" method="get">
+                            <select name="states" id="states">
+                              <option disabled selected value> -- select an country -- </option>
+                              <option value="US">US</option>
+                              <option value="CA">CA</option>
+                              <option value="DE">DE</option>
+                              <option value="AR">AR</option>
+                              <option value="FR">AR</option>
+                            </select>
+                          </form>
+                        </td>
+                      </tr>
+                  </table>
               </div>
 
               <button class="accordion">US</button>

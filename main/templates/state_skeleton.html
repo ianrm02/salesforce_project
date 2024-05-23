@@ -8,14 +8,14 @@
               p {font-family: "Lato", sans-serif;}
               
               table {
-                font-family: arial, sans-serif;
+                font-family: "Lato", sans-serif;
                 border-collapse: collapse;
                 width: 100%;
               }
 
               td, th {
                 border: 1px solid #dddddd;
-                text-align: left;
+                text-align: center;
                 padding: 8px;
               }
 
@@ -63,16 +63,11 @@
               {% endfor %}
               </ul>
 
-              <button class="accordion">AR</button>
+              <button class="accordion">Invalid Country</button>
               <div class="panel">    
-                <button class="accordion">BA</button>
+                <button class="accordion">ER</button>
                 <div class="panel">
-                </div>
-              </div>
-
-              <button class="accordion">US</button>
-              <div class="panel">
-                <table>
+                  <table>
                     <tr>
                       <th>String</th>
                       <th>Occurence</th>
@@ -80,39 +75,99 @@
                       <th>Approved</th>
                       <th>Custom</th>
                     </tr>
-                    <!--Create as many rows as countries are identified in database-->
+                    <!--Populate table based on database; sort based on confidence-->
                     <tr>
-                      <td><!--State variable here--> CO</td>
-                      <td><!--Occurence variable here--> 10</td>
-                      <td><!--Confidence variable here--> 100%</td>
-                      <td><!--Custom Dropdown here-->
+                      <td><!--String variable here--> ENTX Rol</td>
+                      <td><!--Occurence variable here--> 3</td>
+                      <td><!--Confidence variable here--> 60%</td>
+                      <td><!--Approval checkbox here-->
                         <form action="" method="get">
                           <input type="checkbox" id="approve" name="approve" value="approved">
                           <label for="approve"></label>
                         </form>
                       </td>
-                      <td><!--Populate the dropdown based on standardized country-->
+                      <td><!--State and Country dropdowns here; populate off of standardized list-->
                         <form action="" method="get">
-                          <select name="states" id="states">
+                          <select name="country" id="country"><!--Country-->
                             <option disabled selected value> -- select an country -- </option>
                             <option value="US">US</option>
                             <option value="CA">CA</option>
                             <option value="DE">DE</option>
                             <option value="AR">AR</option>
-                            <option value="FR">AR</option>
+                            <option value="FR">FR</option>
                           </select>
-                          <input type="submit" value="Confirm">
+
+                          <!--Only allow state selections based on country picked-->
+                          <select name="states" id="states"><!--State-->
+                            <option disabled selected value> -- select an state -- </option>
+                            <option value="AR">AR</option>
+                            <option value="CA">CA</option>
+                            <option value="CO">CO</option>
+                            <option value="NM">NM</option>
+                            <option value="TX">TX</option>
+                          </select>
+                        </form>
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <td><!--String variable here--> Entree Reo</td>
+                      <td><!--Occurence variable here--> 1200</td>
+                      <td><!--Confidence variable here--> 80%</td>
+                      <td><!--Approval checkbox here-->
+                        <form action="" method="get">
+                          <input type="checkbox" id="approve" name="approve" value="approved">
+                          <label for="approve"></label>
+                        </form>
+                      </td>
+                      <td><!--State and Country dropdowns here; populate off of standardized list-->
+                        <form action="" method="get">
+                          <select name="country" id="country"><!--Country-->
+                            <option disabled selected value> -- select an country -- </option>
+                            <option value="US">US</option>
+                            <option value="CA">CA</option>
+                            <option value="DE">DE</option>
+                            <option value="AR">AR</option>
+                            <option value="FR">FR</option>
+                          </select>
+                          
+                          <!--Only allow state selections based on country picked-->
+                          <select name="states" id="states"><!--State-->
+                            <option disabled selected value> -- select an state -- </option>
+                            <option value="AR">AR</option>
+                            <option value="CA">CA</option>
+                            <option value="CO">CO</option>
+                            <option value="NM">NM</option>
+                            <option value="TX">TX</option>
+                          </select>
                         </form>
                       </td>
                     </tr>
                   </table>
-                  <br>
-                  <br>
+                </div>
+
+                <button class="accordion">ES</button>
+                <div class="panel">
+                  <p>Example table</p>
+                </div>
+              </div>
+
+              <button class="accordion">AR</button>
+              <div class="panel">    
+                <button class="accordion">BA</button>
+                <div class="panel">
+                  <p>Example table</p>
+                </div>
+              </div>
+
+              <button class="accordion">US</button>
+              <div class="panel">
+                <p>Example table</p>
               </div>
 
               <button class="accordion">CA</button>
               <div class="panel">
-                
+                <p>Example table</p>
               </div>
 
               <input type="text" name="search">
