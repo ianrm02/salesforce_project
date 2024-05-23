@@ -1,5 +1,5 @@
 from classifier import Classifier
-from database_functions import get_next_n, get_db_size
+from database_functions import DatabaseManager
 import config
 
 class App(object):
@@ -9,20 +9,20 @@ class App(object):
 
     def __init__(self):
         self.clf = Classifier()
-        self.db_handler = None #for when we turn the database functions into a db handler class
-        self._total_db_size = get_db_size()
+        self.db_handler =  DatabaseManager()
+        self._total_db_size = self.db_handler.get_db_size()
         self._batch_size = config.BATCH_SIZE
 
 
     def run(self):
         while self._entries_processed + self._batch_size < self._total_db_size:
-            self.clf.batch_process(get_next_n(self._batch_size))
+            self.clf.batch_process(self.db_handler.get_next_n(self._batch_size))
             self._entries_processed += self._batch_size
         
         remainder = self._total_db_size - self._entries_processed
 
         if remainder > 0:
-            self.clf.batch_process(get_next_n(remainder))
+            self.clf.batch_process(self.db_handler.get_next_n(remainder))
             self._entries_processed += remainder
 
         if self._entries_processed == self._total_db_size: print("All entries proccessed.")

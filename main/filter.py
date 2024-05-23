@@ -157,7 +157,7 @@ class fuzzyFilter(Filter):
         elif len(self.hits) == 1:
             return (self.hits[0][0], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
         elif len(self.hits) > 1:
-            return self._sort_multiple_hits(parsedIn)
+            return self._sort_multiple_hits(parsedIn=parsedIn)
         else:
             return (None, 0)
     
