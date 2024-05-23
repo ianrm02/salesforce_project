@@ -106,8 +106,6 @@
                       </td>
                     </tr>
                   </table>
-                  <input type="text" name="country">
-                  <input type="submit" value="Convert">
                   <br>
                   <br>
               </div>
@@ -116,6 +114,11 @@
               <div class="panel">
                 
               </div>
+
+              <input type="text" name="search">
+              <input type="submit" value="Search"> <br><br>
+
+              <button onclick="redirect()">Next page</button>
 
               <script>
               var acc = document.getElementsByClassName("accordion");
@@ -131,6 +134,10 @@
                     panel.style.display = "block";
                   }
                 });
+              }
+
+              function redirect() {
+                window.location.href = "{{url_for('statistics')}}"
               }
               </script>
 
