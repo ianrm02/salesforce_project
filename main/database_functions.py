@@ -3,169 +3,127 @@ import time
 import csv
 from config import DBNAME, USER, PASSWORD, HOST
 
-LAST_ID = 1
-
-def connect_to_db():
-    conn = pg8000.connect(
-        database=DBNAME,
-        user=USER,
-        password=PASSWORD,
-        host=HOST
-    )
-    cur = conn.cursor()
-    return conn, cur
-
-def close_db(cur: pg8000.Cursor, conn: pg8000.Connection):
-    cur.close()
-    conn.close()
-
-def insert_address(address, state, country):
-    try:
-        conn, cur = connect_to_db()
-        insert_query = "INSERT INTO Addresses (Address, State, Country) VALUES (%s, %s, %s)"
-        cur.execute(insert_query, (address, state, country))
-        conn.commit()
-        
-    except Exception as e:
-        print("An error occurred:", e)
-
-    finally:
-        if conn:
-            close_db(cur, conn)
-
-def delete_address(condition):
-    try:
-        conn, cur = connect_to_db()
-        delete_query = f"DELETE FROM Addresses WHERE {condition};"
-        cur.execute(delete_query)
-        conn.commit()
-        
-        print("Deleted successfully")
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-    finally:
-        if conn:
-            close_db(cur, conn)
-
-def re_id_database():
-    conn, cur = connect_to_db()
+class DatabaseManager:
+    def __init__(self):
+        self.conn = pg8000.connect(
+            database=DBNAME,
+            user=USER,
+            password=PASSWORD,
+            host=HOST
+        )
+        self.cur = self.conn.cursor()
+        self.LAST_ID = 1
+        self.SIZE = self.get_db_size()
     
-    try:
-        cur.execute("""
-            CREATE TEMP TABLE temp_ids AS
-            SELECT id, ROW_NUMBER() OVER (ORDER BY id) as new_id
-            FROM Addresses;
-        """)
+    def __del__(self):
+        self.cur.close()
+        self.conn.close()
+
+    def insert_address(self, address, state, country):
+        try:
+            insert_query = "INSERT INTO Addresses (Address, State, Country) VALUES (%s, %s, %s)"
+            self.cur.execute(insert_query, (address, state, country))
+            self.conn.commit()
+            
+        except Exception as e:
+            print("An error occurred:", e)
+
+    def delete_address(self, condition):
+        try:
+            delete_query = f"DELETE FROM Addresses WHERE {condition};"
+            self.cur.execute(delete_query)
+            self.conn.commit()
+            
+            print("Deleted successfully")
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    def re_id_database(self):        
+        try:
+            self.cur.execute("""
+                CREATE TEMP TABLE temp_ids AS
+                SELECT id, ROW_NUMBER() OVER (ORDER BY id) as new_id
+                FROM Addresses;
+            """)
+            
+            self.cur.execute("""
+                UPDATE Addresses
+                SET id = temp_ids.new_id
+                FROM temp_ids
+                WHERE Addresses.id = temp_ids.id;
+            """)
+            
+            self.cur.execute("DROP TABLE temp_ids;")
+            
+            self.conn.commit()
+
+        except Exception as e:
+            self.conn.rollback()
+            print(f"An error occurred: {e}")
+
+    def get_next_n(self, n):
+        results = []
+
+        count = 0
+
+        for i in range(self.LAST_ID, self.LAST_ID+n):
+            self.cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
+            result = self.cur.fetchone()
+            if result is None:
+                break
+            results.append(result)
+            count += 1
         
-        cur.execute("""
-            UPDATE Addresses
-            SET id = temp_ids.new_id
-            FROM temp_ids
-            WHERE Addresses.id = temp_ids.id;
-        """)
-        
-        cur.execute("DROP TABLE temp_ids;")
-        
-        conn.commit()
+        self.LAST_ID += count
 
-    except Exception as e:
-        conn.rollback()
-        print(f"An error occurred: {e}")
+        return results
 
-    finally:
-        if conn:
-            close_db(cur, conn)
+    def get_db_size(self):
+        try:
+            self.cur.execute("SELECT COUNT(*) FROM Addresses;")
+            size = self.cur.fetchall()[0][0]
+            return size
 
-def get_next_n(n):
-    global LAST_ID
+        except Exception as e:
+            print(f"An error occurred: {e}")
 
-    results = []
+    def upload_csv_to_db(self, filename):
+        with open(filename, newline='', encoding="utf8") as csvfile:
+            reader = csv.reader(csvfile)
+            for row in reader:
+                address = row[0]
+                country = row[1]
+                state = row[2]
 
-    conn, cur = connect_to_db()
-    count = 0
+                sql = """
+                INSERT INTO Addresses (address, country, state)
+                VALUES (%s, %s, %s)
+                """
+                self.cur.execute(sql, (address, country, state))
 
-    for i in range(LAST_ID, LAST_ID+n):
-        cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
-        result = cur.fetchone()
-        if result is None:
-            break
-        results.append(result)
-        count += 1
-    
-    LAST_ID += count
+            self.conn.commit()
 
-    close_db(cur, conn)
+    def insert_n_entries(self, n):
+        address = 1000
+        state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
+        country = ["United States", "Merica", "Arg", "Iran"]
+        one_twentieth = n // 20
 
-    return results
+        for i in range(n):
+            self.insert_address(address, state[i % 4], country[i % 4])
+            address = ((address + i - 1000) % 9000) + 1000
+            if (i % one_twentieth == 0):
+                print(i)
 
-def timing_test():
-    start_time = time.time()
+    def timing_test(self):
+        start_time = time.time()
 
-    conn, cur = connect_to_db()
+        size = self.get_db_size()
 
-    cur.execute("SELECT COUNT(*) FROM Addresses;")
-    size = cur.fetchall()[0][0]
-    print(size)
+        for i in range(1, size+1):
+            self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE id=%s;", (i,))
 
-    for i in range(1, size+1):
-        cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
+        end_time = time.time()
 
-    end_time = time.time()
-
-    print(f"Duration: {end_time - start_time} seconds")
-
-    close_db(cur, conn)
-
-def insert_n_entries(n):
-    conn, cur = connect_to_db()
-    address = 1000
-    state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
-    country = ["United States", "Merica", "Arg", "Iran"]
-    one_twentieth = n // 20
-
-    for i in range(n):
-        insert_address(address, state[i % 4], country[i % 4])
-        address = ((address + i - 1000) % 9000) + 1000
-        if (i % one_twentieth == 0):
-            print(i)
-
-    close_db(cur, conn)
-
-def upload_csv_to_db(filename):
-    conn, cur = connect_to_db()
-
-    with open(filename, newline='', encoding="utf8") as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            address = row[0]
-            country = row[1]
-            state = row[2]
-
-            sql = """
-            INSERT INTO Addresses (address, country, state)
-            VALUES (%s, %s, %s)
-            """
-            cur.execute(sql, (address, country, state))
-
-        conn.commit()
-
-    close_db(cur, conn)
-
-
-def get_db_size():
-    try:
-        conn, cur = connect_to_db()
-
-        cur.execute("SELECT COUNT(*) FROM Addresses;")
-        size = cur.fetchall()[0][0]
-        close_db(cur, conn)
-        
-        return size
-
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-#insert_n_entries(1_000_000)
-re_id_database()
+        print(f"Duration: {end_time - start_time} seconds")
