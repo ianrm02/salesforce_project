@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+              <html>
+              <head>
+              <meta name="viewport" content="width=device-width, initial-scale=1">
+              <style>
+              body {font-family: "Lato", sans-serif;}
+              
+              p {font-family: "Lato", sans-serif;}
+              
+              table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+              }
+
+              td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+              }
+
+              tr:nth-child(even) {
+                background-color: #dddddd;
+              }
+              
+              .accordion {
+                background-color: #eee;
+                color: #444;
+                cursor: pointer;
+                padding: 18px;
+                width: 100%;
+                border: none;
+                text-align: left;
+                outline: none;
+                font-size: 15px;
+                transition: 0.4s;
+              }
+
+              .active, .accordion:hover {
+                background-color: #ccc; 
+              }
+
+              .panel {
+                padding: 0 18px;
+                display: none;
+                background-color: white;
+                overflow: hidden;
+              }
+              </style>
+              </head>
+              <body>
+
+              <h2>Approve Country Entries</h2>
+
+              <ul>
+              {% for item in ccodes %}
+                <button class="accordion">{{item}}</button>
+                <div class="panel">    
+                  <button class="accordion">Invalid State</button>
+                  <div class="panel">
+                  </div>
+                </div>
+              {% endfor %}
+              </ul>
+
+              <button class="accordion">AR</button>
+              <div class="panel">    
+                <button class="accordion">BA</button>
+                <div class="panel">
+                </div>
+              </div>
+
+              <button class="accordion">US</button>
+              <div class="panel">
+                <table>
+                    <tr>
+                      <th>String</th>
+                      <th>Occurence</th>
+                      <th>Confidence</th>
+                      <th>Approved</th>
+                      <th>Custom</th>
+                    </tr>
+                    <tr>
+                      <td><!--State variable here--> CO</td>
+                      <td><!--Occurence variable here--> 10</td>
+                      <td><!--Confidence variable here--> 100%</td>
+                      <td><!--Custom Dropdown here--></td>
+                      <td><!--Populate the dropdown based on standardized country-->
+                        <form action="" method="get">
+                          <select name="states" id="states">
+                            <option disabled selected value> -- select an option -- </option>
+                            <option value="US">US</option>
+                            <option value="CA">CA</option>
+                            <option value="DE">DE</option>
+                            <option value="AR">AR</option>
+                            <option value="FR">AR</option>
+                          </select>
+                          <input type="submit" value="Confirm">
+                        </form>
+                      </td>
+                    </tr>
+                  </table>
+                  <input type="text" name="country">
+                  <input type="submit" value="Convert">
+                  <br>
+                  <br>
+              </div>
+
+              <button class="accordion">CA</button>
+              <div class="panel">
+                
+              </div>
+              <button onclick="redirect()">Next page</button>
+
+              <script>
+              var acc = document.getElementsByClassName("accordion");
+              var i;
+
+              for (i = 0; i < acc.length; i++) {
+                acc[i].addEventListener("click", function() {
+                  this.classList.toggle("active");
+                  var panel = this.nextElementSibling;
+                  if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                  } else {
+                    panel.style.display = "block";
+                  }
+                });
+              }
+
+              function redirect() {
+                window.location.href = "{{url_for('test')}}"
+              }
+              </script>
+
+              </body>
+              </html>

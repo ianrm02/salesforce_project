@@ -50,7 +50,7 @@
               </head>
               <body>
 
-              <h2>Approve address entries</h2>
+              <h2>Approve Country Entries</h2>
 
               <ul>
               {% for item in ccodes %}
@@ -65,7 +65,7 @@
 
               <button class="accordion">AR</button>
               <div class="panel">    
-                <button class="accordion">Invalid State</button>
+                <button class="accordion">BA</button>
                 <div class="panel">
                 </div>
               </div>
@@ -74,30 +74,26 @@
               <div class="panel">
                 <table>
                     <tr>
-                      <th>Address</th>
+                      <th>String</th>
+                      <th>Occurence</th>
                       <th>Confidence</th>
-                      <th>Country</th>
-                      <th>State</th>
+                      <th>Approved</th>
+                      <th>Custom</th>
                     </tr>
                     <tr>
-                      <td>123 Argument ln.</td>
-                      <td>60%</td>
-                      <td>
-                        <form action="" method="get">
-                          <select name="countries" id="countries">
-                            <option value="US">US</option>
-                            <option value="CN">CN</option>
-                            <option value="CA">CA</option>
-                          </select>
-                          <input type="submit" value="Confirm">
-                        </form>
-                      </td>
-                      <td>
+                      <td><!--State variable here--> CO</td>
+                      <td><!--Occurence variable here--> 10</td>
+                      <td><!--Confidence variable here--> 100%</td>
+                      <td><!--Custom Dropdown here--></td>
+                      <td><!--Populate the dropdown based on standardized country-->
                         <form action="" method="get">
                           <select name="states" id="states">
-                            <option value="CO">CO</option>
+                            <option disabled selected value> -- select an option -- </option>
+                            <option value="US">US</option>
                             <option value="CA">CA</option>
-                            <option value="TX">TX</option>
+                            <option value="DE">DE</option>
+                            <option value="AR">AR</option>
+                            <option value="FR">AR</option>
                           </select>
                           <input type="submit" value="Confirm">
                         </form>
@@ -114,6 +110,7 @@
               <div class="panel">
                 
               </div>
+              <button onclick="redirect()">Next page</button>
 
               <script>
               var acc = document.getElementsByClassName("accordion");
@@ -129,6 +126,10 @@
                     panel.style.display = "block";
                   }
                 });
+              }
+
+              function redirect() {
+                window.location.href = "{{url_for('test')}}"
               }
               </script>
 
