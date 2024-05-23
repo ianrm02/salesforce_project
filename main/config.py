@@ -6,6 +6,7 @@ ISO_3166_1_PATH = 'main/iso3166_1.csv'
 
 #formats
 OUTPUT_FORMAT = "alpha-2"
+FILTER_ORDER = ['C', 'S', 'A', 'O'] #Country filters, then State, then Address, then Overflow (Processing filter + any add ons)
 
 #Fuzzy Distance Confidences
 ORDER_CONFIDENCES = [90, 80, 70, 50] #ie 1 order is 90% confidence

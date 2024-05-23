@@ -32,7 +32,7 @@ class Filter:
             relevantText = userIn[0]
 
 
-        text = re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", relevantText.upper()).strip()
+        text = re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http\S+", lambda x: x.group(0).upper(), str(relevantText).strip())
         return text 
 
 

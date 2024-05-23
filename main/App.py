@@ -12,6 +12,9 @@ class App(object):
         self.db_handler =  DatabaseManager()
         self._total_db_size = self.db_handler.get_db_size()
         self._batch_size = config.BATCH_SIZE
+        
+        #TODO testing - get rid of
+        self._total_db_size = 10
 
 
     def run(self):
@@ -26,6 +29,8 @@ class App(object):
             self._entries_processed += remainder
 
         if self._entries_processed == self._total_db_size: print("All entries proccessed.")
+        
+        return 0
 
 
     def testRun(self):
@@ -35,4 +40,3 @@ class App(object):
 
 app = App()
 app.run()
-

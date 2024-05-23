@@ -19,6 +19,7 @@ class Classifier:
         #TODO check for valid loading of files, throw errors if not
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
         self.standard_country_df = self._load_iso_standard()
+        self.filterOrder = config.FILTER_ORDER
 
         #Filter System:
         userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
@@ -28,7 +29,7 @@ class Classifier:
         exactState_f    = exactFilter(                appliesTo='S', name="exct_stte")
         fuzzyState_f    = fuzzyFilter(                appliesTo='S', order=2, name="fzzy_stte")
         userAddress_f   = userFilter(  filterRule={}, appliesTo='A', name="user_addr")
-        proccessing_f   = ProcessingFilter(name="proc_mgic")
+        proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
         self.filters = [
             userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
@@ -70,18 +71,56 @@ class Classifier:
                 break
             #num_filters += 1
             (new_probable_mapping, new_confidence) = filter.applyFilter(rowInput)
-            if new_confidence == 30:
-                print(filter.getName(), rowInput, new_probable_mapping)
             if new_confidence > confidence:
                 probable_mapping = new_probable_mapping
                 confidence = new_confidence
         
         return probable_mapping, confidence
     
+    def applyFilterSubset(self, rowInput, subset: chr):
+        filter_subset = [filter for filter in self.filters if filter.appliesTo == subset]
+
+        probable_mapping = None
+        confidence = 0
+
+        for filter in filter_subset:
+            if confidence == 100:
+                break
+            new_probable_mapping, new_confidence = filter.applyFilter(rowInput)
+            if new_confidence > confidence:
+                probable_mapping = new_probable_mapping
+                confidence = new_confidence
+            
+        return probable_mapping, confidence
+
     
-    def batch_process(self, batch):
-        batch_results = []
-        for item in batch:
-            whole_addr = f"{item[0]} | {item[1]} | {item[2]}"
-            probable_match, confidence = self.applyFilterStack(item)
-            print(f"{whole_addr} mapped to {probable_match} with {confidence}% confidence")
+    def batch_process(self, batch, stepThroughRuntime=False):
+        all_results = {}
+        for stage in self.filterOrder:
+            stage_results = [] # to eventually return to the web app
+            #TODO the database is currently grabbing ID too
+            for item in batch:
+                whole_addr = f"{item[0]} | {item[1]} | {item[2]}"
+                probable_match, confidence = self.applyFilterSubset(item, stage)
+                #need to get how many of this same string occur in the same field in the database
+                #to return to the webapp in the form [Identified String] [Mapping] [Confidence] [# Occurences]
+                relevant_text = ""
+                if stage == 'C':
+                    relevant_text = item[2]
+                elif stage == 'S':
+                    relevant_text = item[1]
+                elif stage == 'A':
+                    relevant_text = item[0]
+                elif stage == 'O':
+                    relevant_text = f"{item[0]}{item[1]}{item[2]}"
+                stage_results.append((relevant_text, probable_match, confidence, 0))
+                print(f"{whole_addr} mapped to {probable_match} with {confidence}% confidence in the {stage} stage.")
+            
+            all_results[stage] = stage_results
+
+            print(f"{stage} Stage Completed...")
+            if stepThroughRuntime == True:
+                _ = input("")
+            
+
+            
