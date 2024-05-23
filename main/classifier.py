@@ -21,14 +21,14 @@ class Classifier:
         self.standard_country_df = self._load_iso_standard()
 
         #Filter System:
-        userCountry_f   = userFilter(  filterRule={}, appliesTo='C')
-        exactCountry_f  = exactFilter(                appliesTo='C')
-        fuzzyCountry_f  = fuzzyFilter(                appliesTo='C', order=2)
-        userState_f     = userFilter(  filterRule={}, appliesTo='S')
-        exactState_f    = exactFilter(                appliesTo='S')
-        fuzzyState_f    = fuzzyFilter(                appliesTo='S', order=2)
-        userAddress_f   = userFilter(  filterRule={}, appliesTo='A')
-        proccessing_f   = ProcessingFilter()
+        userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
+        exactCountry_f  = exactFilter(                appliesTo='C', name="exct_ctry")
+        fuzzyCountry_f  = fuzzyFilter(                appliesTo='C', order=2, name="fzzy_ctry")
+        userState_f     = userFilter(  filterRule={}, appliesTo='S', name="user_stte")
+        exactState_f    = exactFilter(                appliesTo='S', name="exct_stte")
+        fuzzyState_f    = fuzzyFilter(                appliesTo='S', order=2, name="fzzy_stte")
+        userAddress_f   = userFilter(  filterRule={}, appliesTo='A', name="user_addr")
+        proccessing_f   = ProcessingFilter(name="proc_mgic")
 
         self.filters = [
             userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
@@ -44,8 +44,7 @@ class Classifier:
     def _parseUserInput(userIn: str)->str:
         return re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper())
 
-
-    def applyFilterStack(self, rowInput:str):
+    def applyFilterStack(self, rowInput):
         #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
         """
             Operational Order:
@@ -71,10 +70,18 @@ class Classifier:
                 break
             #num_filters += 1
             (new_probable_mapping, new_confidence) = filter.applyFilter(rowInput)
-            print(type(filter))
-            print(new_probable_mapping, new_confidence)
+            if new_confidence == 30:
+                print(filter.getName(), rowInput, new_probable_mapping)
             if new_confidence > confidence:
                 probable_mapping = new_probable_mapping
                 confidence = new_confidence
         
         return probable_mapping, confidence
+    
+    
+    def batch_process(self, batch):
+        batch_results = []
+        for item in batch:
+            whole_addr = f"{item[0]} | {item[1]} | {item[2]}"
+            probable_match, confidence = self.applyFilterStack(item)
+            print(f"{whole_addr} mapped to {probable_match} with {confidence}% confidence")

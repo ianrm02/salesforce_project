@@ -15,6 +15,7 @@ def create_default_table():
     close_db(cur, conn)
 
 create_default_table()
-upload_csv_to_db('377_items.txt')
+upload_csv_to_db('main/377_items.txt')
+
 result = get_next_n(377)
 print(len(result))

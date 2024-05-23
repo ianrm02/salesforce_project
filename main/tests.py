@@ -39,6 +39,7 @@ def testClassifier():
         "Egy",
         "Cuba",
         "Nigeri",
+        "Nigert",
         "Switzeland",
         "Canama",
         "Panada",
