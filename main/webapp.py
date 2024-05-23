@@ -19,6 +19,10 @@ def country_approve():
 def state_approve():
     return render_template('state_skeleton.html')
 
+@app.route("/address_approve")
+def address_approve():
+    return render_template('address_skeleton.html')
+
 if __name__ == "__main__":
     # country_input = input("Country: ")
     # print("Input: ", country_input)

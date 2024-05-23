@@ -50,7 +50,7 @@
               </head>
               <body>
 
-              <h2>Approve Country Entries</h2>
+              <h2>Approve State Entries</h2>
 
               <ul>
               {% for item in ccodes %}
@@ -80,15 +80,21 @@
                       <th>Approved</th>
                       <th>Custom</th>
                     </tr>
+                    <!--Create as many rows as countries are identified in database-->
                     <tr>
                       <td><!--State variable here--> CO</td>
                       <td><!--Occurence variable here--> 10</td>
                       <td><!--Confidence variable here--> 100%</td>
-                      <td><!--Custom Dropdown here--></td>
+                      <td><!--Custom Dropdown here-->
+                        <form action="" method="get">
+                          <input type="checkbox" id="approve" name="approve" value="approved">
+                          <label for="approve"></label>
+                        </form>
+                      </td>
                       <td><!--Populate the dropdown based on standardized country-->
                         <form action="" method="get">
                           <select name="states" id="states">
-                            <option disabled selected value> -- select an option -- </option>
+                            <option disabled selected value> -- select an country -- </option>
                             <option value="US">US</option>
                             <option value="CA">CA</option>
                             <option value="DE">DE</option>
@@ -100,8 +106,6 @@
                       </td>
                     </tr>
                   </table>
-                  <input type="text" name="country">
-                  <input type="submit" value="Convert">
                   <br>
                   <br>
               </div>
@@ -110,6 +114,10 @@
               <div class="panel">
                 
               </div>
+
+              <input type="text" name="search">
+              <input type="submit" value="Search"> <br><br>
+
               <button onclick="redirect()">Next page</button>
 
               <script>
@@ -129,7 +137,7 @@
               }
 
               function redirect() {
-                window.location.href = "{{url_for('test')}}"
+                window.location.href = "{{url_for('address_approve')}}"
               }
               </script>
 
