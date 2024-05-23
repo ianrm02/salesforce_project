@@ -11,21 +11,23 @@ class InvalidFilter(Exception):
 
 
 class Filter:
+    _name = None
     ruleSet = {}
     appliesTo = None #Enumerable: C S or A for country state address respectively
 
-    def __init__(self, filterRule={}):
+    def __init__(self, filterRule={}, name=None):
         self.ruleSet = filterRule #expects a hashmap
         self.appliesTo = None
+        self._name = name
 
     def _parseUserInput(self, userIn)->str:
         """
             Input: userIn as a tuple of strings ('[ADDRESS FIELD]', '[STATE FIELD]', '[COUNTRY FIELD]')
-        """
+        """      
         if self.appliesTo == 'C':
-            relevantText = userIn[2]
-        elif self.appliesTo == 'S':
             relevantText = userIn[1]
+        elif self.appliesTo == 'S':
+            relevantText = userIn[2]
         elif self.appliesTo == 'A':
             relevantText = userIn[0]
 
@@ -40,16 +42,25 @@ class Filter:
 
     def getKeys(self):
         return self.ruleSet.keys()
+    
+    def getName(self):
+        return self._name
+    
+    def setName(self, name):
+        self._name = name
 
 
 class userFilter(Filter):
-    def __init__(self, filterRule, appliesTo):
+    def __init__(self, filterRule, appliesTo, name=None):
         self.ruleSet = filterRule
         self.appliesTo = appliesTo
+        self._name = name
 
 
     def applyFilter(self, rowInput: str):
         parsedIn = self._parseUserInput(rowInput)
+        if parsedIn == "":
+            return (None, 0)
         if self.ruleSet.__contains__(parsedIn):
             return (self.ruleSet[parsedIn], 100)
         else:
@@ -57,8 +68,9 @@ class userFilter(Filter):
 
 
 class exactFilter(Filter):
-    def __init__(self, appliesTo):
+    def __init__(self, appliesTo, name=None):
         self.appliesTo = appliesTo
+        self._name = name
         if self.appliesTo == 'C':
             self.ruleSet = common_country_alternates.COMMON_COUNTRY_ATERNATES
         elif self.appliesTo == 'S':
@@ -70,6 +82,8 @@ class exactFilter(Filter):
 
     def applyFilter(self, rowInput: str):
         parsedIn = self._parseUserInput(rowInput)
+        if parsedIn == "":
+            return (None, 0)
         if self.ruleSet.__contains__(parsedIn):
             return (self.ruleSet[parsedIn], 100)
         else:
@@ -77,9 +91,10 @@ class exactFilter(Filter):
         
 
 class fuzzyFilter(Filter):
-    def __init__(self, appliesTo, order=2):
+    def __init__(self, appliesTo, order=2, name=None):
         self.appliesTo = appliesTo
         self.order = order
+        self._name = name
         self.hits = []
         self.min_hits_val = None
         if self.appliesTo == 'C':
@@ -92,7 +107,7 @@ class fuzzyFilter(Filter):
             raise Exception("Invalid Filter")
     
     
-    def _sort_multiple_hits(self):
+    def _sort_multiple_hits(self, parsedIn):
         self.hits = sorted(self.hits, key= lambda x: x[1]) #sorts list min->max by dist
         self.min_hits_val = self.hits[0][2] #gets min_hit_val from min->max sorted list
         min_hits = [spelling for spelling in self.hits if spelling[2] == self.min_hits_val] #selects all hits with the same min_hit_val
@@ -102,7 +117,7 @@ class fuzzyFilter(Filter):
         possibles = [full[1] for full in min_hits]
 
 
-        for i, char in enumerate(self.rowInput):
+        for i, char in enumerate(parsedIn):
             if len(possibles) == 1: #only 1 probable hit remaining
                 return (self.ruleSet[possibles[0]], config.ORDER_CONFIDENCES[self.min_hits_val-1])
             temp_possibles = []
@@ -126,10 +141,12 @@ class fuzzyFilter(Filter):
     
 
     def applyFilter(self, rowInput: str):
-        self.rowInput = self._parseUserInput(rowInput)
+        parsedIn = self._parseUserInput(rowInput)
+        if parsedIn == "":
+            return (None, 0)
         self.hits = []
         for common_spelling in list(self.ruleSet.keys()):
-            dist = calc_fuzzy_dist(common_spelling, self.rowInput)
+            dist = calc_fuzzy_dist(common_spelling, parsedIn)
             if dist <= self.order:
                 self.hits.append((self.ruleSet[common_spelling], common_spelling, dist))
         
@@ -140,14 +157,15 @@ class fuzzyFilter(Filter):
         elif len(self.hits) == 1:
             return (self.hits[0][0], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
         elif len(self.hits) > 1:
-            return self._sort_multiple_hits()
+            return self._sort_multiple_hits(parsedIn)
         else:
             return (None, 0)
     
 
 class ProcessingFilter(Filter):
-    def __init__(self):
-        pass
+    def __init__(self, appliesTo='A', name=None):
+        self.appliesTo = appliesTo
+        self._name = name
 
 
     def applyFilter(self, rowInput: str):

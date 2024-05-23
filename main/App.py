@@ -25,8 +25,13 @@ class App(object):
             self.clf.batch_process(get_next_n(remainder))
             self._entries_processed += remainder
 
-        #if self._entries_processed == self._total_db_size: print("All entries proccessed.")
-    
+        if self._entries_processed == self._total_db_size: print("All entries proccessed.")
+
+
+    def testRun(self):
+        example_case = ('6652 BIRCHWOOD ST; sandiego','US','CA')
+        self.clf.applyFilterStack(example_case)
+
 
 app = App()
 app.run()
