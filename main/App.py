@@ -28,8 +28,11 @@ class App(object):
             self.clf.batch_process(self.db_handler.get_next_n(remainder))
             self._entries_processed += remainder
 
-        if self._entries_processed == self._total_db_size: print("All entries proccessed.")
+        if self._entries_processed == self._total_db_size: 
+            print("All entries proccessed.")
+            self.clf.get_results()
         
+        #Now Do UI Here
         return 0
 
 

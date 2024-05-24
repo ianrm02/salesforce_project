@@ -15,11 +15,15 @@ class Classifier:
     address_list = []
     standard_country_df = pd.DataFrame()
 
+    # Format:
+    # Old String | New String | Confidence | Num Occurences
+
     def __init__(self):
         #TODO check for valid loading of files, throw errors if not
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
         self.standard_country_df = self._load_iso_standard()
         self.filterOrder = config.FILTER_ORDER
+        self.results = {stage: [] for stage in self.filterOrder}
 
         #Filter System:
         userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
@@ -95,9 +99,7 @@ class Classifier:
 
     
     def batch_process(self, batch, stepThroughRuntime=False):
-        all_results = {}
         for stage in self.filterOrder:
-            stage_results = [] # to eventually return to the web app
             #TODO the database is currently grabbing ID too
             for item in batch:
                 whole_addr = f"{item[0]} | {item[1]} | {item[2]}"
@@ -113,14 +115,23 @@ class Classifier:
                     relevant_text = item[0]
                 elif stage == 'O':
                     relevant_text = f"{item[0]}{item[1]}{item[2]}"
-                stage_results.append((relevant_text, probable_match, confidence, 0))
+                self.results[stage].append((relevant_text, probable_match, confidence, 0))
                 print(f"{whole_addr} mapped to {probable_match} with {confidence}% confidence in the {stage} stage.")
             
-            all_results[stage] = stage_results
+            
+            """ Results will look something like this:
+            results  = [
+                {'S'}: [(OLD1, NEW1, CONF1, FREQ1), (OLD2, NEW2, CONF2, FREQ2), ],
+                {'C'}: [(OLD3, NEW3, CONF3, FREQ3), (OLD3, NEW3, CONF3, FREQ3), ],
+                {'A'}: [(OLD3, NEW3, CONF3, FREQ3), (OLD3, NEW3, CONF3, FREQ3), ],
+            ]
+            """
 
             print(f"{stage} Stage Completed...")
             if stepThroughRuntime == True:
                 _ = input("")
-            
 
-            
+    
+    def get_results(self):
+        return self.results
+                
