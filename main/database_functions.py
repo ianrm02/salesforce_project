@@ -68,7 +68,7 @@ class DatabaseManager:
         count = 0
 
         for i in range(self.LAST_ID, self.LAST_ID+n):
-            self.cur.execute("SELECT * FROM Addresses WHERE id=%s;", (i,))
+            self.cur.execute("SELECT address, country, state FROM Addresses WHERE id=%s;", (i,))
             result = self.cur.fetchone()
             if result is None:
                 break
