@@ -5,19 +5,24 @@ from config import DBNAME, USER, PASSWORD, HOST
 
 class DatabaseManager:
     def __init__(self):
-        self.conn = pg8000.connect(
-            database=DBNAME,
-            user=USER,
-            password=PASSWORD,
-            host=HOST
-        )
-        self.cur = self.conn.cursor()
-        self.LAST_ID = 1
-        self.SIZE = self.get_db_size()
+        try:
+            self.conn = pg8000.connect(
+                database=DBNAME,
+                user=USER,
+                password=PASSWORD,
+                host=HOST
+            )
+            self.cur = self.conn.cursor()
+            self.LAST_ID = 1
+            self.SIZE = self.get_db_size()
+        except Exception as e:
+            raise Exception(f"Failed to connect to the database: {e}")
     
     def __del__(self):
-        self.cur.close()
-        self.conn.close()
+        if hasattr(self, 'cur') and self.cur is not None:
+            self.cur.close()
+        if hasattr(self, 'conn') and self.conn is not None:
+            self.conn.close()
 
     def insert_address(self, address, state, country):
         try:
