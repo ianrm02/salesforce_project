@@ -127,3 +127,14 @@ class DatabaseManager:
         end_time = time.time()
 
         print(f"Duration: {end_time - start_time} seconds")
+
+    def create_default_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS Addresses;")
+        self.cur.execute("""
+        CREATE TABLE Addresses (
+        ID SERIAL PRIMARY KEY,
+        Address VARCHAR(255),
+        State VARCHAR(100),
+        Country VARCHAR(100)
+        );""")
+        self.conn.commit()
