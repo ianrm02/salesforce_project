@@ -32,6 +32,4 @@ def end():
     return render_template('endscreen.html')
 
 if __name__ == "__main__":
-    # country_input = input("Country: ")
-    # print("Input: ", country_input)
     app.run(host="127.0.0.1", port=8080, debug=True)
