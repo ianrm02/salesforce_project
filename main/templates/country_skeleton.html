@@ -55,20 +55,11 @@
               <input type="button" value="Export Settings" style="float: right;">
               <br>
 
-              <ul>
-              {% for item in ccodes %}
-                <button class="accordion">{{item}}</button>
+              
+              {% for ccode in country_codes %}
+                <button class="accordion">{{ccode}}</button>
                 <div class="panel">    
-                  <button class="accordion">Invalid State</button>
-                  <div class="panel">
-                  </div>
-                </div>
-              {% endfor %}
-              </ul>
-
-              <button class="accordion">AR</button>
-              <div class="panel">    
-                <table>
+                  <table>
                     <tr>
                       <th>String</th>
                       <th>Occurence</th>
@@ -77,10 +68,11 @@
                       <th>Custom</th>
                     </tr>
                     <!--Populate table based on database-->
+                    {% for change_id in change_ids if change_id[1] == ccode %}
                     <tr>
-                      <td><!--String variable here--> Arroz</td>
-                      <td><!--Occurence variable here--> 1</td>
-                      <td><!--Confidence variable here--> 10%</td>
+                      <td><!--String variable here--> {{change_id[0]}}</td>
+                      <td><!--Occurence variable here--> {{change_id[2]}}</td>
+                      <td><!--Confidence variable here--> {{change_id[3]}}</td>
                       <td><!--Custom Dropdown here-->
                         <form action="" method="get">
                           <input type="checkbox" id="approve" name="approve" value="approved">
@@ -90,111 +82,19 @@
                         <form action="" method="get">
                           <select name="states" id="states">
                             <option disabled selected value> -- select an country -- </option>
-                            <option value="US">US</option>
-                            <option value="CA">CA</option>
-                            <option value="DE">DE</option>
-                            <option value="AR">AR</option>
-                            <option value="FR">AR</option>
+                            {% for drop_id in dropdown_ids %}
+                            <option value={{drop_id}}>{{drop_id}}</option>
+                            {% endfor %}
                           </select>
                         </form>
                       </td>
                     </tr>
-
-                    <tr>
-                        <td><!--String variable here--> ArGE</td>
-                        <td><!--Occurence variable here--> 30</td>
-                        <td><!--Confidence variable here--> 10%</td>
-                        <td><!--Custom Dropdown here-->
-                          <form action="" method="get">
-                            <input type="checkbox" id="approve" name="approve" value="approved">
-                          </form>
-                        </td>
-                        <td><!--Populate the dropdown based on standardized country; sort based on confidence-->
-                          <form action="" method="get">
-                            <select name="states" id="states">
-                              <option disabled selected value> -- select an country -- </option>
-                              <option value="US">US</option>
-                              <option value="CA">CA</option>
-                              <option value="DE">DE</option>
-                              <option value="AR">AR</option>
-                              <option value="FR">AR</option>
-                            </select>
-                          </form>
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td><!--String variable here--> arentin</td>
-                        <td><!--Occurence variable here--> 12</td>
-                        <td><!--Confidence variable here--> 70%</td>
-                        <td><!--Custom Dropdown here-->
-                          <form action="" method="get">
-                            <input type="checkbox" id="approve" name="approve" value="approved">
-                          </form>
-                        </td>
-                        <td><!--Populate the dropdown based on standardized country-->
-                          <form action="" method="get">
-                            <select name="states" id="states">
-                              <option disabled selected value> -- select an country -- </option>
-                              <option value="US">US</option>
-                              <option value="CA">CA</option>
-                              <option value="DE">DE</option>
-                              <option value="AR">AR</option>
-                              <option value="FR">AR</option>
-                            </select>
-                          </form>
-                        </td>
-                      </tr>
+                    {% endfor %}
                   </table>
                   <input type="button" value="Approve All" style="float: right;">
-                  <br>
-                  <br>
               </div>
-
-              <button class="accordion">US</button>
-              <div class="panel">
-                <table>
-                    <tr>
-                      <th>String</th>
-                      <th>Occurence</th>
-                      <th>Confidence</th>
-                      <th>Approved</th>
-                      <th>Custom</th>
-                    </tr>
-                    <!--Create as many rows as countries are identified in database-->
-                    <tr>
-                      <td><!--State variable here--> CO</td>
-                      <td><!--Occurence variable here--> 10</td>
-                      <td><!--Confidence variable here--> 100%</td>
-                      <td><!--Custom Dropdown here-->
-                        <form action="" method="get">
-                          <input type="checkbox" id="approve" name="approve" value="approved">
-                        </form>
-                      </td>
-                      <td><!--Populate the dropdown based on standardized country-->
-                        <form action="" method="get">
-                          <select name="states" id="states">
-                            <option disabled selected value> -- select an country -- </option>
-                            <option value="US">US</option>
-                            <option value="CA">CA</option>
-                            <option value="DE">DE</option>
-                            <option value="AR">AR</option>
-                            <option value="FR">AR</option>
-                          </select>
-                        </form>
-                      </td>
-                    </tr>
-                  </table>
-                  <input type="button" value="Approve All" style="float: right;">
-                  <br>
-                  <br>
-              </div>
-
-              <button class="accordion">CA</button>
-              <div class="panel">
-                <p>Example table</p>
-              </div>
-
+              {% endfor %}
+              
               <input type="text" name="search">
               <input type="submit" value="Search"> <br><br>
 
