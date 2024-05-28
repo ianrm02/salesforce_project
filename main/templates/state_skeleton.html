@@ -52,16 +52,49 @@
 
               <h2>Approve State Entries</h2>
 
-              <ul>
-              {% for item in ccodes %}
-                <button class="accordion">{{item}}</button>
-                <div class="panel">    
-                  <button class="accordion">Invalid State</button>
-                  <div class="panel">
-                  </div>
+              {% for ccode in country_codes %}
+                <button class="accordion">{{ccode}}</button>
+                <div class="panel">
+                  {% for scode in state_codes %}
+                    <button class = "accordion">{{scode}}</button>
+                    <div class="panel">    
+                      <table>
+                        <tr>
+                          <th>String</th>
+                          <th>Occurence</th>
+                          <th>Confidence</th>
+                          <th>Approved</th>
+                          <th>Custom</th>
+                        </tr>
+                        <!--Populate table based on database-->
+                        {% for change_id in change_ids if change_id[1] == scode %}
+                        <tr>
+                          <td><!--String variable here--> {{change_id[0]}}</td>
+                          <td><!--Occurence variable here--> {{change_id[2]}}</td>
+                          <td><!--Confidence variable here--> {{change_id[3]}}</td>
+                          <td><!--Custom Dropdown here-->
+                            <form action="" method="get">
+                              <input type="checkbox" id="approve" name="approve" value="approved">
+                            </form>
+                          </td>
+                          <td><!--Populate the dropdown based on standardized country-->
+                            <form action="" method="get">
+                              <select name="states" id="states">
+                                <option disabled selected value> -- select an country -- </option>
+                                {% for drop_id in dropdown_ids %}
+                                <option value={{drop_id}}>{{drop_id}}</option>
+                                {% endfor %}
+                              </select>
+                            </form>
+                          </td>
+                        </tr>
+                        {% endfor %}
+                      </table>
+                      <input type="button" value="Approve All" style="float: right;">
+                  </div>  
+                  {% endfor %}
                 </div>
-              {% endfor %}
-              </ul>
+                
 
               <button class="accordion">Invalid Country</button>
               <div class="panel">    
