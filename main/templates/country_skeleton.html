@@ -70,12 +70,12 @@
   {% for ccode in aff_country_codes %}
   <button class="accordion">{{ccode}}</button>
   <div class="panel">
-    <table id="users-table">
+    <table id=ccode class="country">
       <tr>
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id="approve" name="approve" value="approved" class="check-all"></th>
+        <th>Approved<input type="checkbox" id=checkall name="approve" value="approved" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -86,7 +86,7 @@
         <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id="approve" name="approve" value="approved" class="check">
+            <input type="checkbox" id=ccode name="approve" value="approved" class="country">
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
@@ -131,17 +131,13 @@
       window.location.href = "{{url_for('state_approve')}}"
     }
 
-    $('#approve').change(function () {
-      if ($(this).prop('checked')) {
-        $('#users-table tr td input[type="checkbox"]').each(function () {
-          $(this).prop('checked', true);
-        });
-      } else {
-        $('#users-table tr td input[type="checkbox"]').each(function () {
-          $(this).prop('checked', false);
-        });
+    function selectAll(table, bx) {
+        for (var bxs=table.getElementsByTagName('input'), j=bxs.length; j--; ) {
+         if (bxs[j].type == "checkbox") {
+           bxs[j].checked = bx.checked;
+        }
       }
-    });
+    }
   </script>
 
 </body>
