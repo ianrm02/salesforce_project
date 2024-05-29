@@ -185,8 +185,3 @@ class DatabaseManager:
                 self.cur.execute(sql, (address, country, state))
 
             self.conn.commit()
-
-app = DatabaseManager()
-app.setup_database()
-app.upload_csv_entries("main/377_items.txt")
-print(app.get_db_size())
