@@ -51,7 +51,8 @@
               <body>
 
               <h2>Approve State Entries</h2>
-
+              Our system has identified these free-text state spellings in your database.<br>
+              Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their mapping using the dropdowns.
               {% for ccode in aff_country_codes%}
                 <button class="accordion">{{ccode}}</button>
                 <div class="panel">
@@ -60,9 +61,9 @@
                     <div class="panel">    
                       <table>
                         <tr>
-                          <th>String</th>
-                          <th>Occurence</th>
-                          <th>Confidence</th>
+                          <th>State Field</th>
+                          <th>Occurences</th>
+                          <th>Alpha2 Confidence</th>
                           <th>Approved</th>
                           <th>Custom</th>
                         </tr>
@@ -71,7 +72,7 @@
                         <tr>
                           <td><!--String variable here--> {{change_id[1]}}</td>
                           <td><!--Occurence variable here--> {{change_id[3]}}</td>
-                          <td><!--Confidence variable here--> {{change_id[4]}}</td>
+                          <td><!--Confidence variable here--> {{change_id[4]}}%</td>
                           <td><!--Custom Dropdown here-->
                             <form action="" method="get">
                               <input type="checkbox" id="approve" name="approve" value="approved">

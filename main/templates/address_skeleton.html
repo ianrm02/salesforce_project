@@ -50,8 +50,10 @@
               </head>
               <body>
 
-              <h2>Approve address entries</h2>
-
+              <h2>Review Address Placement</h2>
+              Based on your rules and our own filters, the addresses below have been sorted into countries and states.<br>
+              Some addresses may be improperly placed due to conversion difficulties.<br>
+              Please review these placements before moving to the last step.<br>
               {% for ccode in aff_country_codes%}
               <button class="accordion">{{ccode}}</button>
               <div class="panel">
@@ -69,7 +71,7 @@
                       {% for add_case in address_info if loop.index < 10 and add_case[0] == ccode and add_case[1] == scode %}
                       <tr>
                         <td><!--String variable here--> {{add_case[2]}}</td>
-                        <td><!--Confidence variable here--> {{add_case[3]}}</td>
+                        <td><!--Confidence variable here--> {{add_case[3]}}%</td>
                         <td><!--Custom Dropdown here-->
                           <form action="" method="get">
                             <input type="checkbox" id="approve" name="approve" value="approved">
