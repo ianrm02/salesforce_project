@@ -5,6 +5,9 @@ from config import DBNAME, USER, PASSWORD, HOST
 
 class DatabaseManager:
     def __init__(self):
+        """
+        TODO: add comment block
+        """
         try:
             self.conn = pg8000.connect(
                 database=DBNAME,
@@ -44,7 +47,10 @@ class DatabaseManager:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def re_id_database(self):        
+    def re_id_database(self):
+        """
+        TODO: add comment block
+        """        
         try:
             self.cur.execute("""
                 CREATE TEMP TABLE temp_ids AS
@@ -68,6 +74,9 @@ class DatabaseManager:
             print(f"An error occurred: {e}")
 
     def get_next_n(self, n):
+        """
+        TODO: add comment block
+        """
         results = []
 
         count = 0
@@ -85,6 +94,9 @@ class DatabaseManager:
         return results
 
     def get_db_size(self):
+        """
+        TODO: add comment block
+        """
         try:
             self.cur.execute("SELECT COUNT(*) FROM Addresses;")
             size = self.cur.fetchall()[0][0]
@@ -93,7 +105,73 @@ class DatabaseManager:
         except Exception as e:
             print(f"An error occurred: {e}")
 
-    def upload_csv_to_db(self, filename):
+    def drop_all_tables(self):
+        self.cur.execute("DROP TABLE IF EXISTS Mappings;")
+        self.cur.execute("DROP TABLE IF EXISTS Changes;")
+        self.cur.execute("DROP TABLE IF EXISTS Addresses;")
+        self.conn.commit()
+
+    def create_address_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS Addresses;")
+        self.cur.execute("""
+        CREATE TABLE Addresses (
+        ID SERIAL PRIMARY KEY,
+        Address VARCHAR(255),
+        State VARCHAR(100),
+        Country VARCHAR(100)
+        );""")
+        self.conn.commit()
+
+    def create_change_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS Changes;")
+        self.cur.execute("""
+        CREATE TABLE Changes (
+        ChangeID SERIAL PRIMARY KEY,
+        Type CHAR(1),
+        Old VARCHAR(100),
+        New VARCHAR(100)
+        );""")
+        self.conn.commit()
+
+    def create_mapping_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS Mappings;")
+        self.cur.execute("""
+        CREATE TABLE Mappings (
+        ID INT,
+        ChangeID INT,
+        FOREIGN KEY (ID) REFERENCES Addresses(ID),
+        FOREIGN KEY (ChangeID) REFERENCES Changes(ChangeID)
+        );""")
+        self.conn.commit()
+
+    def setup_database(self):
+        """
+        TODO: add comment block
+        """
+        self.drop_all_tables()
+        self.create_address_table()
+        self.create_change_table()
+        self.create_mapping_table()
+
+    def upload_n_entries(self, n):
+        """
+        TODO: add comment block
+        """
+        address = 1000
+        state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
+        country = ["United States", "Merica", "Arg", "Iran"]
+        one_twentieth = n // 20
+
+        for i in range(n):
+            self.insert_address(address, state[i % 4], country[i % 4])
+            address = ((address + i - 1000) % 9000) + 1000
+            if (i % one_twentieth == 0):
+                print(i)
+
+    def upload_csv_entries(self, filename):
+        """
+        TODO: add comment block
+        """
         with open(filename, newline='', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile)
             for row in reader:
@@ -109,37 +187,5 @@ class DatabaseManager:
 
             self.conn.commit()
 
-    def insert_n_entries(self, n):
-        address = 1000
-        state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
-        country = ["United States", "Merica", "Arg", "Iran"]
-        one_twentieth = n // 20
-
-        for i in range(n):
-            self.insert_address(address, state[i % 4], country[i % 4])
-            address = ((address + i - 1000) % 9000) + 1000
-            if (i % one_twentieth == 0):
-                print(i)
-
-    def timing_test(self):
-        start_time = time.time()
-
-        size = self.get_db_size()
-
-        for i in range(1, size+1):
-            self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE id=%s;", (i,))
-
-        end_time = time.time()
-
-        print(f"Duration: {end_time - start_time} seconds")
-
-    def create_default_table(self):
-        self.cur.execute("DROP TABLE IF EXISTS Addresses;")
-        self.cur.execute("""
-        CREATE TABLE Addresses (
-        ID SERIAL PRIMARY KEY,
-        Address VARCHAR(255),
-        State VARCHAR(100),
-        Country VARCHAR(100)
-        );""")
-        self.conn.commit()
+app = DatabaseManager()
+app.setup_database()
