@@ -34,7 +34,7 @@ class Filter:
 
         text = re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http\S+", lambda x: x.group(0).upper(), str(relevantText).strip())
         return text 
-
+    
 
     def applyFilter(rowInput: str):
         return (None, 0)
