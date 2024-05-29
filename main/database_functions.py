@@ -17,7 +17,6 @@ class DatabaseManager:
             )
             self.cur = self.conn.cursor()
             self.LAST_ID = 1
-            self.SIZE = self.get_db_size()
         except Exception as e:
             raise Exception(f"Failed to connect to the database: {e}")
     
@@ -186,6 +185,3 @@ class DatabaseManager:
                 self.cur.execute(sql, (address, country, state))
 
             self.conn.commit()
-
-app = DatabaseManager()
-app.setup_database()
