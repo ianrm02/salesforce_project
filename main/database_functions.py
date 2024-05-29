@@ -17,7 +17,6 @@ class DatabaseManager:
             )
             self.cur = self.conn.cursor()
             self.LAST_ID = 1
-            self.SIZE = self.get_db_size()
         except Exception as e:
             raise Exception(f"Failed to connect to the database: {e}")
     
@@ -189,3 +188,5 @@ class DatabaseManager:
 
 app = DatabaseManager()
 app.setup_database()
+app.upload_csv_entries("main/377_items.txt")
+print(app.get_db_size())

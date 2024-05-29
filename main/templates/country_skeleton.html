@@ -1,126 +1,149 @@
 <!DOCTYPE html>
-              <html>
-              <head>
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <style>
-              body {font-family: "Lato", sans-serif;}
-              
-              p {font-family: "Lato", sans-serif;}
-              
-              table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-              }
+<html>
 
-              td, th {
-                border: 1px solid #dddddd;
-                text-align: center;
-                padding: 8px;
-              }
+<head>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+    }
 
-              tr:nth-child(even) {
-                background-color: #dddddd;
-              }
-              
-              .accordion {
-                background-color: #eee;
-                color: #444;
-                cursor: pointer;
-                padding: 18px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-size: 15px;
-                transition: 0.4s;
-              }
+    p {
+      font-family: "Lato", sans-serif;
+    }
 
-              .active, .accordion:hover {
-                background-color: #ccc; 
-              }
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
 
-              .panel {
-                padding: 0 18px;
-                display: none;
-                background-color: white;
-                overflow: hidden;
-              }
-              </style>
-              </head>
-              <body>
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: center;
+      padding: 8px;
+    }
 
-              <h2>Approve Country Entries</h2>
-              Our system has identified these free-text country spellings in your database.<br>
-              Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their mapping using the dropdowns.
-              <input type="button" value="Export Settings" style="float: right;">
-              <br>
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
 
-              
-              {% for ccode in aff_country_codes %}
-                <button class="accordion">{{ccode}}</button>
-                <div class="panel">    
-                  <table>
-                    <tr>
-                      <th>Country Field</th>
-                      <th>Occurences</th>
-                      <th>Alpha2 Confidence</th>
-                      <th>Approved</th>
-                      <th>Custom</th>
-                    </tr>
-                    <!--Populate table based on database-->
-                    {% for change_id in change_ids if change_id[2] == ccode %}
-                    <tr>
-                      <td><!--String variable here--> {{change_id[1]}}</td>
-                      <td><!--Occurence variable here--> {{change_id[3]}}</td>
-                      <td><!--Confidence variable here--> {{change_id[4]}}%</td>
-                      <td><!--Custom Dropdown here-->
-                        <form action="" method="get">
-                          <input type="checkbox" id="approve" name="approve" value="approved">
-                        </form>
-                      </td>
-                      <td><!--Populate the dropdown based on standardized country-->
-                        <form action="" method="get">
-                          <select name="states" id="states">
-                            <option disabled selected value> -- select an country -- </option>
-                            {% for drop_id in dropdown_ids %}
-                            <option value={{drop_id}}>{{drop_id}}</option>
-                            {% endfor %}
-                          </select>
-                        </form>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </table>
-                  <input type="button" value="Approve All" style="float: right;">
-              </div>  
+    .accordion {
+      background-color: #eee;
+      color: #444;
+      cursor: pointer;
+      padding: 18px;
+      width: 100%;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 15px;
+      transition: 0.4s;
+    }
+
+    .active,
+    .accordion:hover {
+      background-color: #ccc;
+    }
+
+    .panel {
+      padding: 0 18px;
+      display: none;
+      background-color: white;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>Approve Country Entries</h2>
+  Our system has identified these free-text country spellings in your database.<br>
+  Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their
+  mapping using the dropdowns.
+  <input type="button" value="Export Settings" style="float: right;">
+  <br>
+
+
+  {% for ccode in aff_country_codes %}
+  <button class="accordion">{{ccode}}</button>
+  <div class="panel">
+    <table id="users-table">
+      <tr>
+        <th>Country Field</th>
+        <th>Occurences</th>
+        <th>Alpha2 Confidence</th>
+        <th>Approved<input type="checkbox" id="approve" name="approve" value="approved" class="check-all"></th>
+        <th>Custom</th>
+      </tr>
+      <!--Populate table based on database-->
+      {% for change_id in change_ids if change_id[2] == ccode %}
+      <tr>
+        <td><!--String variable here--> {{change_id[1]}}</td>
+        <td><!--Occurence variable here--> {{change_id[3]}}</td>
+        <td><!--Confidence variable here--> {{change_id[4]}}%</td>
+        <td><!--Custom Dropdown here-->
+          <form action="" method="get">
+            <input type="checkbox" id="approve" name="approve" value="approved" class="check">
+          </form>
+        </td>
+        <td><!--Populate the dropdown based on standardized country-->
+          <form action="" method="get">
+            <select name="states" id="states">
+              <option disabled selected value> -- select an country -- </option>
+              {% for drop_id in dropdown_ids %}
+              <option value={{drop_id}}>{{drop_id}}</option>
               {% endfor %}
-              
-              <input type="text" name="search">
-              <input type="submit" value="Search"> <br><br>
+            </select>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+    <input type="button" value="Approve All" style="float: right;">
+  </div>
+  {% endfor %}
 
-              <button onclick="redirect()">Next page</button>
+  <input type="text" name="search">
+  <input type="submit" value="Search"> <br><br>
 
-              <script>
-              var acc = document.getElementsByClassName("accordion");
-              var i;
+  <button onclick="redirect()">Next page</button>
 
-              for (i = 0; i < acc.length; i++) {
-                acc[i].addEventListener("click", function() {
-                  this.classList.toggle("active");
-                  var panel = this.nextElementSibling;
-                  if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                  } else {
-                    panel.style.display = "block";
-                  }
-                });
-              }
+  <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
 
-              function redirect() {
-                window.location.href = "{{url_for('state_approve')}}"
-              }
-              </script>
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function () {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
 
-              </body>
-              </html>
+    function redirect() {
+      window.location.href = "{{url_for('state_approve')}}"
+    }
+
+    $('#approve').change(function () {
+      if ($(this).prop('checked')) {
+        $('#users-table tr td input[type="checkbox"]').each(function () {
+          $(this).prop('checked', true);
+        });
+      } else {
+        $('#users-table tr td input[type="checkbox"]').each(function () {
+          $(this).prop('checked', false);
+        });
+      }
+    });
+  </script>
+
+</body>
+
+</html>
