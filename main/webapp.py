@@ -8,6 +8,7 @@ country_dropdown_ids = ['AF', 'AX', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'A
 state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']}
 affected_ccodes = ['AR', 'US']
 affected_scodes = {'AR':['ER'], 'US':['CO']}
+address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
 # LIST MUST BE SORTED BY CONFIDENCE BEFORE PASSED TO PAGE
 
 # 0=Type 1=New 2=Occurences 3=Confidence
@@ -28,7 +29,7 @@ def state_approve():
 
 @app.route("/address_approve")
 def address_approve():
-    return render_template('address_skeleton.html')
+    return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, address_info = address_batch)
 
 @app.route("/statistics")
 def statistics():
