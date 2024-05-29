@@ -23,7 +23,7 @@ class Classifier:
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
         self.iso_standard_df = self._load_iso_standard()
         self.filterOrder = config.FILTER_ORDER
-        self.results = {stage: [] for stage in self.filterOrder}
+        self.results = {str: list}
 
         #Filter System:
         userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
@@ -102,30 +102,27 @@ class Classifier:
         for stage in self.filterOrder:
             #TODO the database is currently grabbing ID too
             for item in batch:
-                whole_addr = f"{item[0]} | {item[1]} | {item[2]}"
+                whole_addr = f"{str(item[0]).strip()} {str(item[1]).strip()} {str(item[2]).strip()}"
+                if whole_addr not in self.results: self.results[whole_addr] = ["", 0, "", 0]
                 probable_match, confidence = self.applyFilterSubset(item, stage)
-                #need to get how many of this same string occur in the same field in the database
-                #to return to the webapp in the form [Identified String] [Mapping] [Confidence] [# Occurences]
-                relevant_text = ""
                 if stage == 'C':
                     relevant_text = item[2]
+                    self.results[whole_addr][0] = probable_match
+                    self.results[whole_addr][1] = confidence
                 elif stage == 'S':
                     relevant_text = item[1]
+                    self.results[whole_addr][2] = probable_match
+                    self.results[whole_addr][3] = confidence
                 elif stage == 'A':
                     relevant_text = item[0]
                 elif stage == 'O':
-                    relevant_text = f"{item[0]}{item[1]}{item[2]}"
-                self.results[stage].append((relevant_text, probable_match, confidence, 0))
-                print(f"{whole_addr} mapped to {probable_match} with {confidence}% confidence in the {stage} stage.")
+                    relevant_text = f"{item[0]} {item[1]} {item[2]}"
+
+                print(f"{item[0]} | {item[1]} | {item[2]}")
+                print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
+            print(" ")
             
-            
-            """ Results will look something like this:
-            results  = [
-                {'S'}: [(OLD1, NEW1, CONF1, FREQ1), (OLD2, NEW2, CONF2, FREQ2), ],
-                {'C'}: [(OLD3, NEW3, CONF3, FREQ3), (OLD3, NEW3, CONF3, FREQ3), ],
-                {'A'}: [(OLD3, NEW3, CONF3, FREQ3), (OLD3, NEW3, CONF3, FREQ3), ],
-            ]
-            """
+            #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf]
 
             print(f"{stage} Stage Completed...")
             if stepThroughRuntime == True:

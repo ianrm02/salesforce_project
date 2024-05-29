@@ -30,7 +30,8 @@ class App(object):
 
         if self._entries_processed == self._total_db_size: 
             print("All entries proccessed.")
-            self.clf.get_results()
+            results = self.clf.get_results()
+            print(results)
         
         #Now Do UI Here
         return 0

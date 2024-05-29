@@ -3,6 +3,7 @@ from fuzzy_distance import calc_fuzzy_dist
 import config
 import unittest
 import pandas as pd
+from filter import *
 
 class ClassifierInitTestCase(unittest.TestCase):
     def setUp(self):
@@ -24,6 +25,14 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
     def test_db_for_something(self):
         pass
+
+class CountryExactFilterTestCase(unittest.TestCase):
+    def setUp(self):
+        cef = exactFilter()
+
+
+    def test_ukraina(self):
+
 
 
 unittest.main()
