@@ -105,12 +105,13 @@ class DatabaseManager:
             print(f"An error occurred: {e}")
 
     def drop_all_tables(self):
-        self.cur.execute("DROP TABLE IF EXISTS Mappings;")
-        self.cur.execute("DROP TABLE IF EXISTS Changes;")
+        self.cur.execute("DROP TABLE IF EXISTS AddressChanges;")
+        self.cur.execute("DROP TABLE IF EXISTS StateChanges;")
+        self.cur.execute("DROP TABLE IF EXISTS CountryChanges;")
         self.cur.execute("DROP TABLE IF EXISTS Addresses;")
         self.conn.commit()
 
-    def create_address_table(self):
+    def address_table(self):
         self.cur.execute("DROP TABLE IF EXISTS Addresses;")
         self.cur.execute("""
         CREATE TABLE Addresses (
@@ -121,36 +122,51 @@ class DatabaseManager:
         );""")
         self.conn.commit()
 
-    def create_change_table(self):
-        self.cur.execute("DROP TABLE IF EXISTS Changes;")
+    def country_changes_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS CountryChanges;")
         self.cur.execute("""
-        CREATE TABLE Changes (
-        ChangeID SERIAL PRIMARY KEY,
-        Type CHAR(1),
-        Old VARCHAR(100),
-        New VARCHAR(100)
+        CREATE TABLE CountryChanges (
+        OldCountry VARCHAR(100),
+        NewCountry CHAR(2),
+        Occurrences INT,
+        Confidence CHAR(1)
         );""")
         self.conn.commit()
 
-    def create_mapping_table(self):
-        self.cur.execute("DROP TABLE IF EXISTS Mappings;")
+    def state_changes_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS StateChanges;")
         self.cur.execute("""
-        CREATE TABLE Mappings (
-        ID INT,
-        ChangeID INT,
-        FOREIGN KEY (ID) REFERENCES Addresses(ID),
-        FOREIGN KEY (ChangeID) REFERENCES Changes(ChangeID)
+        CREATE TABLE StateChanges (
+        StateChangeID SERIAL PRIMARY KEY,
+        NewCountry CHAR(2),
+        OldState VARCHAR(100),
+        NewState CHAR(2),
+        Occurrences INT,
+        Confidence CHAR(1)
         );""")
         self.conn.commit()
 
-    def setup_database(self):
+    def address_changes_table(self):
+        self.cur.execute("DROP TABLE IF EXISTS AddressChanges;")
+        self.cur.execute("""
+        CREATE TABLE AddressChanges (
+        ID INT REFERENCES Addresses(ID),
+        Address VARCHAR(255)
+        );""")
+        self.conn.commit()
+
+    def setup_default_database(self):
         """
         TODO: add comment block
         """
         self.drop_all_tables()
-        self.create_address_table()
-        self.create_change_table()
-        self.create_mapping_table()
+        self.address_table()
+        self.upload_csv_entries("./data/377_items.txt")
+    
+    def setup_database_extension(self):
+        self.country_changes_table()
+        self.state_changes_table()
+        self.address_changes_table()
 
     def upload_n_entries(self, n):
         """
@@ -185,3 +201,92 @@ class DatabaseManager:
                 self.cur.execute(sql, (address, country, state))
 
             self.conn.commit()
+    
+    def store_temp_values(self, values):
+        """
+        Pass in a tuple that is 10 long with values for id, Addr, OldCo, OldSt, NewCo, NewSt, OccCo, OccSt, ConfCo, and ConfSt
+
+        The order is not important, I can easily fix that in this function
+
+        TODO: refactor this comment block
+        """
+        id, Addr, OldCo, OldSt, NewCo, NewSt, OccCo, OccSt, ConfCo, ConfSt = values
+        try:
+            # Check for duplicate in CountryChanges
+            check_query = "SELECT COUNT(*) FROM CountryChanges WHERE OldCountry = %s AND NewCountry = %s"
+            self.cur.execute(check_query, (OldCo, NewCo))
+            if self.cur.fetchone()[0] == 0:
+                insert_query = "INSERT INTO CountryChanges (OldCountry, NewCountry, Occurrences, Confidence) VALUES (%s, %s, %s, %s)"
+                self.cur.execute(insert_query, (OldCo, NewCo, OccCo, ConfCo))
+                self.conn.commit()
+
+            # Check for duplicate in StateChanges
+            check_query = "SELECT COUNT(*) FROM StateChanges WHERE NewCountry = %s AND OldState = %s AND NewState = %s"
+            self.cur.execute(check_query, (NewCo, OldSt, NewSt))
+            if self.cur.fetchone()[0] == 0:
+                insert_query = "INSERT INTO StateChanges (NewCountry, OldState, NewState, Occurrences, Confidence) VALUES (%s, %s, %s, %s, %s)"
+                self.cur.execute(insert_query, (NewCo, OldSt, NewSt, OccSt, ConfSt))
+                self.conn.commit()
+
+            # Check for duplicate in AddressChanges
+            check_query = "SELECT COUNT(*) FROM AddressChanges WHERE ID = %s AND Address = %s"
+            self.cur.execute(check_query, (id, Addr))
+            if self.cur.fetchone()[0] == 0:
+                insert_query = "INSERT INTO AddressChanges (ID, Address) VALUES (%s, %s)"
+                self.cur.execute(insert_query, (id, Addr))
+                self.conn.commit()
+                
+        except Exception as e:
+            print("An error occurred:", e)
+
+    def get_freq(self, type, value):
+        """
+        Pass in a char for 'type' ('C' / 'A' / 'S') and a string for 'value'
+
+        This function will then find the number of occurences of that string in the customer database
+
+        TODO: refactor this comment block
+        """
+        if (type == 'C'):
+            try:
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value, ))
+                size = self.cur.fetchall()[0][0]
+                return size
+            
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        if (type == 'S'):
+            try:
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s;", (value, ))
+                size = self.cur.fetchall()[0][0]
+                return size
+            
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        if (type == 'A'):
+            try:
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (value, ))
+                size = self.cur.fetchall()[0][0]
+                return size
+            
+            except Exception as e:
+                print(f"An error occurred: {e}")
+        else:
+            print("Please enter a valid type \'C\', \'A\', or \'S\'")
+            return 0
+
+        
+
+def test_setup():
+    tester = DatabaseManager()
+    tester.setup_default_database()
+    tester.setup_database_extension()
+    print(tester.get_db_size())
+    print(tester.get_freq('C', 'IN'))
+    tester.insert_address("1234 Taj Mahal Ln.", "New Dehli", "Indania")
+    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
+    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
+    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
+
+
+#test_setup()
