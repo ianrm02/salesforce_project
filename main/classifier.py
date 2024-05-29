@@ -21,7 +21,7 @@ class Classifier:
     def __init__(self):
         #TODO check for valid loading of files, throw errors if not
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
-        self.standard_country_df = self._load_iso_standard()
+        self.iso_standard_df = self._load_iso_standard()
         self.filterOrder = config.FILTER_ORDER
         self.results = {stage: [] for stage in self.filterOrder}
 

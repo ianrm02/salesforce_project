@@ -36,10 +36,5 @@ class App(object):
         return 0
 
 
-    def testRun(self):
-        example_case = ('6652 BIRCHWOOD ST; sandiego','US','CA')
-        self.clf.applyFilterStack(example_case)
-
-
 app = App()
 app.run()
