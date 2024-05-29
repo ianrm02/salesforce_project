@@ -52,10 +52,10 @@
 
               <h2>Approve State Entries</h2>
 
-              {% for ccode in country_codes %}
+              {% for ccode in aff_country_codes%}
                 <button class="accordion">{{ccode}}</button>
                 <div class="panel">
-                  {% for scode in state_codes %}
+                  {% for scode in aff_state_codes[ccode] %}
                     <button class = "accordion">{{scode}}</button>
                     <div class="panel">    
                       <table>
@@ -67,11 +67,11 @@
                           <th>Custom</th>
                         </tr>
                         <!--Populate table based on database-->
-                        {% for change_id in change_ids if change_id[1] == scode %}
+                        {% for change_id in change_ids if change_id[0] == 'S' and change_id[5] == ccode and change_id[2] == scode %}
                         <tr>
-                          <td><!--String variable here--> {{change_id[0]}}</td>
-                          <td><!--Occurence variable here--> {{change_id[2]}}</td>
-                          <td><!--Confidence variable here--> {{change_id[3]}}</td>
+                          <td><!--String variable here--> {{change_id[1]}}</td>
+                          <td><!--Occurence variable here--> {{change_id[3]}}</td>
+                          <td><!--Confidence variable here--> {{change_id[4]}}</td>
                           <td><!--Custom Dropdown here-->
                             <form action="" method="get">
                               <input type="checkbox" id="approve" name="approve" value="approved">
@@ -80,11 +80,18 @@
                           <td><!--Populate the dropdown based on standardized country-->
                             <form action="" method="get">
                               <select name="states" id="states">
-                                <option disabled selected value> -- select an country -- </option>
-                                {% for drop_id in dropdown_ids %}
+                                <option disabled selected value> -- select a country -- </option>
+                                {% for drop_id in cdropdown_ids %}
                                 <option value={{drop_id}}>{{drop_id}}</option>
                                 {% endfor %}
                               </select>
+                              <form action="" method="get">
+                                <select name="states" id="states">
+                                  <option disabled selected value> -- select a state -- </option>
+                                  {% for drop_id in sdropdown_ids[ccode] %}
+                                  <option value={{drop_id}}>{{drop_id}}</option>
+                                  {% endfor %}
+                                </select>
                             </form>
                           </td>
                         </tr>
@@ -94,114 +101,7 @@
                   </div>  
                   {% endfor %}
                 </div>
-                
-
-              <button class="accordion">Invalid Country</button>
-              <div class="panel">    
-                <button class="accordion">ER</button>
-                <div class="panel">
-                  <table>
-                    <tr>
-                      <th>String</th>
-                      <th>Occurence</th>
-                      <th>Confidence</th>
-                      <th>Approved</th>
-                      <th>Custom</th>
-                    </tr>
-                    <!--Populate table based on database; sort based on confidence-->
-                    <tr>
-                      <td><!--String variable here--> ENTX Rol</td>
-                      <td><!--Occurence variable here--> 3</td>
-                      <td><!--Confidence variable here--> 60%</td>
-                      <td><!--Approval checkbox here-->
-                        <form action="" method="get">
-                          <input type="checkbox" id="approve" name="approve" value="approved">
-                          <label for="approve"></label>
-                        </form>
-                      </td>
-                      <td><!--State and Country dropdowns here; populate off of standardized list-->
-                        <form action="" method="get">
-                          <select name="country" id="country"><!--Country-->
-                            <option disabled selected value> -- select an country -- </option>
-                            <option value="US">US</option>
-                            <option value="CA">CA</option>
-                            <option value="DE">DE</option>
-                            <option value="AR">AR</option>
-                            <option value="FR">FR</option>
-                          </select>
-
-                          <!--Only allow state selections based on country picked-->
-                          <select name="states" id="states"><!--State-->
-                            <option disabled selected value> -- select an state -- </option>
-                            <option value="AR">AR</option>
-                            <option value="CA">CA</option>
-                            <option value="CO">CO</option>
-                            <option value="NM">NM</option>
-                            <option value="TX">TX</option>
-                          </select>
-                        </form>
-                      </td>
-                    </tr>
-
-                    <tr>
-                      <td><!--String variable here--> Entree Reo</td>
-                      <td><!--Occurence variable here--> 1200</td>
-                      <td><!--Confidence variable here--> 80%</td>
-                      <td><!--Approval checkbox here-->
-                        <form action="" method="get">
-                          <input type="checkbox" id="approve" name="approve" value="approved">
-                          <label for="approve"></label>
-                        </form>
-                      </td>
-                      <td><!--State and Country dropdowns here; populate off of standardized list-->
-                        <form action="" method="get">
-                          <select name="country" id="country"><!--Country-->
-                            <option disabled selected value> -- select an country -- </option>
-                            <option value="US">US</option>
-                            <option value="CA">CA</option>
-                            <option value="DE">DE</option>
-                            <option value="AR">AR</option>
-                            <option value="FR">FR</option>
-                          </select>
-                          
-                          <!--Only allow state selections based on country picked-->
-                          <select name="states" id="states"><!--State-->
-                            <option disabled selected value> -- select an state -- </option>
-                            <option value="AR">AR</option>
-                            <option value="CA">CA</option>
-                            <option value="CO">CO</option>
-                            <option value="NM">NM</option>
-                            <option value="TX">TX</option>
-                          </select>
-                        </form>
-                      </td>
-                    </tr>
-                  </table>
-                </div>
-
-                <button class="accordion">ES</button>
-                <div class="panel">
-                  <p>Example table</p>
-                </div>
-              </div>
-
-              <button class="accordion">AR</button>
-              <div class="panel">    
-                <button class="accordion">BA</button>
-                <div class="panel">
-                  <p>Example table</p>
-                </div>
-              </div>
-
-              <button class="accordion">US</button>
-              <div class="panel">
-                <p>Example table</p>
-              </div>
-
-              <button class="accordion">CA</button>
-              <div class="panel">
-                <p>Example table</p>
-              </div>
+              {% endfor %}
 
               <input type="text" name="search">
               <input type="submit" value="Search"> <br><br>

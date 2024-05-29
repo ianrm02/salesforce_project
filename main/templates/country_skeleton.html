@@ -56,7 +56,7 @@
               <br>
 
               
-              {% for ccode in country_codes %}
+              {% for ccode in aff_country_codes %}
                 <button class="accordion">{{ccode}}</button>
                 <div class="panel">    
                   <table>
@@ -68,11 +68,11 @@
                       <th>Custom</th>
                     </tr>
                     <!--Populate table based on database-->
-                    {% for change_id in change_ids if change_id[1] == ccode %}
+                    {% for change_id in change_ids if change_id[2] == ccode %}
                     <tr>
-                      <td><!--String variable here--> {{change_id[0]}}</td>
-                      <td><!--Occurence variable here--> {{change_id[2]}}</td>
-                      <td><!--Confidence variable here--> {{change_id[3]}}</td>
+                      <td><!--String variable here--> {{change_id[1]}}</td>
+                      <td><!--Occurence variable here--> {{change_id[3]}}</td>
+                      <td><!--Confidence variable here--> {{change_id[4]}}</td>
                       <td><!--Custom Dropdown here-->
                         <form action="" method="get">
                           <input type="checkbox" id="approve" name="approve" value="approved">
