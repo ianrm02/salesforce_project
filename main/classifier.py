@@ -114,7 +114,7 @@ class Classifier:
                     self.results[whole_addr][2] = probable_match
                     self.results[whole_addr][3] = confidence
                 elif stage == 'A':
-                    relevant_text = item[0]
+                    relevant_text = whole_addr
                 elif stage == 'O':
                     relevant_text = f"{item[0]} {item[1]} {item[2]}"
 
