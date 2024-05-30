@@ -2,7 +2,6 @@ import common_country_alternates
 import common_state_alternates
 from fuzzy_distance import calc_fuzzy_dist
 import config
-
 import re
 
 
@@ -26,13 +25,20 @@ class Filter:
         """      
         if self.appliesTo == 'C':
             relevantText = userIn[1]
+            text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http\S+"," ",str(relevantText)).split())
+            text = re.sub(r"[0-9]", "", text)
         elif self.appliesTo == 'S':
             relevantText = userIn[2]
+            text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
+            text = re.sub(r"[0-9]", "", text) #Might become problematic for Japan's number based state system, but TODO for now.
         elif self.appliesTo == 'A':
             relevantText = userIn[0]
+            text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
+        elif self.appliesTo == 'O':
+            relevantText == userIn[0]
+            text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
 
-
-        text = re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http\S+", lambda x: x.group(0).upper(), str(relevantText).strip())
+        text = text.upper()
         return text 
     
 
@@ -82,6 +88,7 @@ class exactFilter(Filter):
 
     def applyFilter(self, rowInput: str):
         parsedIn = self._parseUserInput(rowInput)
+        print(f"[PARSED FOR EXACT] {parsedIn}")
         if parsedIn == "":
             return (None, 0)
         if self.ruleSet.__contains__(parsedIn):

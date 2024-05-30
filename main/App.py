@@ -31,9 +31,10 @@ class App(object):
         if self._entries_processed == self._total_db_size: 
             print("All entries proccessed.")
             results = self.clf.get_results()
-            print(results)
+            for key, mappings in results.items():
+                print (key, mappings)
         
-        #Now Do UI Here
+        #TODO Now Do UI Here
         return 0
 
 
