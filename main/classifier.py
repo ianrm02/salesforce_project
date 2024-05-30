@@ -23,7 +23,7 @@ class Classifier:
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
         self.iso_standard_df = self._load_iso_standard()
         self.filterOrder = config.FILTER_ORDER
-        self.results = {str: list}
+        self.results = {}
 
         #Filter System:
         userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
@@ -45,10 +45,6 @@ class Classifier:
         return standard_df
     
 
-    #TODO Might be obsolete, but leaving in just in case. Test for later.
-    def _parseUserInput(userIn: str)->str:
-        return re.sub(r"(@\[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http.+?", "", userIn.upper())
-
     def applyFilterStack(self, rowInput):
         #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
         """
@@ -69,17 +65,17 @@ class Classifier:
         probable_mapping = None
         confidence = 0
 
-        #num_filters = 0
         for filter in self.filters:
             if confidence == 100:
                 break
-            #num_filters += 1
             (new_probable_mapping, new_confidence) = filter.applyFilter(rowInput)
+
             if new_confidence > confidence:
                 probable_mapping = new_probable_mapping
                 confidence = new_confidence
         
         return probable_mapping, confidence
+    
     
     def applyFilterSubset(self, rowInput, subset: chr):
         filter_subset = [filter for filter in self.filters if filter.appliesTo == subset]
@@ -99,30 +95,31 @@ class Classifier:
 
     
     def batch_process(self, batch, stepThroughRuntime=False):
-        for stage in self.filterOrder:
-            #TODO the database is currently grabbing ID too
-            for item in batch:
-                whole_addr = f"{str(item[0]).strip()} {str(item[1]).strip()} {str(item[2]).strip()}"
-                if whole_addr not in self.results: self.results[whole_addr] = ["", 0, "", 0]
-                probable_match, confidence = self.applyFilterSubset(item, stage)
-                if stage == 'C':
+        for stage in self.filterOrder: #For each stage: Country, State, Address, Processing
+            for item in batch:         #For each address in the batch
+                whole_addr = f"{str(item[0]).strip()} {str(item[1]).strip()} {str(item[2]).strip()}" #clean the whole address to use as a key
+                if whole_addr not in self.results: self.results[whole_addr] = ["", 0, "", 0, item[0], item[1], item[2]] #if the key is not already in the results db, create it and initialize its values to "", 0, "", 0
+                probable_match, confidence = self.applyFilterSubset(item, stage) #apply the subset of filters to that address, apply results to probable_match and confidence
+                if stage == 'C': 
                     relevant_text = item[2]
-                    self.results[whole_addr][0] = probable_match
-                    self.results[whole_addr][1] = confidence
+                    self.results[whole_addr][0] = probable_match  #If in country stage, change probable_country_mapping
+                    self.results[whole_addr][1] = confidence      #                        and country_confidence
                 elif stage == 'S':
                     relevant_text = item[1]
-                    self.results[whole_addr][2] = probable_match
-                    self.results[whole_addr][3] = confidence
+                    self.results[whole_addr][2] = probable_match  #If in state stage, change probable_state_mapping
+                    self.results[whole_addr][3] = confidence      #                      and state_confidence
                 elif stage == 'A':
-                    relevant_text = item[0]
+                    relevant_text = whole_addr
+                    #TODO [BLOCKER] how does the state or country get decided by these changes internally? I need some sample user rules I think at this point to progress
                 elif stage == 'O':
                     relevant_text = f"{item[0]} {item[1]} {item[2]}"
+                    #TODO Once processing filter is created, decide how its output will update the results for that address
 
                 print(f"{item[0]} | {item[1]} | {item[2]}")
                 print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
             print(" ")
             
-            #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf]
+            #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf, adr line, country, state]
 
             print(f"{stage} Stage Completed...")
             if stepThroughRuntime == True:
