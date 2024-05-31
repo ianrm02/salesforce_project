@@ -88,7 +88,6 @@ class ExactFilter(Filter):
 
     def applyFilter(self, rowInput: str):
         parsedIn = self._parseUserInput(rowInput)
-        print(f"[PARSED FOR EXACT] {parsedIn}")
         if parsedIn == "":
             return (None, 0)
         if self.ruleSet.__contains__(parsedIn):

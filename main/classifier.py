@@ -15,9 +15,6 @@ class Classifier:
     address_list = []
     standard_country_df = pd.DataFrame()
 
-    # Format:
-    # Old String | New String | Confidence | Num Occurences
-
     def __init__(self):
         #TODO check for valid loading of files, throw errors if not
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
@@ -108,6 +105,9 @@ class Classifier:
                     relevant_text = item[1]
                     self.results[whole_addr][2] = probable_match  #If in state stage, change probable_state_mapping
                     self.results[whole_addr][3] = confidence      #                      and state_confidence
+                    if confidence == 100:
+                        #TODO if it found an exact match for the state, give it a mapping to that states country with some confidence (50?)
+                        pass
                 elif stage == 'A':
                     relevant_text = whole_addr
                     #TODO [BLOCKER] how does the state or country get decided by these changes internally? I need some sample user rules I think at this point to progress
@@ -115,7 +115,6 @@ class Classifier:
                     relevant_text = f"{item[0]} {item[1]} {item[2]}"
                     #TODO Once processing filter is created, decide how its output will update the results for that address
 
-                print(f"{item[0]} | {item[1]} | {item[2]}")
                 print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
             print(" ")
             
