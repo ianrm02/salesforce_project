@@ -26,13 +26,13 @@ class Classifier:
         self.results = {}
 
         #Filter System:
-        userCountry_f   = userFilter(  filterRule={}, appliesTo='C', name="user_ctry")
-        exactCountry_f  = exactFilter(                appliesTo='C', name="exct_ctry")
-        fuzzyCountry_f  = fuzzyFilter(                appliesTo='C', order=2, name="fzzy_ctry")
-        userState_f     = userFilter(  filterRule={}, appliesTo='S', name="user_stte")
-        exactState_f    = exactFilter(                appliesTo='S', name="exct_stte")
-        fuzzyState_f    = fuzzyFilter(                appliesTo='S', order=2, name="fzzy_stte")
-        userAddress_f   = userFilter(  filterRule={}, appliesTo='A', name="user_addr")
+        userCountry_f   = UserFilter(  filterRule={}, appliesTo='C', name="user_ctry")
+        exactCountry_f  = ExactFilter(                appliesTo='C', name="exct_ctry")
+        fuzzyCountry_f  = FuzzyFilter(                appliesTo='C', order=2, name="fzzy_ctry")
+        userState_f     = UserFilter(  filterRule={}, appliesTo='S', name="user_stte")
+        exactState_f    = ExactFilter(                appliesTo='S', name="exct_stte")
+        fuzzyState_f    = FuzzyFilter(                appliesTo='S', order=2, name="fzzy_stte")
+        userAddress_f   = UserFilter(  filterRule={}, appliesTo='A', name="user_addr")
         proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
         self.filters = [

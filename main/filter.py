@@ -56,7 +56,7 @@ class Filter:
         self._name = name
 
 
-class userFilter(Filter):
+class UserFilter(Filter):
     def __init__(self, filterRule, appliesTo, name=None):
         self.ruleSet = filterRule
         self.appliesTo = appliesTo
@@ -73,7 +73,7 @@ class userFilter(Filter):
             return (None, 0)
 
 
-class exactFilter(Filter):
+class ExactFilter(Filter):
     def __init__(self, appliesTo, name=None):
         self.appliesTo = appliesTo
         self._name = name
@@ -97,7 +97,7 @@ class exactFilter(Filter):
             return (None, 0)
         
 
-class fuzzyFilter(Filter):
+class FuzzyFilter(Filter):
     def __init__(self, appliesTo, order=2, name=None):
         self.appliesTo = appliesTo
         self.order = order
