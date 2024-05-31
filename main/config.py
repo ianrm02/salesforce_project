@@ -21,3 +21,5 @@ DBNAME = 'bobby_db'
 USER = 'postgres'
 PASSWORD = 'bobby'
 HOST = 'localhost'
+
+STATED_COUNTRIES = ['AU', 'BR', 'CA', 'CN', 'IE', 'IN', 'IT', 'JP', 'MX', 'US']

@@ -20,15 +20,16 @@ class Classifier:
         self.address_list = input_standardization.generateStandardizedInput(config.DATASET_PATH, config.WORKING_DATASET)
         self.iso_standard_df = self._load_iso_standard()
         self.filterOrder = config.FILTER_ORDER
+        self.countries_that_require_states = config.STATED_COUNTRIES
         self.results = {}
 
         #Filter System:
         userCountry_f   = UserFilter(  filterRule={}, appliesTo='C', name="user_ctry")
-        exactCountry_f  = ExactFilter(                appliesTo='C', name="exct_ctry")
+        exactCountry_f  = CountryExactFilter(                appliesTo='C', name="exct_ctry")
         fuzzyCountry_f  = FuzzyFilter(                appliesTo='C', order=2, name="fzzy_ctry")
         userState_f     = UserFilter(  filterRule={}, appliesTo='S', name="user_stte")
-        exactState_f    = ExactFilter(                appliesTo='S', name="exct_stte")
-        fuzzyState_f    = FuzzyFilter(                appliesTo='S', order=2, name="fzzy_stte")
+        exactState_f    = StateExactFilter(                appliesTo='S', name="exct_stte")
+        fuzzyState_f    = FuzzyFilter(                appliesTo='S', order=1, name="fzzy_stte") #Order of 1 so that not every alpha 2 maps to every other alpha 2 within 2 order.
         userAddress_f   = UserFilter(  filterRule={}, appliesTo='A', name="user_addr")
         proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
@@ -83,40 +84,57 @@ class Classifier:
         for filter in filter_subset:
             if confidence == 100:
                 break
+                
             new_probable_mapping, new_confidence = filter.applyFilter(rowInput)
             if new_confidence > confidence:
                 probable_mapping = new_probable_mapping
                 confidence = new_confidence
             
         return probable_mapping, confidence
+    
+
+    def _state_selection_override(self, item, country):
+        state_filter = [filter for filter in self.filters if filter._name == "exct_stte"][0]
+        probable_state, _ = state_filter.applyFilter(item, identifiedCountry=True, probableCountry=country)
+        return probable_state
 
     
     def batch_process(self, batch, stepThroughRuntime=False):
         for stage in self.filterOrder: #For each stage: Country, State, Address, Processing
             for item in batch:         #For each address in the batch
-                whole_addr = f"{str(item[0]).strip()} {str(item[1]).strip()} {str(item[2]).strip()}" #clean the whole address to use as a key
-                if whole_addr not in self.results: self.results[whole_addr] = ["", 0, "", 0, item[0], item[1], item[2]] #if the key is not already in the results db, create it and initialize its values to "", 0, "", 0
+                foundCountry, foundState = False, False
+                whole_addr = f"{str(item[1]).strip()} {str(item[2]).strip()} {str(item[3]).strip()}" #clean the whole address to use as a key
+                if whole_addr not in self.results: self.results[whole_addr] = ["", 0, "", 0, item[0], item[1], item[2], item[3]] #if the key is not already in the results db, create it and initialize its values to "", 0, "", 0
                 probable_match, confidence = self.applyFilterSubset(item, stage) #apply the subset of filters to that address, apply results to probable_match and confidence
                 if stage == 'C': 
-                    relevant_text = item[2]
+                    relevant_text = item[3]
                     self.results[whole_addr][0] = probable_match  #If in country stage, change probable_country_mapping
                     self.results[whole_addr][1] = confidence      #                        and country_confidence
+                    if confidence == 100: #If confidence is 100
+                        foundCountry = True
+                        if probable_match in self.countries_that_require_states: #if found country requires a state
+                            possible_state = self._state_selection_override(item, probable_match) #run override
+                            if possible_state is not None: 
+                                self.results[whole_addr][2] = possible_state  
+                                self.results[whole_addr][3] = 100 #an exact state match after a confidenct country mapping should result in a confident state
                 elif stage == 'S':
-                    relevant_text = item[1]
-                    self.results[whole_addr][2] = probable_match  #If in state stage, change probable_state_mapping
-                    self.results[whole_addr][3] = confidence      #                      and state_confidence
+                    relevant_text = item[2]
+                    if confidence > self.results[whole_addr][3]:      
+                        self.results[whole_addr][2] = probable_match      #If in state stage, change probable_state_mapping
+                        self.results[whole_addr][3] = confidence          #                   and state_confidence as long as they are higher confidence than existing predictions
                     if confidence == 100:
                         #TODO if it found an exact match for the state, give it a mapping to that states country with some confidence (50?)
+                        foundState = True
                         pass
                 elif stage == 'A':
                     relevant_text = whole_addr
                     #TODO [BLOCKER] how does the state or country get decided by these changes internally? I need some sample user rules I think at this point to progress
                 elif stage == 'O':
-                    relevant_text = f"{item[0]} {item[1]} {item[2]}"
+                    relevant_text = f"{item[1]} {item[2]} {item[3]}"
                     #TODO Once processing filter is created, decide how its output will update the results for that address
 
-                print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
-            print(" ")
+                #print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
+            #print(" ")
             
             #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf, adr line, country, state]
 
