@@ -2,7 +2,6 @@
 <html>
 
 <head>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
@@ -63,9 +62,10 @@
   Our system has identified these free-text country spellings in your database.<br>
   Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their
   mapping using the dropdowns.
-  <input type="button" value="Export Settings" style="float: right;">
-  <br>
 
+  <input type="button" value="Export Settings" style="float: right;">
+
+  <br>
 
   {% for ccode in aff_country_codes %}
   <button class="accordion">{{ccode}}</button>
@@ -86,7 +86,7 @@
         <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value="approved" class="country">
+            <input type="checkbox" id=ccode name="approve" value="approved" class=ccode>
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
