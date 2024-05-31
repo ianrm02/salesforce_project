@@ -138,8 +138,8 @@ class Classifier:
             
             #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf, adr line, country, state]
 
-            print(f"{stage} Stage Completed...")
             if stepThroughRuntime == True:
+                print(f"{stage} Stage Completed...")
                 _ = input("")
 
     
