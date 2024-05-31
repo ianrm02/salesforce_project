@@ -83,10 +83,10 @@
       <tr>
         <td><!--String variable here--> {{change_id[1]}}</td>
         <td><!--Occurence variable here--> {{change_id[3]}}</td>
-        <td><!--Confidence variable here--> {{change_id[4]}}%</td>
+        <td><!--Confidence variable here--> 100<!--{{change_id[4]}}%--></td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value="approved" class=ccode>
+            <input type="checkbox" id=ccode name="approve" value="approved" class=ccode onload="autoSelect(100, this)">
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
@@ -131,11 +131,18 @@
       window.location.href = "{{url_for('state_approve')}}"
     }
 
-    function selectAll(table, bx) {
+    function selectAll(table, box) {
         for (var bxs=table.getElementsByTagName('input'), j=bxs.length; j--; ) {
          if (bxs[j].type == "checkbox") {
-           bxs[j].checked = bx.checked;
+           bxs[j].checked = box.checked;
         }
+      }
+    }
+
+    function autoSelect(confidence, box) {
+      //alert(confidence);
+      if (confidence >= 100) {
+        box.checked = true;
       }
     }
   </script>
