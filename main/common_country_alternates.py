@@ -481,6 +481,7 @@ COMMON_COUNTRY_ATERNATES = {
     'ZAMBIAN': 'ZM',
     'REPUBLIC OF ZAMBIA': 'ZM',
     'ZIMBABWEAN': 'ZW',
+    'DEUTSCHLAND': 'DE',
     'REPUBLIC OF ZIMBABWE': 'ZW',
     'US of A': 'US',
     'AFG': 'AF',

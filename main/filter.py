@@ -137,37 +137,6 @@ class FuzzyFilter(Filter):
         else:
             raise Exception("Invalid Filter")
     
-    
-    def _sort_multiple_hits(self, parsedIn):
-        self.hits = sorted(self.hits, key= lambda x: x[1]) #sorts list min->max by dist
-        self.min_hits_val = self.hits[0][2] #gets min_hit_val from min->max sorted list
-        min_hits = [spelling for spelling in self.hits if spelling[2] == self.min_hits_val] #selects all hits with the same min_hit_val
-        min_hits = sorted(min_hits, key=lambda x: x[0]) #sorts remaining viable hits alphebtically
-
-        possibles = [full[1] for full in min_hits]
-
-        for i, char in enumerate(parsedIn):
-            if len(possibles) == 1: #only 1 probable hit remaining
-                return (self.ruleSet[possibles[0]], config.ORDER_CONFIDENCES[self.min_hits_val-1])
-            temp_possibles = []
-            for hit in possibles:
-                if i <= len(hit)-1:
-                    if hit[i] == char:
-                        temp_possibles.append(hit)
-            if len(temp_possibles) == 0:
-                return (self.ruleSet[possibles[0]], config.ORDER_CONFIDENCES[self.min_hits_val-1])
-            
-            possibles = temp_possibles
-        
-        if len(possibles) == 1: 
-            #Base case when the input is shorter than but has no typos when compared to a longer common spelling 
-            # ie Nigeri to Nigeria or Niger, we decide to assume if you are trying to enter the word with which your input
-            # has the most similar characters, in order. We however are not strong in this assumption, so we return with only 60% confidence
-            return (self.ruleSet[possibles[0]], config.NON_TYPO_MISMATCH_LENGTH_CONFIDENCE)
-
-        #If we get to here, we are not confident but we think you might be trying to guess something similar
-        return (self.ruleSet[self.hits[0][0]], config.MULTIPLE_SIMILAR_HITS_FALLBACK_CONFIDENCE)
-    
 
     def applyFilter(self, rowInput: str):
         parsedIn = self._parseUserInput(rowInput)
@@ -189,16 +158,16 @@ class FuzzyFilter(Filter):
 
 
         self.hits = list(set(self.hits)) #to remove duplicates
+        self.hits = sorted(self.hits, key=lambda x: x[2])
 
         if len(self.hits) == 0:
             return (None, 0)
         elif len(self.hits) == 1:
-            return (self.hits[0][0], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
+            return (self.hits[0][1], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
         elif len(self.hits) > 1:
-            if self.appliesTo == "C":
-                return self._sort_multiple_hits(parsedIn=parsedIn)
-            else:
-                return (self.hits[0][0], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
+            if self.hits[0][2] == 0:
+                return (self.hits[0][1], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
+            return (self.hits[0][1], config.ORDER_CONFIDENCES[self.hits[0][2]-1])
         else:
             return (None, 0)
     

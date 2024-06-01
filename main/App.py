@@ -39,6 +39,7 @@ class App(object):
             num_max_confident_country = 0
             num_fully_converted = 0
             for key, mappings in results.items():
+                print(f"{key} ||| {mappings[0]} {mappings[1]} {mappings[2]} {mappings[3]}")
                 #0: New Country, #1: New Country Confidence, #2 New State, #3 New State Confidence, #4 ID, #5 Addr Line, #6 State Line, #7 Country Line
                 total_country_confidence += mappings[1]
                 total_state_confidence += mappings[3]
@@ -47,6 +48,7 @@ class App(object):
                     if mappings[0] not in config.STATED_COUNTRIES: num_fully_converted += 1
                     if mappings[3] == 100:
                         if mappings[0] in config.STATED_COUNTRIES: num_fully_converted += 1
+
 
             print(f"AVG COUNTRY CONF: {total_country_confidence/self._total_db_size}")
             print(f"AVG STATE   CONF: {total_state_confidence/self._total_db_size}")
