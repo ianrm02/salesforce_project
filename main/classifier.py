@@ -133,8 +133,8 @@ class Classifier:
                     relevant_text = f"{item[1]} {item[2]} {item[3]}"
                     #TODO Once processing filter is created, decide how its output will update the results for that address
 
-                #print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
-            #print(" ")
+                print(f"{relevant_text} mapped to {probable_match} with {confidence}% confidence in the {stage} stage")
+            print(" ")
             
             #Results stored intermediately as a dictionary of [address]: [country map, contry conf, state map, state conf, adr line, country, state]
 
