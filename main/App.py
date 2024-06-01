@@ -53,7 +53,7 @@ class App(object):
 
             print(f"%DB with 100% Country Confidence: {num_max_confident_country/self._total_db_size*100:.2f}")
             print("")
-            print(f"% Entries Fully Converted: {num_fully_converted/self._total_db_size*100:.2f}")
+            print(f"% Entries Fully Converted (with 100% confidence): {num_fully_converted/self._total_db_size*100:.2f}")
 
 
         
