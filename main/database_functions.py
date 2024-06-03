@@ -341,4 +341,4 @@ def test_setup():
     tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
     #print(tester.get_all_from_table("Addresses"))
 
-test_setup()
+#test_setup()
