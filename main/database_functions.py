@@ -212,6 +212,7 @@ class DatabaseManager:
         NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
         OccCo = self.get_freq('C', OldCo)
         OccSt = self.get_freq('S', OldSt, OldCo) #changed from NewCo
+        #TODO: THIS IS STILL NOT RIGHT, PLEASE WRITE THIS OUT ON THE BOARD
         #['US', 90, 'CA', 50, 116, '23 239 NORTH ROBERTSON BOULEVARD BEVERLY HILLS', 'CA 90211', 'UNITED STATES']
 
         try:
@@ -280,8 +281,7 @@ class DatabaseManager:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value,))
             elif appliesTo == 'S':
                 if country is None:
-                    #TODO: changes to below line AND account for null
-                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,))
+                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,)) #potential bug here as what if country is null?
                 else:
                     self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (value, country))
             elif appliesTo == 'A':
@@ -299,7 +299,7 @@ class DatabaseManager:
             print(f"An error occurred: {e}")
             return 0
         
-    #TODO
+    #TODO: create this function
     def search_db(self, address, state, country):
         # if only one value passed in
         # then return
@@ -325,7 +325,6 @@ class DatabaseManager:
             case (_, _, _):
                 pass
 
-    #TODO
     def get_all_from_table(self, table_name):
         """
         Tables are named: "Addresses", "StateChanges", "CountryChanges", "AddressChanges"
