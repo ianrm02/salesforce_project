@@ -45,9 +45,6 @@ class ClassifierApp(object):
         num_max_confident_country = 0
         num_fully_converted = 0
         for _, mappings in results.items(): 
-            # TODO: Ian's changes start here
-            #if ("CA" in mappings[6]):
-                #print(mappings)
             #print(f"{mappings[4]} {mappings[5]} {mappings[6]} {mappings[7]} NewCo:{mappings[0]} CoConf:{mappings[1]} NewSt:{mappings[2]} StConf:{mappings[3]} {"[FULLY MAPPED]" if mappings[1]+mappings[3] == 200 else ""}")
             total_country_confidence += mappings[1]
             total_state_confidence += mappings[3]

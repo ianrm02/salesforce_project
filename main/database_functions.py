@@ -126,6 +126,7 @@ class DatabaseManager:
         self.cur.execute("DROP TABLE IF EXISTS CountryChanges;")
         self.cur.execute("""
         CREATE TABLE CountryChanges (
+        CountryChangeID SERIAL PRIMARY KEY,
         OldCountry VARCHAR(100),
         NewCountry CHAR(2),
         Occurrences INT,
