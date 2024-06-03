@@ -42,24 +42,6 @@ class Classifier:
         standard_df = pd.read_csv(iso_standard_file, keep_default_na=False)
         return standard_df
     
-
-    def applyFilterStack(self, rowInput):
-        #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
-        probable_mapping = None
-        confidence = 0
-
-        for filter in self.filters:
-            if confidence == 100:
-                break
-
-            (new_probable_mapping, new_confidence) = filter.applyFilter(rowInput)
-
-            if new_confidence > confidence:
-                probable_mapping = new_probable_mapping
-                confidence = new_confidence
-        
-        return probable_mapping, confidence
-    
     
     def applyFilterSubset(self, rowInput, subset: chr):
         filter_subset = [filter for filter in self.filters if filter.appliesTo == subset]
