@@ -6,7 +6,7 @@ from config import DBNAME, USER, PASSWORD, HOST
 class DatabaseManager:
     def __init__(self):
         """
-        TODO: add comment block
+        constructor for DB manager
         """
         try:
             self.conn = pg8000.connect(
@@ -48,7 +48,7 @@ class DatabaseManager:
 
     def re_id_database(self):
         """
-        TODO: add comment block
+        re index all id values in the address table
         """        
         try:
             self.cur.execute("""
@@ -74,7 +74,7 @@ class DatabaseManager:
 
     def get_next_n(self, n):
         """
-        TODO: add comment block
+        get next n results from the , based on a static id variable
         """
         results = []
 
@@ -94,7 +94,7 @@ class DatabaseManager:
 
     def get_db_size(self):
         """
-        TODO: add comment block
+        get database size
         """
         try:
             self.cur.execute("SELECT COUNT(*) FROM Addresses;")
@@ -129,7 +129,7 @@ class DatabaseManager:
         OldCountry VARCHAR(100),
         NewCountry CHAR(2),
         Occurrences INT,
-        Confidence CHAR(1)
+        Confidence SMALLINT
         );""")
         self.conn.commit()
 
@@ -140,7 +140,7 @@ class DatabaseManager:
         StateChangeID SERIAL PRIMARY KEY,
         NewCountry CHAR(2),
         OldState VARCHAR(100),
-        NewState CHAR(2),
+        NewState CHAR(3),
         Occurrences INT,
         Confidence CHAR(1)
         );""")
@@ -157,7 +157,7 @@ class DatabaseManager:
 
     def setup_default_database(self):
         """
-        TODO: add comment block
+        sets default/expected db shape
         """
         self.drop_all_tables()
         self.address_table()
@@ -170,7 +170,7 @@ class DatabaseManager:
 
     def upload_n_entries(self, n):
         """
-        TODO: add comment block
+        upload n random entries to the database
         """
         address = 1000
         state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
@@ -185,7 +185,7 @@ class DatabaseManager:
 
     def upload_csv_entries(self, filename):
         """
-        TODO: add comment block
+        upload csv entries to the database
         """
         with open(filename, newline='', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile)
@@ -204,37 +204,42 @@ class DatabaseManager:
     
     def store_temp_values(self, values):
         """
-        Pass in a tuple that is 10 long with values for id, Addr, OldCo, OldSt, NewCo, NewSt, OccCo, OccSt, ConfCo, and ConfSt
+        Pass in a tuple that is 10 long with values for NewCo, ConfCo, NewSt, ConfSt, id, Addr, OldSt, and OldCo
 
         The order is not important, I can easily fix that in this function
-
-        TODO: refactor this comment block
         """
-        id, Addr, OldCo, OldSt, NewCo, NewSt, OccCo, OccSt, ConfCo, ConfSt = values
+        NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
+        OccCo = self.get_freq('C', OldCo)
+        OccSt = self.get_freq('S', OldSt)
         try:
-            # Check for duplicate in CountryChanges
-            check_query = "SELECT COUNT(*) FROM CountryChanges WHERE OldCountry = %s AND NewCountry = %s"
-            self.cur.execute(check_query, (OldCo, NewCo))
-            if self.cur.fetchone()[0] == 0:
-                insert_query = "INSERT INTO CountryChanges (OldCountry, NewCountry, Occurrences, Confidence) VALUES (%s, %s, %s, %s)"
-                self.cur.execute(insert_query, (OldCo, NewCo, OccCo, ConfCo))
-                self.conn.commit()
-
-            # Check for duplicate in StateChanges
-            check_query = "SELECT COUNT(*) FROM StateChanges WHERE NewCountry = %s AND OldState = %s AND NewState = %s"
-            self.cur.execute(check_query, (NewCo, OldSt, NewSt))
-            if self.cur.fetchone()[0] == 0:
-                insert_query = "INSERT INTO StateChanges (NewCountry, OldState, NewState, Occurrences, Confidence) VALUES (%s, %s, %s, %s, %s)"
-                self.cur.execute(insert_query, (NewCo, OldSt, NewSt, OccSt, ConfSt))
-                self.conn.commit()
-
+            # Country table
+            if (ConfCo != 0):
+                # Check for duplicate in CountryChanges
+                check_query = "SELECT COUNT(*) FROM CountryChanges WHERE OldCountry = %s AND NewCountry = %s"
+                self.cur.execute(check_query, (OldCo, NewCo))
+                if self.cur.fetchone()[0] == 0:
+                    insert_query = "INSERT INTO CountryChanges (OldCountry, NewCountry, Occurrences, Confidence) VALUES (%s, %s, %s, %s)"
+                    self.cur.execute(insert_query, (OldCo, NewCo, OccCo, ConfCo))
+                    self.conn.commit()
+            # state table
+            if (ConfSt != 0):
+                #TODO: there might be an error here, if the None type being pushed doesn't automatically convert to Null
+                # Check for duplicate in StateChanges
+                check_query = "SELECT COUNT(*) FROM StateChanges WHERE NewCountry = %s AND OldState = %s AND NewState = %s"
+                self.cur.execute(check_query, (NewCo, OldSt, NewSt))
+                if self.cur.fetchone()[0] == 0:
+                    insert_query = "INSERT INTO StateChanges (NewCountry, OldState, NewState, Occurrences, Confidence) VALUES (%s, %s, %s, %s, %s)"
+                    self.cur.execute(insert_query, (NewCo, OldSt, NewSt, OccSt, ConfSt))
+                    self.conn.commit()
+            # address table
+            if (ConfSt == 0 and ConfCo == 0):
             # Check for duplicate in AddressChanges
-            check_query = "SELECT COUNT(*) FROM AddressChanges WHERE ID = %s AND Address = %s"
-            self.cur.execute(check_query, (id, Addr))
-            if self.cur.fetchone()[0] == 0:
-                insert_query = "INSERT INTO AddressChanges (ID, Address) VALUES (%s, %s)"
-                self.cur.execute(insert_query, (id, Addr))
-                self.conn.commit()
+                check_query = "SELECT COUNT(*) FROM AddressChanges WHERE ID = %s AND Address = %s"
+                self.cur.execute(check_query, (iD, Addr))
+                if self.cur.fetchone()[0] == 0:
+                    insert_query = "INSERT INTO AddressChanges (ID, Address) VALUES (%s, %s)"
+                    self.cur.execute(insert_query, (iD, Addr))
+                    self.conn.commit()
                 
         except Exception as e:
             print("An error occurred:", e)
@@ -244,8 +249,6 @@ class DatabaseManager:
         Pass in a char for 'type' ('C' / 'A' / 'S') and a string for 'value'
 
         This function will then find the number of occurences of that string in the customer database
-
-        TODO: refactor this comment block
         """
         if (type == 'C'):
             try:
@@ -275,7 +278,40 @@ class DatabaseManager:
             print("Please enter a valid type \'C\', \'A\', or \'S\'")
             return 0
 
-        
+    #TODO
+    def search_db(self, address, state, country):
+        # if only one value passed in
+        # then return
+        none_count = sum(val is None for val in [address, state, country])
+        if (none_count >= 2):
+            return "Error"
+
+        match (address, state, country):
+            # else if state and country
+            # search state and country
+            case(None, _, _):
+                pass
+            # else if address and country
+            # search address and country
+            case(_, None, _):
+                pass
+            # else if address and state
+            # search address and state
+            case(_, _, None):
+                pass
+            # else if all
+            # search all
+            case (_, _, _):
+                pass
+
+    #TODO
+    def get_all_from_table(table_name):
+        try:
+            pass
+            #self.cur.execute("SELECT * FROM %s;", (table_name, ))
+            #self.
+        except Exception as e:
+            print("An error occurred:", e)
 
 def test_setup():
     tester = DatabaseManager()
@@ -284,9 +320,12 @@ def test_setup():
     print(tester.get_db_size())
     print(tester.get_freq('C', 'IN'))
     tester.insert_address("1234 Taj Mahal Ln.", "New Dehli", "Indania")
-    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
-    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
-    tester.store_temp_values((378, "1234 Taj Mahal Ln.", "Indania", "New Dehli", "IN", "ND", 1, 1, 'M', 'H'))
-
+    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
+    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
+    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
+    tester.insert_address("2107 Very Cool Rd.", "Texas", "USofAmerica")
+    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
+    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
+    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
 
 #test_setup()
