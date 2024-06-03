@@ -2,6 +2,7 @@ from classifier import Classifier
 from database_functions import DatabaseManager
 import config
 import time
+import logging
 
 class ClassifierApp(object):
     _total_db_size = None
@@ -71,8 +72,9 @@ class ClassifierApp(object):
 
 
     def run(self):
-        print("Starting...")
-    
+        logging.info('[STARTING ClassifierApp.run()]')   
+        logging.warning('Classifier failed to start')    
+
         self.process_entries()
 
         intermediate_results = self.clf.get_results()
@@ -96,10 +98,6 @@ class ClassifierApp(object):
             responsibility of the user to then manually find this in the UI stages of the solution and correct it because they had poor data quality?
         """
 
-        print("")
-        print("Done")
+        logging.info('[Finished ClassifierApp.run()]')       
+
         return 0
-
-
-app = ClassifierApp()
-app.run()
