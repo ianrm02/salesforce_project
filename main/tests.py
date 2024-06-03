@@ -29,7 +29,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
 class CountryExactFilterTestCase(unittest.TestCase):
     def setUp(self):
-        self.cef = exactFilter(appliesTo='C', name="Test Country Exact Filter")
+        self.cef = CountryExactFilter(appliesTo='C', name="Test Country Exact Filter")
 
 
     def test_ukraina(self):
@@ -38,17 +38,17 @@ class CountryExactFilterTestCase(unittest.TestCase):
 
 class StateExactFilterTestCase(unittest.TestCase):
     def setUp(self):
-        self.sef = exactFilter(appliesTo='S', name="Test State Exact Filter")
+        self.sef = StateExactFilter(appliesTo='S', name="Test State Exact Filter")
 
 
 class CountryFuzzyFilterTestCase(unittest.TestCase):
     def setUp(self):
-        self.cff = fuzzyFilter(appliesTo='C', name="Test Country Fuzzy Filter")
+        self.cff = FuzzyFilter(appliesTo='C', name="Test Country Fuzzy Filter")
 
 
 class StateFuzzyFilterTestCase(unittest.TestCase):
     def setUp(self):
-        self.sff = fuzzyFilter(appliesTo='S', name="Test State Fuzzy Filter")
+        self.sff = FuzzyFilter(appliesTo='S', name="Test State Fuzzy Filter")
 
 
 class ProcessingFiltertestCase(unittest.TestCase):

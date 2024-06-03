@@ -2,8 +2,8 @@
 <html>
 
 <head>
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <style>
     body {
       font-family: "Lato", sans-serif;
@@ -57,15 +57,16 @@
   </style>
 </head>
 
-<body>
+<body onload="autoSelect(100, this)">
 
   <h2>Approve Country Entries</h2>
   Our system has identified these free-text country spellings in your database.<br>
   Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their
   mapping using the dropdowns.
-  <input type="button" value="Export Settings" style="float: right;">
-  <br>
 
+  <input type="button" value="Export Settings" style="float: right;">
+
+  <br>
 
   {% for ccode in aff_country_codes %}
   <button class="accordion">{{ccode}}</button>
@@ -75,7 +76,7 @@
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id=checkall name="approve" value="approved" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+        <th>Approved<input type="checkbox" id=checkall name="checkall" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -86,15 +87,16 @@
         <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value="approved" class="country">
+            <input type="checkbox" id=ccode name="approve" value={{change_id[4]}} class=ccode >
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
           <form action="" method="get">
             <select name="states" id="states">
-              <option disabled selected value> -- select an country -- </option>
+              <option disabled value> -- select an country -- </option>
               {% for drop_id in dropdown_ids %}
-              <option value={{drop_id}}>{{drop_id}}</option>
+              <option value={{ drop_id }}
+               {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
               {% endfor %}
             </select>
           </form>
@@ -102,7 +104,6 @@
       </tr>
       {% endfor %}
     </table>
-    <input type="button" value="Approve All" style="float: right;">
   </div>
   {% endfor %}
 
@@ -112,6 +113,8 @@
   <button onclick="redirect()">Next page</button>
 
   <script>
+    let affected_ccodes = '{{ aff_country_codes }}';
+    var change_ids = '{{ change_ids }}';
     var acc = document.getElementsByClassName("accordion");
     var i;
 
@@ -131,13 +134,32 @@
       window.location.href = "{{url_for('state_approve')}}"
     }
 
-    function selectAll(table, bx) {
+    function fillAccordion(ccode){
+      var table = document.getElementById(ccode);
+      for(let i = 0; i < change_ids.length; i++){
+        let row = table.insertRow();
+        let cfield = row.insertCell(0);
+        cfield.innerHTML = change_ids[i][1];
+        let occs = row.insertCell(1);
+        occs.innerHTML = change_ids[i][3];
+      }
+    }
+
+    function selectAll(table, box) {
         for (var bxs=table.getElementsByTagName('input'), j=bxs.length; j--; ) {
          if (bxs[j].type == "checkbox") {
-           bxs[j].checked = bx.checked;
+           bxs[j].checked = box.checked;
         }
       }
     }
+
+    $(document).ready(function(){
+      $('[type="checkbox"]').each(function(){
+        if ($(this).attr('value')=='100') {
+          $(this).attr("checked","checked");
+        }
+      })
+    })
   </script>
 
 </body>
