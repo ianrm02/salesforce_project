@@ -329,18 +329,3 @@ def test_setup():
     tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
 
 #test_setup()
-
-sample = ("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina")
-
-for item in sample:
-    print(f"{item}: {type(item)}")
-
-    """UA: <class 'str'>
-100: <class 'int'>
-None: <class 'NoneType'>
-0: <class 'int'>
-362: <class 'int'>
-kosmonavtov4a, Odessa: <class 'str'>
-: <class 'str'>
-Ukraina: <class 'str'>
-"""
