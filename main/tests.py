@@ -33,15 +33,57 @@ class ClassifierInitTestCase(unittest.TestCase):
     def test_classifier_has_iso(self):
         self.assertIs(type(self.clf.iso_standard_df), pd.DataFrame, "ISO Standard Wrong Type After Load")
 
-
-
+        
 class DatabaseHandlerTestCase(unittest.TestCase):
+    """
+        - Proper Connection
+        - Queries are producing expected outputs
+    """
     def setUp(self):
+        self.db_handler = DatabaseManager()
+
+
+    def testDatabseConnectionEstablished(self):
         pass
 
 
-    def test_db_for_something(self):
+    def test_db_insert_address(self):
         pass
+
+
+    def test_db_delete_address(self):
+        pass
+    
+
+    def test_db_re_id_database(self):
+        pass
+    
+
+    def test_get_next_n(self):
+        pass
+    
+
+    def test_get_db_size(self):
+        pass
+
+
+    def test_get_freq(self):
+        pass
+
+
+    def test_store_temp_values(self):
+        pass
+
+
+    def test_search_db(self):
+        pass
+
+
+    def test_get_all_from_table(self):
+        pass
+
+    
+
 
 
 class CountryExactFilterTestCase(unittest.TestCase):
@@ -72,12 +114,5 @@ class ProcessingFiltertestCase(unittest.TestCase):
     def setUp(self):
         self.pf = ProcessingFilter(appliesTo='o', name="Test Processing Filter")
 
-
-class DatabaseConnectivityCase(unittest.TestCase):
-    def setUp(self):
-        self.db_handler = DatabaseManager()
-
-    def testDatabseConnectionEstablished(self):
-        pass
 
 unittest.main()
