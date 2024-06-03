@@ -59,6 +59,9 @@ class Filter:
     def setName(self, name):
         self._name = name
 
+    def getAppliesTo(self):
+        return self.appliesTo
+
 
 class UserFilter(Filter):
     def __init__(self, filterRule, appliesTo, name=None):

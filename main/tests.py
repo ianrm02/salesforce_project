@@ -1,5 +1,6 @@
 from classifier import Classifier
 from fuzzy_distance import calc_fuzzy_dist
+from database_functions import *
 import config
 import unittest
 import pandas as pd
@@ -10,12 +11,28 @@ class ClassifierInitTestCase(unittest.TestCase):
         self.clf = Classifier()
 
 
+    def test_classifier_init(self):
+        self.assertIs(type(self.clf), Classifier, "Classifier is not of type Classifier")
+        self.assertIs(type(self.clf.filters), list, "clf.filters is NOT expected list of objects of type Filter")
+
+
+    def test_classifier_filter_types(self):
+        expected_filter_types = [UserFilter, CountryExactFilter, FuzzyFilter, UserFilter, StateExactFilter, FuzzyFilter, UserFilter, ProcessingFilter]
+        
+        for i, filter in enumerate(self.clf.filters):
+            self.assertIs(type(filter), expected_filter_types[i], f"{i}th filter was of {type(filter)} but was expected to be {expected_filter_types[i]}")
+
+
+    def test_classifier_filter_application_types(self):
+        expected_filter_appliesTo_types = ['C', 'C', 'C', 'S', 'S', 'S', 'A', 'O']
+
+        for i, filter in enumerate(self.clf.filters):
+            self.assertIs(filter.getAppliesTo(), expected_filter_appliesTo_types[i], f"{i}th filter of type {type(filter)} was applied to {filter.getAppliesTo()}but was expected to be {expected_filter_appliesTo_types[i]}")
+
+
     def test_classifier_has_iso(self):
         self.assertIs(type(self.clf.iso_standard_df), pd.DataFrame, "ISO Standard Wrong Type After Load")
 
-
-    def test_classifier_has_address(self):
-        pass
 
 
 class DatabaseHandlerTestCase(unittest.TestCase):
@@ -55,5 +72,12 @@ class ProcessingFiltertestCase(unittest.TestCase):
     def setUp(self):
         self.pf = ProcessingFilter(appliesTo='o', name="Test Processing Filter")
 
+
+class DatabaseConnectivityCase(unittest.TestCase):
+    def setUp(self):
+        self.db_handler = DatabaseManager()
+
+    def testDatabseConnectionEstablished(self):
+        pass
 
 unittest.main()
