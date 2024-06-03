@@ -96,14 +96,14 @@
           </td>
           <td><!--Populate the dropdown based on standardized country-->
             <form action="" method="get">
-              <select id="cdropdown" onchange="repopulate_statedropdown(ccode)">
+              <select id='cdropdown{{ccode}}' onchange = "repopulate_statedropdown('{{ccode}}')">
                 <option disabled value> -- select a country -- </option>
                 {% for drop_id in cdropdown_ids %}
                 <option {% if drop_id==ccode %} selected {% endif %}>{{drop_id}}</option>
                 {% endfor %}
               </select>
               <form action="" method="get">
-                <select id="sdropdown{{ccode}}">
+                <select id='sdropdown{{ccode}}'>
                   <option disabled value> -- select a state -- </option>
                   {% for drop_id in sdropdown_ids[ccode] %}
                   <option {% if drop_id==scode %} selected {% endif %}>{{drop_id}}</option>
@@ -153,10 +153,19 @@
       }
     }
 
-    function repopulate_statedropdown(ccode) {
-      var sdropdown = document.getElementById("sdropdown{{ccode}}");
-      sdropdown.options[1].innerHTML = "HEY";
-      console.log("HEY");
+    function repopulate_statedropdown(ccode){
+      var cdropdown = document.getElementById("cdropdown" + ccode);
+      var nccode = cdropdown.options[cdropdown.selectedIndex].text;
+      var sdropdown = document.getElementById("sdropdown" + ccode);
+      
+      while(sdropdown.options.length < sdropdown_ids[nccode]){
+        var newOption = document.createElement("option");
+        sdropdown.appendChild(newOption);
+      }
+      for(var i = sdropdown.options.length-1; i >= 0; i--){
+        var selitem = sdropdown.options[i];
+        selitem.text = ccode;
+      }
     }
     // Auto select feature
     $(document).ready(function () {
