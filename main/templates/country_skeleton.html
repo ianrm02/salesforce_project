@@ -3,6 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <style>
     body {
       font-family: "Lato", sans-serif;
@@ -56,7 +57,7 @@
   </style>
 </head>
 
-<body>
+<body onload="autoSelect(100, this)">
 
   <h2>Approve Country Entries</h2>
   Our system has identified these free-text country spellings in your database.<br>
@@ -75,7 +76,7 @@
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id=checkall name="approve" value="approved" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+        <th>Approved<input type="checkbox" id=checkall name="checkall" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -83,10 +84,10 @@
       <tr>
         <td><!--String variable here--> {{change_id[1]}}</td>
         <td><!--Occurence variable here--> {{change_id[3]}}</td>
-        <td><!--Confidence variable here--> 100<!--{{change_id[4]}}%--></td>
+        <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value="approved" class=ccode onload="autoSelect(100, this)">
+            <input type="checkbox" id=ccode name="approve" value={{change_id[4]}} class=ccode >
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
@@ -152,12 +153,13 @@
       }
     }
 
-    function autoSelect(confidence, box) {
-      //alert(confidence);
-      if (confidence >= 100) {
-        box.checked = true;
-      }
-    }
+    $(document).ready(function(){
+      $('[type="checkbox"]').each(function(){
+        if ($(this).attr('value')==='100') {
+          $(this).attr("checked","checked");
+        }
+      })
+    })
   </script>
 
 </body>
