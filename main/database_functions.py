@@ -204,13 +204,18 @@ class DatabaseManager:
     
     def store_temp_values(self, values):
         """
-        Pass in a tuple that is 10 long with values for NewCo, ConfCo, NewSt, ConfSt, id, Addr, OldSt, and OldCo
+        Pass in a tuple that is 8 long with values for NewCo, ConfCo, NewSt, ConfSt, id, Addr, OldSt, and OldCo
 
-        The order is not important, I can easily fix that in this function
+        Stores these values to the temp database that we created
         """
         NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
         OccCo = self.get_freq('C', OldCo)
-        OccSt = self.get_freq('S', OldSt)
+        OccSt = self.get_freq('S', OldSt, NewCo)
+
+        if (NewSt=="CA"): #DEBUG
+            print(values)
+            print(OccSt)
+
         try:
             # Country table
             if (ConfCo != 0):
@@ -244,42 +249,35 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred:", e)
 
-    def get_freq(self, appliesTo, value):
+    def get_freq(self, appliesTo, value, country=None):
         """
-        Pass in a char for 'type' ('C' / 'A' / 'S') and a string for 'value'
+        Pass in a char for 'appliesTo' ('C' / 'A' / 'S') and a string for 'value'.
 
-        This function will then find the number of occurences of that string in the customer database
+        This function will then find the number of occurrences of that string in the customer database.
         """
-        if (appliesTo == 'C'):
-            try:
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value, ))
-                size = self.cur.fetchall()[0][0]
-                return size
+        try:
+            if appliesTo == 'C':
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value,))
+            elif appliesTo == 'S':
+                if country is None:
+                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,))
+                else:
+                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (value, country))
+            elif appliesTo == 'A':
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (value,))
+            elif appliesTo == 'O':
+                # Implement logic for 'O' if needed
+                return 0
+            else:
+                print("Please enter a valid type 'C', 'A', 'S', or 'O'")
+                return 0
             
-            except Exception as e:
-                print(f"An error occurred: {e}")
-        elif (appliesTo == 'S'):
-            try:
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s;", (value, ))
-                size = self.cur.fetchall()[0][0]
-                return size
-            
-            except Exception as e:
-                print(f"An error occurred: {e}")
-        elif (appliesTo == 'A'):
-            try:
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (value, ))
-                size = self.cur.fetchall()[0][0]
-                return size
-            
-            except Exception as e:
-                print(f"An error occurred: {e}")
-        elif (appliesTo == 'O'):
-            pass
-        else:
-            print("Please enter a valid type \'C\', \'A\', or \'S\'")
+            size = self.cur.fetchone()[0]
+            return size
+        except Exception as e:
+            print(f"An error occurred: {e}")
             return 0
-
+        
     #TODO
     def search_db(self, address, state, country):
         # if only one value passed in
@@ -341,4 +339,10 @@ def test_setup():
     tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
     #print(tester.get_all_from_table("Addresses"))
 
+def test_get_freq():
+    tester = DatabaseManager()
+    print(tester.get_freq('S', 'CA', 'US'))
+    print(tester.get_freq('S', 'CA'))
+
 #test_setup()
+#test_get_freq()
