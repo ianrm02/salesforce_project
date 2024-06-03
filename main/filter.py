@@ -6,6 +6,7 @@ import re
 
 
 class InvalidFilter(Exception):
+    #TODO
     pass
 
 
@@ -21,7 +22,10 @@ class Filter:
 
     def _parseUserInput(self, userIn)->str:
         """
-            Input: userIn as a tuple of strings ('[ADDRESS FIELD]', '[STATE FIELD]', '[COUNTRY FIELD]')
+            Input: userIn as a tuple of strings ('[ID]', [ADDRESS FIELD]', '[STATE FIELD]', '[COUNTRY FIELD]')
+            Output: the input, parsed to only include the relevant portion of the text that the filter needs
+            This can defintely be expanded on, but depending on how structured the users data is, might be less
+            valuable endeavor to try to improve.
         """      
         text = ""
         if self.appliesTo == 'C':
@@ -42,10 +46,9 @@ class Filter:
         text = text.upper()
         return text 
     
-
+    #To be overriden in child classes
     def applyFilter(rowInput: str):
         return (None, 0)
-    
 
     def getKeys(self):
         return self.ruleSet.keys()
@@ -179,6 +182,7 @@ class ProcessingFilter(Filter):
 
 
     def applyFilter(self, rowInput: str):
+        #TODO
         return (None, 0)
 
 
