@@ -67,7 +67,7 @@
   <input type="button" value="Export Settings" style="float: right;">
 
   <br>
-  
+
   {% for ccode in aff_country_codes%}
   <button class="accordion">{{ccode}}</button>
   <div class="panel">
@@ -151,10 +151,10 @@
     }
 
     // Auto select feature
-    $(document).ready(function(){
-      $('[type="checkbox"]').each(function(){
-        if ($(this).attr('value')==='100') {
-          $(this).attr("checked","checked");
+    $(document).ready(function () {
+      $('[type="checkbox"]').each(function () {
+        if ($(this).attr('value') === '100') {
+          $(this).attr("checked", "checked");
         }
       })
     })

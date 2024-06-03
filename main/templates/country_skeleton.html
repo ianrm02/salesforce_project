@@ -76,7 +76,8 @@
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id=checkall name="checkall" onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+        <th>Approved<input type="checkbox" id=checkall name="checkall"
+            onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -87,7 +88,7 @@
         <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value={{change_id[4]}} class=ccode >
+            <input type="checkbox" id=ccode name="approve" value={{change_id[4]}} class=ccode>
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
@@ -95,8 +96,8 @@
             <select name="states" id="states">
               <option disabled value> -- select an country -- </option>
               {% for drop_id in dropdown_ids %}
-              <option value={{ drop_id }}
-               {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
+              <option value={{ drop_id }}>
+                {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
               {% endfor %}
             </select>
           </form>
@@ -134,9 +135,9 @@
       window.location.href = "{{url_for('state_approve')}}"
     }
 
-    function fillAccordion(ccode){
+    function fillAccordion(ccode) {
       var table = document.getElementById(ccode);
-      for(let i = 0; i < change_ids.length; i++){
+      for (let i = 0; i < change_ids.length; i++) {
         let row = table.insertRow();
         let cfield = row.insertCell(0);
         cfield.innerHTML = change_ids[i][1];
@@ -146,17 +147,18 @@
     }
 
     function selectAll(table, box) {
-        for (var bxs=table.getElementsByTagName('input'), j=bxs.length; j--; ) {
-         if (bxs[j].type == "checkbox") {
-           bxs[j].checked = box.checked;
+      for (var bxs = table.getElementsByTagName('input'), j = bxs.length; j--;) {
+        if (bxs[j].type == "checkbox") {
+          bxs[j].checked = box.checked;
         }
       }
     }
 
-    $(document).ready(function(){
-      $('[type="checkbox"]').each(function(){
-        if ($(this).attr('value')=='100') {
-          $(this).attr("checked","checked");
+    // Auto select feature
+    $(document).ready(function () {
+      $('[type="checkbox"]').each(function () {
+        if ($(this).attr('value') == '100') {
+          $(this).attr("checked", "checked");
         }
       })
     })
