@@ -94,14 +94,10 @@ Please enter your information to begin processing. You will be notified when you
 </form>
 <br>
 
-<button onclick="redirect()">Next page</button>
+<button onclick="redirect('country_approve')">Next page</button>
 <br>
 
 <script>
-  function redirect() {
-    window.location.href = "{{url_for('country_approve')}}"
-  }
-
   function openForm() {
     document.getElementById("settingsForm").style.display = "block";
   }
@@ -112,5 +108,5 @@ Please enter your information to begin processing. You will be notified when you
 </script>
 
 </body>
-
+<script type="text/javascript" src="/static/javascript/approval.js"></script>
 </html>
