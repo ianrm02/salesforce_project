@@ -45,21 +45,6 @@ class Classifier:
 
     def applyFilterStack(self, rowInput):
         #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
-        """
-            Operational Order:
-            1. User Country Filter
-            2. Exact Country Filter
-            3. Fuzzy Country Filter
-            ----- UI Break: Country
-            4. User State Filter
-            5. Exact State Filter
-            6. Fuzzy State Filter.
-            ----- UI Break: State
-            7. User Address Filter
-            8. Processing Filter
-            ----- UI Break: Address
-            ----- UI Confirm Screen
-        """
         probable_mapping = None
         confidence = 0
 
