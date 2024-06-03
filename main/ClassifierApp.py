@@ -5,16 +5,17 @@ import time
 import logging
 
 class ClassifierApp(object):
-    _total_db_size = None
+    _total_db_size = 0
     _entries_processed = 0
     _batch_size = 0
+    _payload = None
 
     def __init__(self):
         self.clf = Classifier()
-        self.db_handler =  DatabaseManager()
-        self._total_db_size = self.db_handler.get_db_size()
         self._batch_size = config.BATCH_SIZE
-        
+        #TODO implement custom payload loading
+        self.db_handler = DatabaseManager()
+
 
     def process_entries(self):
         #TODO add comments
@@ -68,10 +69,22 @@ class ClassifierApp(object):
             self.db_handler.store_temp_values(mappings)
 
 
-    def run(self):
-        logging.info('[STARTING ClassifierApp.run()]')   
-        logging.warning('Classifier failed to start')    
+    def load_db_from_payload(self, payload):
+        self._payload = payload
+        self.db_handler = self._create_db_manager(payload=self._payload)
+        self._total_db_size = self.db_handler.get_db_size()
 
+        print(self.db_handler.get_db_size())
+
+
+    def _create_db_manager(self, payload):
+        print(payload)
+        #TODO with custom payload, for now just default to config
+        db_handler = DatabaseManager()
+        return db_handler
+
+
+    def run(self):
         self.process_entries()
 
         intermediate_results = self.clf.get_results()
@@ -83,8 +96,6 @@ class ClassifierApp(object):
         self.uploadProcessedToDB()
 
         del self.db_handler #TODO test if the connection is still open
-
-        #TODO Now Do UI Here
 
         """Test Cases to observe / processing filter?
         198 "Hospital; Bangalore; 560099" "" "IN" Maps to India correctly but not Bangalore because

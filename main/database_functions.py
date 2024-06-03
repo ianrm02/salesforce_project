@@ -1,24 +1,24 @@
 import pg8000
 import time
 import csv
-from config import DBNAME, USER, PASSWORD, HOST
-
+import config
 class DatabaseManager:
-    def __init__(self):
+    def __init__(self, *, db_name=config.DBNAME, username=config.USER, pwd=config.PASSWORD, host=config.HOST):
         """
         constructor for DB manager
         """
         try:
             self.conn = pg8000.connect(
-                database=DBNAME,
-                user=USER,
-                password=PASSWORD,
-                host=HOST
+                database=db_name,
+                user=username,
+                password=pwd,
+                host=host
             )
             self.cur = self.conn.cursor()
             self.LAST_ID = 1
         except Exception as e:
             raise Exception(f"Failed to connect to the database: {e}")
+        
     
     def __del__(self):
         if hasattr(self, 'cur') and self.cur is not None:
