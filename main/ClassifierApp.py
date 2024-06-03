@@ -35,6 +35,7 @@ class ClassifierApp(object):
             print("[WARNING] Not all entries processed")
             #TODO error handling / logging for non-processed entries and why they couldnt be processed
         print("")
+
             
     def print_intermediate_diagnostics(self, results):
         #TODO add comments
@@ -61,15 +62,26 @@ class ClassifierApp(object):
         print(f"% Entries Fully Converted (with 100% confidence): {num_fully_converted/self._total_db_size*100:.2f}")
 
 
+    def uploadProcessedToDB(self):
+        for _, mappings in self.clf.get_results().items():
+            try:
+                self.db_handler.store_temp_values(tuple(mappings))
+            except:
+                print(f"Unable to upload data to intermediate database: {mappings}")
+
+
     def run(self):
         print("Starting...")
     
         self.process_entries()
-        
+
         intermediate_results = self.clf.get_results()
         #List elements for each address in intermediate_results:
         #0: New Country, #1: New Country Confidence, #2 New State, #3 New State Confidence, #4 ID, #5 Addr Line, #6 State Line, #7 Country Line
         self.print_intermediate_diagnostics(intermediate_results)
+
+        #upload the processed to result to intermediate database to await UI stage.
+        self.uploadProcessedToDB()
 
         del self.db_handler #TODO test if the connection is still open
 
