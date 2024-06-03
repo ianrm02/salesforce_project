@@ -18,20 +18,6 @@ address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT'
 # Change Type: C|A|S
 change_ids = [['C', 'Arroz', 'AR', 1200, 10], ['C', 'ArGE', 'AR', 30, 10], ['C', 'United States', 'US', 100000, 100], ['S', 'Colorado', 'CO', 10000, 100, 'US'], ['S', 'Entree Reo', 'ER', 12500, 80, 'AR'], ['S', 'Entre Rios', 'ER', 10000, 100, 'AR']]
 
-#compiles javascript files to be passed with templates
-def compile_js_files():
-    # Location of js files
-    path = 'main/static/javascript'
-
-    files = [fin for fin in listdir(path) if isfile(join(path, fin))]
-    i = 0
-    js_file_list = []
-    for file in files:
-        file_name = "javascript/" + file
-        js_file_list.append(url_for('static', filename = file_name))
-        i+=1
-    return js_file_list
-
 # connect URL endpoints
 @app.route("/", methods=('GET', 'POST'))
 def home():
