@@ -64,10 +64,7 @@ class ClassifierApp(object):
 
     def uploadProcessedToDB(self):
         for _, mappings in self.clf.get_results().items():
-            try:
-                self.db_handler.store_temp_values(tuple(mappings))
-            except:
-                print(f"Unable to upload data to intermediate database: {mappings}")
+            self.db_handler.store_temp_values(mappings)
 
 
     def run(self):

@@ -34,7 +34,8 @@ class Classifier:
         proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
         self.filters = [
-            userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
+            userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, 
+            #TODO proccessing_f
         ]
 
     #currently only handles main/ISO3166_1.csv

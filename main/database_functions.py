@@ -142,7 +142,7 @@ class DatabaseManager:
         OldState VARCHAR(100),
         NewState CHAR(3),
         Occurrences INT,
-        Confidence CHAR(1)
+        Confidence SMALLINT
         );""")
         self.conn.commit()
 
@@ -244,13 +244,13 @@ class DatabaseManager:
         except Exception as e:
             print("An error occurred:", e)
 
-    def get_freq(self, type, value):
+    def get_freq(self, appliesTo, value):
         """
         Pass in a char for 'type' ('C' / 'A' / 'S') and a string for 'value'
 
         This function will then find the number of occurences of that string in the customer database
         """
-        if (type == 'C'):
+        if (appliesTo == 'C'):
             try:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value, ))
                 size = self.cur.fetchall()[0][0]
@@ -258,7 +258,7 @@ class DatabaseManager:
             
             except Exception as e:
                 print(f"An error occurred: {e}")
-        if (type == 'S'):
+        elif (appliesTo == 'S'):
             try:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s;", (value, ))
                 size = self.cur.fetchall()[0][0]
@@ -266,7 +266,7 @@ class DatabaseManager:
             
             except Exception as e:
                 print(f"An error occurred: {e}")
-        if (type == 'A'):
+        elif (appliesTo == 'A'):
             try:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (value, ))
                 size = self.cur.fetchall()[0][0]
@@ -274,6 +274,8 @@ class DatabaseManager:
             
             except Exception as e:
                 print(f"An error occurred: {e}")
+        elif (appliesTo == 'O'):
+            pass
         else:
             print("Please enter a valid type \'C\', \'A\', or \'S\'")
             return 0
@@ -324,8 +326,21 @@ def test_setup():
     tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
     tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
     tester.insert_address("2107 Very Cool Rd.", "Texas", "USofAmerica")
-    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
-    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
-    tester.store_temp_values((None, 0, None, 0, 379, "2107 Very Cool Rd.", "Texas", "USofAmerica"))
+    tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
 
 #test_setup()
+
+sample = ("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina")
+
+for item in sample:
+    print(f"{item}: {type(item)}")
+
+    """UA: <class 'str'>
+100: <class 'int'>
+None: <class 'NoneType'>
+0: <class 'int'>
+362: <class 'int'>
+kosmonavtov4a, Odessa: <class 'str'>
+: <class 'str'>
+Ukraina: <class 'str'>
+"""
