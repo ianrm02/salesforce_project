@@ -28,17 +28,28 @@
     tr:nth-child(even) {
       background-color: #dddddd;
     }
+
     .alert {
       padding: 15px;
       margin: 5px;
       color: #970020;
       background-color: #ffd5de;
     }
+
     .panel {
       padding: 0 18px;
       display: none;
       background-color: white;
       overflow: hidden;
+    }
+
+    .settings-popup {
+      display: none;
+      position: fixed;
+      bottom: 100;
+      right: 15px;
+      border: 3px solid #f1f1f1;
+      z-index: 9;
     }
   </style>
 </head>
@@ -47,9 +58,25 @@
 Please enter your information to begin processing. You will be notified when your new data is ready for review.
 <div>
   {% for message in get_flashed_messages() %}
-    <div class="alert">{{ message }}</div>
+  <div class="alert">{{ message }}</div>
   {% endfor %}
 </div>
+
+<button class="Import Settings" style="float: right;" onclick="openForm()">Import Settings</button>
+<br><br>
+
+<div class="settings-popup" id="settingsForm">
+  <form action="" class="settings-container">
+    <h1>Import Settings</h1>
+
+    <label for="selectFile"><b>Upload File</b></label>
+    <button type="button" class="btn" name="selectFile">Select File</button>
+    <br>
+    <button type="submit" class="btn" name="uploadFile">Upload</button>
+    <button type="button" class="btn cancel" style="float: right;" onclick="closeForm()">Close</button>
+  </form>
+</div>
+
 <form id="userform" method="post">
   <label for="dbname">Database Name:</label><br>
   <input type="text" name="dbname">
@@ -64,13 +91,26 @@ Please enter your information to begin processing. You will be notified when you
   <input type="text" id="host" name="host">
   <br><br>
   <input type="submit" value="Submit">
-</form> 
+</form>
+<br>
+
 <button onclick="redirect()">Next page</button>
+<br>
+
 <script>
-    function redirect() {
-      window.location.href = "{{url_for('country_approve')}}"
-    }
+  function redirect() {
+    window.location.href = "{{url_for('country_approve')}}"
+  }
+
+  function openForm() {
+    document.getElementById("settingsForm").style.display = "block";
+  }
+
+  function closeForm() {
+    document.getElementById("settingsForm").style.display = "none";
+  }
 </script>
 
 </body>
+
 </html>

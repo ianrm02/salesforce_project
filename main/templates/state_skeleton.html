@@ -65,7 +65,7 @@
   mapping using the dropdowns.
 
   <input type="button" value="Export Settings" style="float: right;">
-  
+
   <br>
 
   {% for ccode in aff_country_codes%}
@@ -99,14 +99,14 @@
               <select id='cdropdown{{ccode}}' onchange = "repopulate_statedropdown('{{ccode}}')">
                 <option disabled value> -- select a country -- </option>
                 {% for drop_id in cdropdown_ids %}
-                <option {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
+                <option {% if drop_id==ccode %} selected {% endif %}>{{drop_id}}</option>
                 {% endfor %}
               </select>
               <form action="" method="get">
                 <select id='sdropdown{{ccode}}'>
                   <option disabled value> -- select a state -- </option>
                   {% for drop_id in sdropdown_ids[ccode] %}
-                  <option {% if drop_id == scode %} selected {% endif %}>{{drop_id}}</option>
+                  <option {% if drop_id==scode %} selected {% endif %}>{{drop_id}}</option>
                   {% endfor %}
                 </select>
               </form>
@@ -126,7 +126,7 @@
 
   <script>
     var acc = document.getElementsByClassName("accordion");
-    var sdropdown_ids = {"US":["TX", "DE"], "AR":["ER"]};
+    var sdropdown_ids = { "US": ["TX", "DE"], "AR": ["ER"] };
     var i;
 
     for (i = 0; i < acc.length; i++) {
@@ -168,10 +168,10 @@
       }
     }
     // Auto select feature
-    $(document).ready(function(){
-      $('[type="checkbox"]').each(function(){
-        if ($(this).attr('value')==='100') {
-          $(this).attr("checked","checked");
+    $(document).ready(function () {
+      $('[type="checkbox"]').each(function () {
+        if ($(this).attr('value') === '100') {
+          $(this).attr("checked", "checked");
         }
       })
     })
