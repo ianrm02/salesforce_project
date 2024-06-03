@@ -201,7 +201,8 @@ class DatabaseManager:
                 self.cur.execute(sql, (address, country, state))
 
             self.conn.commit()
-    
+
+    #TODO: OS mutex issue
     def store_temp_values(self, values):
         """
         Pass in a tuple that is 8 long with values for NewCo, ConfCo, NewSt, ConfSt, id, Addr, OldSt, and OldCo
@@ -210,48 +211,67 @@ class DatabaseManager:
         """
         NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
         OccCo = self.get_freq('C', OldCo)
-        OccSt = self.get_freq('S', OldSt, NewCo)
-
-        if (NewSt=="CA"): #DEBUG
-            print(values)
-            print(OccSt)
+        OccSt = self.get_freq('S', OldSt, OldCo) #changed from NewCo
+        #['US', 90, 'CA', 50, 116, '23 239 NORTH ROBERTSON BOULEVARD BEVERLY HILLS', 'CA 90211', 'UNITED STATES']
 
         try:
             # Country table
-            if (ConfCo != 0):
+            if ConfCo != 0:
                 # Check for duplicate in CountryChanges
-                check_query = "SELECT COUNT(*) FROM CountryChanges WHERE OldCountry = %s AND NewCountry = %s"
+                check_query = """
+                    SELECT COUNT(*) 
+                    FROM CountryChanges 
+                    WHERE OldCountry IS NOT DISTINCT FROM %s AND NewCountry IS NOT DISTINCT FROM %s
+                """
                 self.cur.execute(check_query, (OldCo, NewCo))
                 if self.cur.fetchone()[0] == 0:
-                    insert_query = "INSERT INTO CountryChanges (OldCountry, NewCountry, Occurrences, Confidence) VALUES (%s, %s, %s, %s)"
+                    insert_query = """
+                        INSERT INTO CountryChanges (OldCountry, NewCountry, Occurrences, Confidence) 
+                        VALUES (%s, %s, %s, %s)
+                    """
                     self.cur.execute(insert_query, (OldCo, NewCo, OccCo, ConfCo))
                     self.conn.commit()
-            # state table
-            if (ConfSt != 0):
-                #TODO: there might be an error here, if the None type being pushed doesn't automatically convert to Null
+
+            # State table
+            if ConfSt != 0:
                 # Check for duplicate in StateChanges
-                check_query = "SELECT COUNT(*) FROM StateChanges WHERE NewCountry = %s AND OldState = %s AND NewState = %s"
+                check_query = """
+                    SELECT COUNT(*) 
+                    FROM StateChanges 
+                    WHERE NewCountry IS NOT DISTINCT FROM %s AND OldState IS NOT DISTINCT FROM %s AND NewState IS NOT DISTINCT FROM %s
+                """
                 self.cur.execute(check_query, (NewCo, OldSt, NewSt))
                 if self.cur.fetchone()[0] == 0:
-                    insert_query = "INSERT INTO StateChanges (NewCountry, OldState, NewState, Occurrences, Confidence) VALUES (%s, %s, %s, %s, %s)"
+                    insert_query = """
+                        INSERT INTO StateChanges (NewCountry, OldState, NewState, Occurrences, Confidence) 
+                        VALUES (%s, %s, %s, %s, %s)
+                    """
                     self.cur.execute(insert_query, (NewCo, OldSt, NewSt, OccSt, ConfSt))
                     self.conn.commit()
-            # address table
-            if (ConfSt == 0 and ConfCo == 0):
-            # Check for duplicate in AddressChanges
-                check_query = "SELECT COUNT(*) FROM AddressChanges WHERE ID = %s AND Address = %s"
+
+            # Address table
+            if ConfSt == 0 and ConfCo == 0:
+                # Check for duplicate in AddressChanges
+                check_query = """
+                    SELECT COUNT(*) 
+                    FROM AddressChanges 
+                    WHERE ID IS NOT DISTINCT FROM %s AND Address IS NOT DISTINCT FROM %s
+                """
                 self.cur.execute(check_query, (iD, Addr))
                 if self.cur.fetchone()[0] == 0:
-                    insert_query = "INSERT INTO AddressChanges (ID, Address) VALUES (%s, %s)"
+                    insert_query = """
+                        INSERT INTO AddressChanges (ID, Address) 
+                        VALUES (%s, %s)
+                    """
                     self.cur.execute(insert_query, (iD, Addr))
                     self.conn.commit()
-                
+
         except Exception as e:
             print("An error occurred:", e)
 
     def get_freq(self, appliesTo, value, country=None):
         """
-        Pass in a char for 'appliesTo' ('C' / 'A' / 'S') and a string for 'value'.
+        Pass in a char for 'appliesTo' ('C' / 'A' / 'S' / 'O') and a string for 'value'.
 
         This function will then find the number of occurrences of that string in the customer database.
         """
@@ -260,6 +280,7 @@ class DatabaseManager:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value,))
             elif appliesTo == 'S':
                 if country is None:
+                    #TODO: changes to below line AND account for null
                     self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,))
                 else:
                     self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (value, country))
