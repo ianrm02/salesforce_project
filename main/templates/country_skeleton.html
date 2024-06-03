@@ -93,9 +93,10 @@
         <td><!--Populate the dropdown based on standardized country-->
           <form action="" method="get">
             <select name="states" id="states">
-              <option disabled selected value> -- select an country -- </option>
+              <option disabled value> -- select an country -- </option>
               {% for drop_id in dropdown_ids %}
-              <option value={{drop_id}}>{{drop_id}}</option>
+              <option value={{ drop_id }}
+               {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
               {% endfor %}
             </select>
           </form>
@@ -112,6 +113,8 @@
   <button onclick="redirect()">Next page</button>
 
   <script>
+    let affected_ccodes = '{{ aff_country_codes }}';
+    var change_ids = '{{ change_ids }}';
     var acc = document.getElementsByClassName("accordion");
     var i;
 
@@ -131,6 +134,17 @@
       window.location.href = "{{url_for('state_approve')}}"
     }
 
+    function fillAccordion(ccode){
+      var table = document.getElementById(ccode);
+      for(let i = 0; i < change_ids.length; i++){
+        let row = table.insertRow();
+        let cfield = row.insertCell(0);
+        cfield.innerHTML = change_ids[i][1];
+        let occs = row.insertCell(1);
+        occs.innerHTML = change_ids[i][3];
+      }
+    }
+
     function selectAll(table, box) {
         for (var bxs=table.getElementsByTagName('input'), j=bxs.length; j--; ) {
          if (bxs[j].type == "checkbox") {
@@ -141,7 +155,7 @@
 
     $(document).ready(function(){
       $('[type="checkbox"]').each(function(){
-        if ($(this).attr('value')==='100') {
+        if ($(this).attr('value')=='100') {
           $(this).attr("checked","checked");
         }
       })
