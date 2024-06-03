@@ -96,17 +96,17 @@
           </td>
           <td><!--Populate the dropdown based on standardized country-->
             <form action="" method="get">
-              <select name="states" id="states">
-                <option disabled selected value> -- select a country -- </option>
+              <select id="cdropdown" onchange = "repopulate_statedropdown(ccode)">
+                <option disabled value> -- select a country -- </option>
                 {% for drop_id in cdropdown_ids %}
-                <option value={{drop_id}}>{{drop_id}}</option>
+                <option {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
                 {% endfor %}
               </select>
               <form action="" method="get">
-                <select name="states" id="states">
-                  <option disabled selected value> -- select a state -- </option>
+                <select id="sdropdown{{ccode}}">
+                  <option disabled value> -- select a state -- </option>
                   {% for drop_id in sdropdown_ids[ccode] %}
-                  <option value={{drop_id}}>{{drop_id}}</option>
+                  <option {% if drop_id == scode %} selected {% endif %}>{{drop_id}}</option>
                   {% endfor %}
                 </select>
               </form>
@@ -126,6 +126,7 @@
 
   <script>
     var acc = document.getElementsByClassName("accordion");
+    var sdropdown_ids = {"US":["TX", "DE"], "AR":["ER"]};
     var i;
 
     for (i = 0; i < acc.length; i++) {
@@ -152,6 +153,11 @@
       }
     }
 
+    function repopulate_statedropdown(ccode){
+      var sdropdown = document.getElementById("sdropdown{{ccode}}");
+      sdropdown.options[1].innerHTML = "HEY";
+      console.log("HEY");
+    }
     // Auto select feature
     $(document).ready(function(){
       $('[type="checkbox"]').each(function(){

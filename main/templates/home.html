@@ -1,12 +1,70 @@
 <!DOCTYPE html>
 <html>
-<head>
-</head>
-<body>
-<style>
-</style>
 
-<h1>Press button to start country and state conversion</h1>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: "Lato", sans-serif;
+    }
+
+    p {
+      font-family: "Lato", sans-serif;
+    }
+
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td,
+    th {
+      border: 1px solid #dddddd;
+      text-align: center;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+    .alert {
+      padding: 15px;
+      margin: 5px;
+      color: #970020;
+      background-color: #ffd5de;
+    }
+    .panel {
+      padding: 0 18px;
+      display: none;
+      background-color: white;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<h1>Welcome to the ISO Conversion Tool</h1>
+Please enter your information to begin processing. You will be notified when your new data is ready for review.
+<div>
+  {% for message in get_flashed_messages() %}
+    <div class="alert">{{ message }}</div>
+  {% endfor %}
+</div>
+<form id="userform" method="post">
+  <label for="dbname">Database Name:</label><br>
+  <input type="text" name="dbname">
+  <br>
+  <label for="username">User Name:</label><br>
+  <input type="text" name="username">
+  <br>
+  <label for="password">Password:</label><br>
+  <input type="text" name="password">
+  <br>
+  <label for="host">Host URL:</label><br>
+  <input type="text" id="host" name="host">
+  <br><br>
+  <input type="submit" value="Submit">
+</form> 
 <button onclick="redirect()">Next page</button>
 <script>
     function redirect() {
