@@ -40,17 +40,29 @@ def home():
 @app.route("/country_approve") # define path component
 def country_approve():
     #TODO loading screen to show it's in processing
-    country_changes = clfApp.db_handler.get_all_from_table("CountryChanges")
+    country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")].sort(key=lambda x: x[3])
+    #Sorted by confidence
+
+    #TODO logic to get from changes to the format needed bby the render_template()
+
     return render_template('country_skeleton.html', aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = change_ids)
 
 @app.route("/state_approve")
 def state_approve():
-    state_changes = clfApp.db_handler.get_all_from_table("StateChanges")
+    state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")].sort(key=lambda x: x[3])
+    #Sorted by confidence
+
+    #TODO logic to get from changes to the format needed bby the render_template()
+
     return render_template('state_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = change_ids)
 
 @app.route("/address_approve")
 def address_approve():
-    address_changes = clfApp.db_handler.get_all_from_table("AddressChanges")
+    address_changes = [item for item in clfApp.db_handler.get_all_from_table("AddressChanges")].sort(key=lambda x: x[3])
+    #Sorted by confidence
+
+    #TODO logic to get from changes to the format needed bby the render_template()
+
     return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, address_info = address_batch)
 
 @app.route("/statistics")
