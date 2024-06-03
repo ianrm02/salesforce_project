@@ -4,57 +4,7 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <style>
-    body {
-      font-family: "Lato", sans-serif;
-    }
-
-    p {
-      font-family: "Lato", sans-serif;
-    }
-
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td,
-    th {
-      border: 1px solid #dddddd;
-      text-align: center;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
-
-    .accordion {
-      background-color: #eee;
-      color: #444;
-      cursor: pointer;
-      padding: 18px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 15px;
-      transition: 0.4s;
-    }
-
-    .active,
-    .accordion:hover {
-      background-color: #ccc;
-    }
-
-    .panel {
-      padding: 0 18px;
-      display: none;
-      background-color: white;
-      overflow: hidden;
-    }
-  </style>
+  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
 <body onload="autoSelect(100, this)">
@@ -96,7 +46,7 @@
             <select name="states" id="states">
               <option disabled value> -- select an country -- </option>
               {% for drop_id in dropdown_ids %}
-              <option value={{ drop_id }}>
+              <option value={{ drop_id }}
                 {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
               {% endfor %}
             </select>
@@ -111,60 +61,8 @@
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
 
-  <button onclick="redirect()">Next page</button>
-
-  <script>
-    let affected_ccodes = '{{ aff_country_codes }}';
-    var change_ids = '{{ change_ids }}';
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-
-    for (i = 0; i < acc.length; i++) {
-      acc[i].addEventListener("click", function () {
-        this.classList.toggle("active");
-        var panel = this.nextElementSibling;
-        if (panel.style.display === "block") {
-          panel.style.display = "none";
-        } else {
-          panel.style.display = "block";
-        }
-      });
-    }
-
-    function redirect() {
-      alert("{{url_for('state_approve')}}");
-      window.location.href = "{{url_for('state_approve')}}"
-    }
-
-    function fillAccordion(ccode) {
-      var table = document.getElementById(ccode);
-      for (let i = 0; i < change_ids.length; i++) {
-        let row = table.insertRow();
-        let cfield = row.insertCell(0);
-        cfield.innerHTML = change_ids[i][1];
-        let occs = row.insertCell(1);
-        occs.innerHTML = change_ids[i][3];
-      }
-    }
-
-    function selectAll(table, box) {
-      for (var bxs = table.getElementsByTagName('input'), j = bxs.length; j--;) {
-        if (bxs[j].type == "checkbox") {
-          bxs[j].checked = box.checked;
-        }
-      }
-    }
-
-    // Auto select feature
-    $(document).ready(function () {
-      $('[type="checkbox"]').each(function () {
-        if ($(this).attr('value') == '100') {
-          $(this).attr("checked", "checked");
-        }
-      })
-    })
-  </script>
+  <button onclick="redirect('state_approve')">Next page</button>
 
 </body>
-
+<script type="text/javascript" src="/static/javascript/approval.js"></script>
 </html>
