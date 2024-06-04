@@ -36,6 +36,7 @@ def home():
             flash('Please fill out all fields')
         else:
             clfApp.load_db_from_payload((dbname, username, password, host))
+            clfApp.run()
 
     return render_template('home.html')
 
@@ -46,9 +47,6 @@ def country_approve():
     country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")]
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
-
-    print(country_changes)
-
 
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
@@ -67,9 +65,6 @@ def country_approve():
 def state_approve():
     fetchresults = clfApp.db_handler.get_all_from_table("StateChanges")
 
-    for res in fetchresults:
-        print(res)
-
     state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")]
     state_changes.sort(key=lambda x: x[5]) 
     state_changes.reverse() #highest to lowest confidence
@@ -87,12 +82,13 @@ def state_approve():
     affected_ccodes = list(set([item[5] for item in state_change_ids]))
     affected_scodes = {country: [] for country in affected_ccodes}
 
-    for item in state_change_ids: #for each change
+    for item in state_change_ids: #for each change 
         if item[2] not in affected_scodes[item[5]]: #if current state isnt represented yet in its country bucket
             affected_scodes[item[5]].append(item[2]) #append the state to the country bucket
 
     for country, states in affected_scodes.items():
-        print(affected_scodes)
+        tmp_states = sorted(states)
+        affected_scodes[country] = tmp_states
 
     return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, change_ids = state_change_ids)
 
