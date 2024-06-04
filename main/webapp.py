@@ -11,6 +11,8 @@ app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
 clfApp = ClassifierApp()
 
+conf_threshold = 90
+
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
 state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']} #TODO
 affected_scodes = {'AR':['ER'], 'US':['CO']} #TODO
@@ -52,7 +54,7 @@ def country_approve():
 
     country_change_ids = [['C'] + code for code in country_changes]
 
-    return render_template('country_skeleton.html', aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = country_change_ids)
+    return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = country_change_ids)
 
 
 @app.route("/state_approve")
@@ -83,7 +85,7 @@ def state_approve():
     state_change_ids = [['S', code[2], code[3], code[4], code[5], code[1]] for code in state_changes]
     #Should be a list of lists wher each sublist has a C/S/A, an old state, a new state, a frequency, a confidence and a new country
 
-    return render_template('state_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
+    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
 
 
 @app.route("/address_approve")
