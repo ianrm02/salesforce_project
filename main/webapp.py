@@ -59,45 +59,50 @@ def country_approve():
 
 @app.route("/state_approve")
 def state_approve():
+    fetchresults = clfApp.db_handler.get_all_from_table("StateChanges")
+
+    for res in fetchresults:
+        print(res)
+
     state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")]
-    state_changes.sort(key=lambda x: x[3])
-    #Sorted by confidence
-    #Each address has [ID] [NewCo] [OldSt] [New] [Freq] [Conf]
+    state_changes.sort(key=lambda x: x[5]) 
+    state_changes.reverse() #highest to lowest confidence
 
-    #TODO logic to get from changes to the format needed by the render_template()
+    #Each address has [ID] [NewCo] [OldSt] [NewSt] [Freq] [Conf]
 
-    affected_ccodes = list(set([code[1] for code in state_changes if code[1] is not None]))
-    affected_ccodes.sort()
-    affected_ccodes.append('None')
+    state_change_ids = list()
 
-    scodes_raw = list(set([code[3] for code in state_changes]))
+    #state_change_id format for the render_template() must be S, OldS, newS, freq, conf, newC
+
+    for change in state_changes:
+        change[3] = change[3].strip()
+        state_change_ids.append(['S', change[2], change[3], change[4], change[5], change[1]])
+
+    affected_ccodes = list(set([item[5] for item in state_change_ids]))
     affected_scodes = {country: [] for country in affected_ccodes}
 
-    for state_code in scodes_raw:
-        for country, states in common_state_alternates.COMMON_STATE_ALTERNATES.items():
-            print(state_code in states.keys(), state_code, states.keys())
-            if state_code.strip() in states.keys():
-                if country in affected_ccodes:
-                    affected_scodes[country].append(state_code)
+    for item in state_change_ids: #for each change
+        if item[2] not in affected_scodes[item[5]]: #if current state isnt represented yet in its country bucket
+            affected_scodes[item[5]].append(item[2]) #append the state to the country bucket
+    
 
-    print(affected_scodes)
-
-    state_change_ids = [['S', code[2], code[3], code[4], code[5], code[1]] for code in state_changes]
-    #Should be a list of lists wher each sublist has a C/S/A, an old state, a new state, a frequency, a confidence and a new country
 
     return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
 
 
 @app.route("/address_approve")
 def address_approve():
-    address_changes = [item for item in clfApp.db_handler.get_all_from_table("AddressChanges")]
-    address_changes.sort(key=lambda x: x[3])
+    #address_changes = [item for item in clfApp.db_handler.get_all_from_table("AddressChanges")]
+    #address_changes.sort(key=lambda x: x[3])
     #Sorted by confidence
 
     #TODO logic to get from changes to the format needed bby the render_template()
 
-    affected_ccodes = list(set([code[1] for code in address_changes]))
-    affected_scodes = list(set([code[1] for code in address_changes]))
+    #affected_ccodes = list(set([code[1] for code in address_changes]))
+    #affected_scodes = list(set([code[1] for code in address_changes]))
+
+    affected_ccodes = []
+    affected_scodes = []
 
     return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, address_info = address_batch)
 
