@@ -4,6 +4,7 @@ from os.path import isfile, join
 from flask import Flask, render_template, request, flash, url_for
 from ClassifierApp import ClassifierApp
 import config
+import common_state_alternates
 
 # create instance of flask
 app = Flask(__name__, static_folder='static', template_folder='templates')
@@ -45,8 +46,6 @@ def country_approve():
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
-    print(country_changes)
-
     affected_ccodes = list(set([code[1] for code in country_changes]))
     affected_ccodes.sort()
 
@@ -60,13 +59,31 @@ def state_approve():
     state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")]
     state_changes.sort(key=lambda x: x[3])
     #Sorted by confidence
-    #Each address has [Old] [New] [Freq] [Conf]
+    #Each address has [ID] [NewCo] [OldSt] [New] [Freq] [Conf]
 
-    #TODO logic to get from changes to the format needed bby the render_template()
+    #TODO logic to get from changes to the format needed by the render_template()
 
-    print(state_changes)
+    affected_ccodes = list(set([code[1] for code in state_changes if code[1] is not None]))
+    affected_ccodes.sort()
+    affected_ccodes.append('None')
 
-    return render_template('state_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = change_ids)
+    scodes_raw = list(set([code[3] for code in state_changes]))
+    affected_scodes = {country: [] for country in affected_ccodes}
+
+    for state_code in scodes_raw:
+        for country, states in common_state_alternates.COMMON_STATE_ALTERNATES.items():
+            print(state_code in states.keys(), state_code, states.keys())
+            if state_code.strip() in states.keys():
+                if country in affected_ccodes:
+                    affected_scodes[country].append(state_code)
+
+    print(affected_scodes)
+
+    state_change_ids = [['S', code[2], code[3], code[4], code[5], code[1]] for code in state_changes]
+
+    #TODO state_dropdown_ids
+
+    return render_template('state_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
 
 
 @app.route("/address_approve")
@@ -76,6 +93,9 @@ def address_approve():
     #Sorted by confidence
 
     #TODO logic to get from changes to the format needed bby the render_template()
+
+    affected_ccodes = list(set([code[1] for code in address_changes]))
+    affected_scodes = list(set([code[1] for code in address_changes]))
 
     return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, address_info = address_batch)
 
