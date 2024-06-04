@@ -60,7 +60,7 @@ def country_approve():
 
     print(affected_ccodes)
 
-    country_change_ids = [['C'] + code for code in country_changes]
+    country_change_ids = [['C'] + code[1:] for code in country_changes]
 
     return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = country_change_ids)
 
