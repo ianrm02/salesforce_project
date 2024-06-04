@@ -282,7 +282,7 @@ class DatabaseManager:
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value,))
             elif appliesTo == 'S':
                 if country is None:
-                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,)) #potential bug here as what if country is null?
+                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,)) #TODO: potential bug here as what if country is null?
                 else:
                     self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (value, country))
             elif appliesTo == 'A':
