@@ -46,6 +46,7 @@ def country_approve():
     #TODO loading screen to show it's in processing
     country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")]
     country_changes.sort(key=lambda x: x[3])
+    country_changes.reverse()
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
@@ -84,8 +85,11 @@ def state_approve():
     for item in state_change_ids: #for each change
         if item[2] not in affected_scodes[item[5]]: #if current state isnt represented yet in its country bucket
             affected_scodes[item[5]].append(item[2]) #append the state to the country bucket
-    
 
+    for country, states in affected_scodes.items():
+        print(states)
+        tmp_states = sorted(states)
+        affected_scodes[country] = tmp_states
 
     return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
 
