@@ -6,10 +6,11 @@ from ClassifierApp import ClassifierApp
 import config
 import common_state_alternates
 
+clfApp = ClassifierApp()
+
 # create instance of flask
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
-clfApp = ClassifierApp()
 
 conf_threshold = 90
 
@@ -36,7 +37,8 @@ def home():
             flash('Please fill out all fields')
         else:
             clfApp.load_db_from_payload((dbname, username, password, host))
-            clfApp.run()
+
+    clfApp.run()
 
     return render_template('home.html')
 
