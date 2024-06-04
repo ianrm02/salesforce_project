@@ -15,7 +15,6 @@ conf_threshold = 90
 
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
 state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']} #TODO
-affected_scodes = {'AR':['ER'], 'US':['CO']} #TODO
 
 address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
 # LIST MUST BE SORTED BY CONFIDENCE BEFORE PASSED TO PAGE
@@ -47,11 +46,17 @@ def country_approve():
     country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")]
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
+
+    print(country_changes)
+
+
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
     affected_ccodes = list(set([code[1] for code in country_changes]))
     affected_ccodes.sort()
+
+    print(affected_ccodes)
 
     country_change_ids = [['C'] + code for code in country_changes]
 
@@ -87,11 +92,9 @@ def state_approve():
             affected_scodes[item[5]].append(item[2]) #append the state to the country bucket
 
     for country, states in affected_scodes.items():
-        print(states)
-        tmp_states = sorted(states)
-        affected_scodes[country] = tmp_states
+        print(affected_scodes)
 
-    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
+    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, change_ids = state_change_ids)
 
 
 @app.route("/address_approve")
