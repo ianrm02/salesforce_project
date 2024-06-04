@@ -6,10 +6,11 @@ from ClassifierApp import ClassifierApp
 import config
 import common_state_alternates
 
+clfApp = ClassifierApp()
+
 # create instance of flask
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
-clfApp = ClassifierApp()
 
 conf_threshold = 90
 
@@ -36,7 +37,8 @@ def home():
             flash('Please fill out all fields')
         else:
             clfApp.load_db_from_payload((dbname, username, password, host))
-            clfApp.run()
+
+    clfApp.run()
 
     return render_template('home.html')
 
@@ -48,15 +50,17 @@ def country_approve():
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
 
+    print(country_changes)
+
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
-    affected_ccodes = list(set([code[1] for code in country_changes]))
+    affected_ccodes = list(set([code[2] for code in country_changes]))
     affected_ccodes.sort()
 
     print(affected_ccodes)
 
-    country_change_ids = [['C'] + code for code in country_changes]
+    country_change_ids = [['C'] + code[1:] for code in country_changes]
 
     return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = country_change_ids)
 

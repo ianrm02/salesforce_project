@@ -2,7 +2,7 @@ import pg8000
 import time
 import csv
 import config
-class DatabaseManager:
+class DatabaseManager():
     def __init__(self, *, db_name=config.DBNAME, username=config.USER, pwd=config.PASSWORD, host=config.HOST):
         """
         constructor for DB manager
@@ -359,7 +359,7 @@ def test_setup():
     tester.insert_address("2107 Very Cool Rd.", "Texas", "USofAmerica")
     tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
     #print(tester.get_all_from_table("Addresses"))
-    
+
 
 def test_get_freq():
     tester = DatabaseManager()

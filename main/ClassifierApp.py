@@ -9,13 +9,14 @@ class ClassifierApp(object):
     _entries_processed = 0
     _batch_size = 0
     _payload = None
+    db_handler = DatabaseManager()
 
     def __init__(self):
         self.clf = Classifier()
         self._batch_size = config.BATCH_SIZE
         #TODO implement custom payload loading
         self.db_handler = DatabaseManager()
-        
+        self._total_db_size = self.db_handler.get_db_size()
 
 
     def process_entries(self):
