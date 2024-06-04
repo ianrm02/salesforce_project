@@ -50,10 +50,12 @@ def country_approve():
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
 
+    print(country_changes)
+
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
-    affected_ccodes = list(set([code[1] for code in country_changes]))
+    affected_ccodes = list(set([code[2] for code in country_changes]))
     affected_ccodes.sort()
 
     print(affected_ccodes)
