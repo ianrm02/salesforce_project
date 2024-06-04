@@ -3,11 +3,10 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
-<body onload="autoSelect(100, this)">
+<body>
 
   <h2>Approve Country Entries</h2>
   Our system has identified these free-text country spellings in your database.<br>
@@ -26,8 +25,7 @@
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id=checkall name="checkall"
-            onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+        <th>Approved<input type="checkbox" id='approveall{{ccode}}' onclick="selectAll(ccode)"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -38,7 +36,7 @@
         <td><!--Confidence variable here--> {{change_id[4]}}%</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" id=ccode name="approve" value={{change_id[4]}} class=ccode>
+            <input type="checkbox" tag='check{{ccode}}' class="checkboxes" {% if change_id[4] >= conf_threshold %} checked {%endif%}>
           </form>
         </td>
         <td><!--Populate the dropdown based on standardized country-->
