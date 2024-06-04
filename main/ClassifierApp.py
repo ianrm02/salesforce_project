@@ -15,6 +15,7 @@ class ClassifierApp(object):
         self._batch_size = config.BATCH_SIZE
         #TODO implement custom payload loading
         self.db_handler = DatabaseManager()
+        
 
 
     def process_entries(self):

@@ -56,17 +56,18 @@ function repopulate_statedropdown(ccode, fieldstring){
 function selectAll(ccode){
   //Auto select feature
   var newCheckVal = document.getElementById("approveall"+ccode).checked;
-  var checks = document.getElementsByTagName("check"+ccode);
+  var checks = document.getElementsByName("check"+ccode);
+
   for(var i = 0; i < checks.length; i++){
     checks[i].checked = newCheckVal;
   }
 }
 
-// // Auto select feature
-// $(document).ready(function(){
-//   $('[type="checkbox"]').each(function(){
-//     if ($(this).attr('value')==='100') {
-//       $(this).attr("checked","checked");
-//     }
-//   })
-// })
+// function checkApproved(){
+//   var tables = document.getElementsByTagName("approveall"+ccode).checked;
+//   var checks = document.getElementsByName("check"+ccode);
+
+//   for(var i = 0; i < checks.length; i++){
+//     checks[i].checked = newCheckVal;
+//   }
+// }

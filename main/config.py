@@ -19,7 +19,7 @@ BATCH_SIZE = 10
 #database config
 DBNAME = 'bobby_db'
 USER = 'postgres'
-PASSWORD = 'bobby'
+PASSWORD = 'p@p3rs0cc3rPos'
 HOST = 'localhost'
 
 STATED_COUNTRIES = ['AU', 'BR', 'CA', 'CN', 'IE', 'IN', 'IT', 'JP', 'MX', 'US']
