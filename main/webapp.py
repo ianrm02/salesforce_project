@@ -14,6 +14,7 @@ clfApp = ClassifierApp()
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
 state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']} #TODO
 affected_scodes = {'AR':['ER'], 'US':['CO']} #TODO
+
 address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
 # LIST MUST BE SORTED BY CONFIDENCE BEFORE PASSED TO PAGE
 
@@ -80,8 +81,7 @@ def state_approve():
     print(affected_scodes)
 
     state_change_ids = [['S', code[2], code[3], code[4], code[5], code[1]] for code in state_changes]
-
-    #TODO state_dropdown_ids
+    #Should be a list of lists wher each sublist has a C/S/A, an old state, a new state, a frequency, a confidence and a new country
 
     return render_template('state_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, change_ids = state_change_ids)
 
