@@ -28,7 +28,7 @@
           <th>State Field</th>
           <th>Occurences</th>
           <th>Alpha2 Confidence</th>
-          <th>Approved<input type="checkbox" id='approveall{{ccode}}' class="approveall" onclick="selectAll('{{ccode}}')"></th>
+          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton()"></th>
           <th>Custom</th>
         </tr>
         <!--Populate table based on database-->
@@ -39,7 +39,7 @@
           <td><!--Confidence variable here--> {{change_id[4]}}</td>
           <td><!--Custom Dropdown here-->
             <form action="" method="get">
-              <input type="checkbox" name='check{{ccode}}' {% if change_id[4] >= conf_threshold %} 
+              <input type="checkbox" name='check{{scode}}{{ccode}}' onchange="checkApproved()" {% if change_id[4] >= conf_threshold %} 
               checked {%endif%}>
             </form>
           </td>

@@ -53,10 +53,10 @@ function repopulate_statedropdown(ccode, fieldstring) {
 
 // Allows for "Approve All" feature called by upper checkbox
 // Should only apply to all in the accordion(matching country code in the tag)
-function selectAll(ccode) {
+function selectAll(code) {
   //Auto select feature
-  var newCheckVal = document.getElementById("approveall" + ccode).checked;
-  var checks = document.getElementsByName("check" + ccode);
+  var newCheckVal = document.getElementById("approveall" + code).checked;
+  var checks = document.getElementsByName("check" + code);
 
   for (var i = 0; i < checks.length; i++) {
     checks[i].checked = newCheckVal;
