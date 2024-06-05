@@ -7,9 +7,10 @@ import config
 import common_state_alternates
 
 # create instance of flask
+clfApp = ClassifierApp()
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
-clfApp = ClassifierApp()
+#clfApp = ClassifierApp()
 
 conf_threshold = 90
 

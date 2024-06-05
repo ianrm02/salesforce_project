@@ -38,13 +38,24 @@ class DatabaseHandlerTestCase(unittest.TestCase):
     """
         - Proper Connection
         - Queries are producing expected outputs
+
+        Before running make sure you have a database called "test_db" created in postgres.
+        You can do this be running 'CREATE DATABASE test_db;' from the postgres shell
     """
     def setUp(self):
-        self.db_handler = DatabaseManager()
+        self.db_handler = DatabaseManager(db_name='test_db')
+        self.db_handler.setup_test_database()
 
 
     def testDatabseConnectionEstablished(self):
-        pass
+        # Testing if no connection made when a bad database is passed        
+        with self.assertRaises(pg8000.DatabaseError):
+            self.db_handler = DatabaseManager(db_name='fake_db')
+
+        # Testing if connection made when a good database is passed
+        self.db_handler = DatabaseManager(db_name='test_db')
+        self.assertIsNot(self.db_handler.conn, None)
+        self.assertIsNot(self.db_handler.cur, None)
 
 
     def test_db_insert_address(self):
@@ -64,11 +75,13 @@ class DatabaseHandlerTestCase(unittest.TestCase):
     
 
     def test_get_db_size(self):
-        pass
+        self.assertEqual(self.db_handler.get_db_size(), 377)
 
 
-    def test_get_freq(self):
-        pass
+    def test_get_freq(self): #TODO: make this more robust
+        self.assertEqual(self.db_handler.get_freq('C', 'US'), 59)
+        self.assertEqual(self.db_handler.get_freq('S', 'CA'), 3)
+        self.assertEqual(self.db_handler.get_freq('A', '1545 liona street honolulu'), 1)
 
 
     def test_store_temp_values(self):
@@ -76,6 +89,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
 
     def test_search_db(self):
+        
         pass
 
 

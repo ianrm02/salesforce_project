@@ -8,6 +8,8 @@ class DatabaseManager:
         constructor for DB manager
         """
         try:
+            self.cur = None
+            self.conn = None
             self.conn = pg8000.connect(
                 database=db_name,
                 user=username,
@@ -16,14 +18,14 @@ class DatabaseManager:
             )
             self.cur = self.conn.cursor()
             self.LAST_ID = 1
-        except Exception as e:
-            raise Exception(f"Failed to connect to the database: {e}")
+        except pg8000.DatabaseError as e: #TODO: comnfirm this is the right functionality
+            raise pg8000.DatabaseError(f"Failed to connect to the database: {e}")
         
     
     def __del__(self):
-        if hasattr(self, 'cur') and self.cur is not None:
+        if self.cur is not None:
             self.cur.close()
-        if hasattr(self, 'conn') and self.conn is not None:
+        if self.conn is not None:
             self.conn.close()
 
     def insert_address(self, address, state, country):
@@ -156,20 +158,20 @@ class DatabaseManager:
         );""")
         self.conn.commit()
 
-    def setup_default_database(self):
+    def setup_test_database(self):
         """
         sets default/expected db shape
         """
         self.drop_all_tables()
         self.address_table()
-        self.upload_csv_entries("./data/377_items.txt")
+        self.upload_csv_entries("./data/test_data.txt")
     
     def setup_database_extension(self):
         self.country_changes_table()
         self.state_changes_table()
         self.address_changes_table()
 
-    def upload_n_entries(self, n):
+    def upload_n_entries(self, n): #TODO: delete this outdated method
         """
         upload n random entries to the database
         """
@@ -213,8 +215,8 @@ class DatabaseManager:
         NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
         OccCo = self.get_freq('C', OldCo)
         OccSt = self.get_freq('S', OldSt, OldCo) #changed from NewCo
+        #TODO: I can just make this an if statement that separates the necessary cases 
         #TODO: THIS IS STILL NOT RIGHT, PLEASE WRITE THIS OUT ON THE BOARD
-        #['US', 90, 'CA', 50, 116, '23 239 NORTH ROBERTSON BOULEVARD BEVERLY HILLS', 'CA 90211', 'UNITED STATES']
 
         try:
             # Country table
@@ -300,31 +302,34 @@ class DatabaseManager:
             print(f"An error occurred: {e}")
             return 0
         
-    #TODO: create this function
-    def search_db(self, address, state, country):
-        # if only one value passed in
-        # then return
-        none_count = sum(val is None for val in [address, state, country])
-        if (none_count >= 2):
-            return "Error"
+    def search_db(self, infoTuple):
+        """
+        Pass in a tuple with
+
+        When writing this I assumed errors would be handled before coming here (ie nothing will happen if you only pass me a state or country)
+        """
+
+        address, state, country = infoTuple;
 
         match (address, state, country):
+            # if only address
+            case(_, None, None):
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (address, ))
             # else if state and country
-            # search state and country
             case(None, _, _):
-                pass
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (state, country))
             # else if address and country
-            # search address and country
             case(_, None, _):
-                pass
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND country=%s;", (address, country))
             # else if address and state
-            # search address and state
             case(_, _, None):
-                pass
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND state=%s;", (address, state))
             # else if all
-            # search all
             case (_, _, _):
-                pass
+                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND state=%s AND country=%s;", (address, state, country))
+
+        results = self.cur.fetchall()
+        return results
 
     def get_all_from_table(self, table_name):
         """
@@ -345,26 +350,3 @@ class DatabaseManager:
             return results
         except Exception as e:
             print("An error occurred:", e)
-
-def test_setup():
-    tester = DatabaseManager()
-    tester.setup_default_database()
-    tester.setup_database_extension()
-    print(tester.get_db_size())
-    print(tester.get_freq('C', 'IN'))
-    tester.insert_address("1234 Taj Mahal Ln.", "New Dehli", "Indania")
-    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
-    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
-    tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
-    tester.insert_address("2107 Very Cool Rd.", "Texas", "USofAmerica")
-    tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
-    #print(tester.get_all_from_table("Addresses"))
-    
-
-def test_get_freq():
-    tester = DatabaseManager()
-    print(tester.get_freq('S', 'CA', 'US'))
-    print(tester.get_freq('S', 'CA'))
-
-#test_setup()
-#test_get_freq()
