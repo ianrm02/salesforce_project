@@ -85,7 +85,7 @@
         <!--Populate table based on database-->
         {% for add_case in address_info if loop.index < 10 and add_case[0]==ccode and add_case[1]==scode %} <tr>
           <td><!--String variable here--> {{add_case[2]}}</td>
-          <td><!--Confidence variable here--> {{add_case[3]}}%</td>
+          <td><!--Confidence variable here--> {{add_case[3]}}</td>
           <td><!--Custom Dropdown here-->
             <form action="" method="get">
               <input type="checkbox" id=ccode name="approve" value={{add_case[3]}} class=ccode>
