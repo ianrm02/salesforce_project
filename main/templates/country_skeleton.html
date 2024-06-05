@@ -25,7 +25,7 @@
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id='approveall{{ccode}}' onclick="selectAll('{{ccode}}')"></th>
+        <th>Approved<input type="checkbox" id='approveall{{ccode}}' class="approveall" onclick="selectAll('{{ccode}}')" onchange="enableButton()"></th>
         <th>Custom</th>
       </tr>
       <!--Populate table based on database-->
@@ -36,7 +36,7 @@
         <td><!--Confidence variable here--> {{change_id[4]}}</td>
         <td><!--Custom Dropdown here-->
           <form action="" method="get">
-            <input type="checkbox" name='check{{ccode}}' {% if change_id[4] >= conf_threshold %} 
+            <input type="checkbox" name='check{{ccode}}' onchange="checkApproved()" {% if change_id[4] >= conf_threshold %} 
             checked {%endif%}>
           </form>
         </td>
@@ -60,7 +60,7 @@
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
 
-  <button onclick="redirect('state_approve')">Next page</button>
+  <button id="nextPage" onclick="redirect('state_approve')" disabled>Next page</button>
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
