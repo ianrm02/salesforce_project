@@ -357,7 +357,7 @@ def test_setup():
     tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
     tester.store_temp_values(("IN", 3, "ND", 5, 378, "1234 Taj Mahal Ln.", "New Dehli", "Indania"))
     tester.insert_address("2107 Very Cool Rd.", "Texas", "USofAmerica")
-    tester.store_temp_values(("UA", 100, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
+    tester.store_temp_values(("UA", 5, None, 0, 362, "kosmonavtov4a, Odessa", "", "Ukraina"))
     #print(tester.get_all_from_table("Addresses"))
 
 
