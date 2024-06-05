@@ -12,7 +12,7 @@ clfApp = ClassifierApp()
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
 
-conf_threshold = 90
+conf_threshold = 4
 
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
 state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']} #TODO
