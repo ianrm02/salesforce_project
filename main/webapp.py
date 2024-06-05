@@ -4,7 +4,6 @@ from os.path import isfile, join
 from flask import Flask, render_template, request, flash, url_for
 from ClassifierApp import ClassifierApp
 import config
-import common_state_alternates
 
 clfApp = ClassifierApp()
 
@@ -15,7 +14,7 @@ app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
 conf_threshold = 4
 
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
-state_dropdown_ids = {'AR':['ER'], 'US':['CO', 'DE', 'TX']} #TODO
+state_dropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES
 
 address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
 # LIST MUST BE SORTED BY CONFIDENCE BEFORE PASSED TO PAGE
@@ -50,15 +49,11 @@ def country_approve():
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
 
-    print(country_changes)
-
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
 
     affected_ccodes = list(set([code[2] for code in country_changes]))
     affected_ccodes.sort()
-
-    print(affected_ccodes)
 
     country_change_ids = [['C'] + code[1:] for code in country_changes]
 
@@ -111,7 +106,7 @@ def address_approve():
     affected_ccodes = []
     affected_scodes = []
 
-    return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, cstate_ids = state_dropdown_ids, address_info = address_batch)
+    return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES, cstate_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES, address_info = address_batch)
 
 
 @app.route("/statistics")
