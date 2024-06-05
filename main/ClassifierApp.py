@@ -9,12 +9,14 @@ class ClassifierApp(object):
     _entries_processed = 0
     _batch_size = 0
     _payload = None
+    db_handler = DatabaseManager()
 
     def __init__(self):
         self.clf = Classifier()
         self._batch_size = config.BATCH_SIZE
         #TODO implement custom payload loading
         self.db_handler = DatabaseManager()
+        self._total_db_size = self.db_handler.get_db_size()
 
 
     def process_entries(self):
@@ -49,15 +51,15 @@ class ClassifierApp(object):
             #print(f"{mappings[4]} {mappings[5]} {mappings[6]} {mappings[7]} NewCo:{mappings[0]} CoConf:{mappings[1]} NewSt:{mappings[2]} StConf:{mappings[3]} {"[FULLY MAPPED]" if mappings[1]+mappings[3] == 200 else ""}")
             total_country_confidence += mappings[1]
             total_state_confidence += mappings[3]
-            if mappings[1] == 100: 
+            if mappings[1] == config.MAX_CONFIDENCE: 
                 num_max_confident_country += 1
                 if mappings[0] not in config.STATED_COUNTRIES: num_fully_converted += 1
-                if mappings[3] == 100:
+                if mappings[3] == config.MAX_CONFIDENCE:
                     if mappings[0] in config.STATED_COUNTRIES: num_fully_converted += 1
 
         print("")
-        print(f"AVG COUNTRY CONF: {total_country_confidence/self._total_db_size}")
-        print(f"AVG STATE   CONF: {total_state_confidence/self._total_db_size}")
+        print(f"AVG COUNTRY CONF: {total_country_confidence/self._total_db_size:.2f}")
+        print(f"AVG STATE   CONF: {total_state_confidence/self._total_db_size:.2f}")
 
         print(f"%DB with 100% Country Confidence: {num_max_confident_country/self._total_db_size*100:.2f}")
         print("")

@@ -23,13 +23,12 @@
     {% for scode in aff_state_codes[ccode] %}
     <button class="accordion">{{scode}}</button>
     <div class="panel">
-      <table>
+      <table id="{{scode}}{{ccode}}" class="state">
         <tr>
           <th>State Field</th>
           <th>Occurences</th>
           <th>Alpha2 Confidence</th>
-          <th>Approved<input type="checkbox" id=checkall name="approve" value="approved"
-              onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton()"></th>
           <th>Custom</th>
         </tr>
         <!--Populate table based on database-->
@@ -37,10 +36,11 @@
         <tr>
           <td><!--String variable here--> {{change_id[1]}}</td>
           <td><!--Occurence variable here--> {{change_id[3]}}</td>
-          <td><!--Confidence variable here--> {{change_id[4]}}%</td>
+          <td><!--Confidence variable here--> {{change_id[4]}}</td>
           <td><!--Custom Dropdown here-->
             <form action="" method="get">
-              <input type="checkbox" tag='check{{ccode}}' class="checkboxes" {% if change_id[4] >= conf_threshold %} checked {%endif%}>
+              <input type="checkbox" name='check{{scode}}{{ccode}}' onchange="checkApproved()" {% if change_id[4] >= conf_threshold %} 
+              checked {%endif%}>
             </form>
           </td>
           <td><!--Populate the dropdown based on standardized country-->
@@ -71,7 +71,7 @@
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
 
-  <button onclick="redirect('address_approve')">Next page</button>
+  <button id="nextPage" onclick="redirect('address_approve')" disabled>Next page</button>
 
   
 

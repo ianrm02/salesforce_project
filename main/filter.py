@@ -75,7 +75,7 @@ class UserFilter(Filter):
         if parsedIn == "":
             return (None, 0)
         if self.ruleSet.__contains__(parsedIn):
-            return (self.ruleSet[parsedIn], 100)
+            return (self.ruleSet[parsedIn], config.MAX_CONFIDENCE)
         else:
             return (None, 0)
 
@@ -95,7 +95,7 @@ class CountryExactFilter(Filter):
         if parsedIn == "":
             return (None, 0)
         if self.ruleSet.__contains__(parsedIn):
-            return (self.ruleSet[parsedIn], 100)
+            return (self.ruleSet[parsedIn], config.MAX_CONFIDENCE)
         else:
             return (None, 0)
         
@@ -117,11 +117,11 @@ class StateExactFilter(Filter):
 
         if identifiedCountry:
             if self.ruleSet[probableCountry].__contains__(parsedIn):
-                return (self.ruleSet[probableCountry][parsedIn], 100)
+                return (self.ruleSet[probableCountry][parsedIn], config.MAX_CONFIDENCE)
         elif not identifiedCountry:
             for country, common_state_spellings in self.ruleSet:
                 if common_state_spellings.__contains__(parsedIn):
-                    return (self.ruleSet[country][parsedIn], 80)
+                    return (self.ruleSet[country][parsedIn], config.MAX_CONFIDENCE - 1)
                 
         #default
         return (None, 0)

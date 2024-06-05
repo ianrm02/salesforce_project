@@ -2,7 +2,7 @@ import pg8000
 import time
 import csv
 import config
-class DatabaseManager:
+class DatabaseManager():
     def __init__(self, *, db_name=config.DBNAME, username=config.USER, pwd=config.PASSWORD, host=config.HOST):
         """
         constructor for DB manager
