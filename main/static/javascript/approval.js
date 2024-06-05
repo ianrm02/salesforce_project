@@ -4,6 +4,7 @@ var jQueryScript = document.createElement('script');
 jQueryScript.setAttribute('src', 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/');
 document.head.appendChild(jQueryScript);
 activateAccordions();
+checkApproved();
 
 // Allows accordions to actually extend and function
 function activateAccordions(){
@@ -55,19 +56,27 @@ function repopulate_statedropdown(ccode, fieldstring){
 // Should only apply to all in the accordion(matching country code in the tag)
 function selectAll(ccode){
   //Auto select feature
-  var newCheckVal = document.getElementById("approveall"+ccode).checked;
-  var checks = document.getElementsByName("check"+ccode);
+  var newCheckVal = document.getElementById("approveall" + ccode).checked;
+  var checks = document.getElementsByName("check" + ccode);
 
-  for(var i = 0; i < checks.length; i++){
+  for (var i = 0; i < checks.length; i++) {
     checks[i].checked = newCheckVal;
   }
 }
 
-// function checkApproved(){
-//   var tables = document.getElementsByTagName("approveall"+ccode).checked;
-//   var checks = document.getElementsByName("check"+ccode);
+function checkApproved(){
+  var tables = document.getElementsByTagName("table");
 
-//   for(var i = 0; i < checks.length; i++){
-//     checks[i].checked = newCheckVal;
-//   }
-// }
+  for (var i = 0; i < tables.length; i++) {
+    var approveAllButton = document.getElementById("approveall" + tables[i].id);
+    var checks = document.getElementsByName("check" + tables[i].id);
+
+    for (var j = 0; j < checks.length; j++) {
+      if ((!checks[j].checked)) {
+        approveAllButton.checked = false;
+      } else {
+        approveAllButton.checked = true;
+      }
+    }
+  }
+}
