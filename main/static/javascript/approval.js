@@ -4,6 +4,7 @@ jQueryScript.setAttribute('src', 'https://ajax.googleapis.com/ajax/libs/jquery/3
 document.head.appendChild(jQueryScript);
 activateAccordions();
 checkApproved();
+displayRows();
 
 // Allows accordions to actually extend and function
 function activateAccordions() {
@@ -97,5 +98,13 @@ function enableButton() {
         nextButton.disabled = true;
       }
     }
+  }
+}
+
+function displayRows() {
+  var tables = document.getElementsByTagName("table");
+  
+  for (var i = 0; i < tables.length; i++) {
+    document.getElementById("tab" + tables[i].id).textContent = "Items: " + tables[i].rows.length;
   }
 }

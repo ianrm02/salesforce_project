@@ -18,7 +18,7 @@
   <br>
 
   {% for ccode in aff_country_codes %}
-  <button class="accordion">{{ccode}}</button>
+  <button class="accordion">{{ccode}}<span id="tab{{ccode}}" class="itemNum"></span></button>
   <div class="panel">
     <table id='{{ccode}}' class="country">
       <tr>
