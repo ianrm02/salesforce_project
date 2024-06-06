@@ -13,20 +13,23 @@
   Our system has identified these free-text country spellings in your database.<br>
   Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their
   mapping using the dropdowns.
+  <br><br>
+
+  <div class="notification">Items still pending approval</div>
 
   <input type="button" value="Export Settings" style="float: right;">
 
   <br>
 
   {% for ccode in aff_country_codes %}
-  <button class="accordion">{{ccode}}</button>
+  <button id="tab{{ccode}}" class="accordion">{{ccode}}<span id="itemNum{{ccode}}" class="itemNum"></span></button>
   <div class="panel">
     <table id='{{ccode}}' class="country">
       <tr>
         <th>Country Field</th>
         <th>Occurences</th>
         <th>Alpha2 Confidence</th>
-        <th>Approved<input type="checkbox" id='approveall{{ccode}}' class="approveall" onclick="selectAll('{{ccode}}')" onchange="enableButton()"></th>
+        <th>Approved<input type="checkbox" id='approveall{{ccode}}' class="approveall" onclick="selectAll('{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
         <th>Custom</th>
       </tr>
     </table>
@@ -35,6 +38,8 @@
 
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
+
+  <div class="notification">Items still pending approval</div>
 
   <button id="nextPage" onclick="redirect('state_approve')" disabled>Next page</button>
 
