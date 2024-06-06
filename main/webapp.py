@@ -4,6 +4,7 @@ from os.path import isfile, join
 from flask import Flask, render_template, request, flash, url_for
 from ClassifierApp import ClassifierApp
 import config
+import json
 
 clfApp = ClassifierApp()
 
@@ -14,7 +15,7 @@ app.config['SECRET_KEY'] = 'salesforcebutthesecondtime'
 
 conf_threshold = 4
 
-country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"]
+country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"].to_list()
 state_dropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES
 
 address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
@@ -58,7 +59,7 @@ def country_approve():
 
     country_change_ids = [['C'] + code[1:] for code in country_changes]
 
-    return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, dropdown_ids = country_dropdown_ids, change_ids = country_change_ids)
+    return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, cdropdown_ids = json.dumps(country_dropdown_ids), change_ids = json.dumps(country_change_ids))
 
 
 @app.route("/state_approve")

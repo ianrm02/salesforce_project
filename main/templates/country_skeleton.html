@@ -3,9 +3,10 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name = "init_data" data-change_ids = "{{change_ids|escape}}", data-cdropdown_ids ="{{ cdropdown_ids|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
+  
 </head>
-
 <body>
 
   <h2>Approve Country Entries</h2>
@@ -28,31 +29,6 @@
         <th>Approved<input type="checkbox" id='approveall{{ccode}}' class="approveall" onclick="selectAll('{{ccode}}')" onchange="enableButton()"></th>
         <th>Custom</th>
       </tr>
-      <!--Populate table based on database-->
-      {% for change_id in change_ids if change_id[2] == ccode %}
-      <tr>
-        <td><!--String variable here--> {{change_id[1]}}</td>
-        <td><!--Occurence variable here--> {{change_id[3]}}</td>
-        <td><!--Confidence variable here--> {{change_id[4]}}</td>
-        <td><!--Custom Dropdown here-->
-          <form action="" method="get">
-            <input type="checkbox" name='check{{ccode}}' onchange="checkApproved()" {% if change_id[4] >= conf_threshold %} 
-            checked {%endif%}>
-          </form>
-        </td>
-        <td><!--Populate the dropdown based on standardized country-->
-          <form action="" method="get">
-            <select name="states" id="states">
-              <option disabled value> -- select an country -- </option>
-              {% for drop_id in dropdown_ids %}
-              <option value={{ drop_id }}
-                {% if drop_id == ccode %} selected {% endif %}>{{drop_id}}</option>
-              {% endfor %}
-            </select>
-          </form>
-        </td>
-      </tr>
-      {% endfor %}
     </table>
   </div>
   {% endfor %}
@@ -64,4 +40,10 @@
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
+<!-- <script>
+  var change_ids = {{change_ids}};
+  var dropdown_ids = {{dropdown_ids}};
+  initOnPageLoad(change_ids, dropdown_ids);
+
+</script> -->
 </html>
