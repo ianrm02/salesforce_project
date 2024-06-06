@@ -5,6 +5,7 @@ document.head.appendChild(jQueryScript);
 activateAccordions();
 checkApproved();
 displayRows();
+displayNotif();
 
 // Allows accordions to actually extend and function
 function activateAccordions() {
@@ -64,26 +65,50 @@ function selectAll(code) {
   }
 }
 
+// Check approve all button if all checkmarks in table approved
 function checkApproved() {
   var tables = document.getElementsByTagName("table");
 
   for (var i = 0; i < tables.length; i++) {
     var approveAllButton = document.getElementById("approveall" + tables[i].id);
     var checks = document.getElementsByName("check" + tables[i].id);
-    var tab = document.getElementById("tab" + tables[i].id);
+    var setChecked = true;
 
     for (var j = 0; j < checks.length; j++) {
-      if ((!checks[j].checked)) {
-        approveAllButton.checked = false;
-        tab.style.backgroundColor = "#f24e6c";
-      } else {
-        approveAllButton.checked = true;
-        tab.style.backgroundColor = "";
+      if (!(checks[j].checked)) {
+        setChecked = false;
+        break;
       }
     }
+
+    approveAllButton.checked = setChecked;
   }
 }
 
+// Display notification if not all addresses approved
+function displayNotif() {
+  var tables = document.getElementsByTagName("table");
+  var approveAllList = document.getElementsByClassName("approveall");
+  var notifs = document.getElementsByClassName("notification");
+  var displayNotif = "none";
+
+  for (var i = 0; i < tables.length; i++) {
+    var tab = document.getElementById("tab" + tables[i].id);
+    var highlightTab = "";
+
+    if (!(approveAllList[i].checked)) {
+      displayNotif = "block";
+      highlightTab = "#f24e6c";
+    } 
+    tab.style.backgroundColor = highlightTab;
+  }
+
+  for (var i = 0; i < notifs.length; i++) {
+    notifs[i].style.display = displayNotif;
+  }
+}
+
+// Let user click button if all addresses are approved
 function enableButton() {
   var allCheckedList = document.getElementsByClassName("approveall");
   var nextButton = document.getElementById("nextPage");
@@ -104,10 +129,20 @@ function enableButton() {
   }
 }
 
+// Display number of items in each table
 function displayRows() {
   var tables = document.getElementsByTagName("table");
   
   for (var i = 0; i < tables.length; i++) {
     document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + tables[i].rows.length;
   }
+}
+
+// Open and close import settings form
+function openForm() {
+  document.getElementById("settingsForm").style.display = "block";
+}
+
+function closeForm() {
+  document.getElementById("settingsForm").style.display = "none";
 }

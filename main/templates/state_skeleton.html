@@ -12,23 +12,26 @@
   Our system has identified these free-text state spellings in your database.<br>
   Confirm that they have been converted to the correct ISO Alpha-2 code before moving forward, or customize their
   mapping using the dropdowns.
+  <br><br>
+
+  <div class="notification">Items still pending approval</div>
 
   <input type="button" value="Export Settings" style="float: right;">
 
   <br>
 
   {% for ccode in aff_country_codes%}
-  <button class="accordion">{{ccode}}</button>
+  <button id="tab{{ccode}}" class="accordion">{{ccode}}</button>
   <div class="panel">
     {% for scode in aff_state_codes[ccode] %}
-    <button class="accordion">{{scode}}<span id="tab{{scode}}{{ccode}}" class="itemNum"></span></button>
+    <button id="tab{{scode}}{{ccode}}" class="accordion">{{scode}}<span id="itemNum{{scode}}{{ccode}}" class="itemNum"></span></button>
     <div class="panel">
       <table id="{{scode}}{{ccode}}" class="state">
         <tr>
           <th>State Field</th>
           <th>Occurences</th>
           <th>Alpha2 Confidence</th>
-          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton()"></th>
+          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
           <th>Custom</th>
         </tr>
         <!--Populate table based on database-->
@@ -39,7 +42,7 @@
           <td><!--Confidence variable here--> {{change_id[4]}}</td>
           <td><!--Custom Dropdown here-->
             <form action="" method="get">
-              <input type="checkbox" name='check{{scode}}{{ccode}}' onchange="checkApproved()" {% if change_id[4] >= conf_threshold %} 
+              <input type="checkbox" name='check{{scode}}{{ccode}}' onchange="checkApproved(); enableButton(); displayNotif()" {% if change_id[4] >= conf_threshold %} 
               checked {%endif%}>
             </form>
           </td>
@@ -70,6 +73,8 @@
 
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
+
+  <div class="notification">Items still pending approval</div>
 
   <button id="nextPage" onclick="redirect('address_approve')" disabled>Next page</button>
 
