@@ -70,12 +70,15 @@ function checkApproved() {
   for (var i = 0; i < tables.length; i++) {
     var approveAllButton = document.getElementById("approveall" + tables[i].id);
     var checks = document.getElementsByName("check" + tables[i].id);
+    var tab = document.getElementById("tab" + tables[i].id);
 
     for (var j = 0; j < checks.length; j++) {
       if ((!checks[j].checked)) {
         approveAllButton.checked = false;
+        tab.style.backgroundColor = "#f24e6c";
       } else {
         approveAllButton.checked = true;
+        tab.style.backgroundColor = "";
       }
     }
   }
@@ -105,6 +108,6 @@ function displayRows() {
   var tables = document.getElementsByTagName("table");
   
   for (var i = 0; i < tables.length; i++) {
-    document.getElementById("tab" + tables[i].id).textContent = "Items: " + tables[i].rows.length;
+    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + tables[i].rows.length;
   }
 }

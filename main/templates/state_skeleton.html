@@ -21,7 +21,7 @@
   <button class="accordion">{{ccode}}</button>
   <div class="panel">
     {% for scode in aff_state_codes[ccode] %}
-    <button class="accordion">{{scode}}</button>
+    <button class="accordion">{{scode}}<span id="tab{{scode}}{{ccode}}" class="itemNum"></span></button>
     <div class="panel">
       <table id="{{scode}}{{ccode}}" class="state">
         <tr>
