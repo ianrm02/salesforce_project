@@ -134,7 +134,7 @@ function displayRows() {
   var tables = document.getElementsByTagName("table");
   
   for (var i = 0; i < tables.length; i++) {
-    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + tables[i].rows.length;
+    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length-1);
   }
 }
 
