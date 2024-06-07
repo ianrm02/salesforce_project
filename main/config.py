@@ -18,9 +18,9 @@ WELL_PLACED_CONFIDENCE_THRESHOLD = 4
 BATCH_SIZE = 10
 
 #database config
-DBNAME = 'bobby_db'
+DBNAME = 'test_db'
 USER = 'postgres'
-PASSWORD = 'shellberb'
+PASSWORD = '1234'
 HOST = 'localhost'
 
 STATED_COUNTRIES = ['AU', 'BR', 'CA', 'CN', 'IE', 'IN', 'IT', 'JP', 'MX', 'US']
