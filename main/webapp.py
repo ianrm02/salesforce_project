@@ -91,7 +91,7 @@ def state_approve():
         tmp_states = sorted(states)
         affected_scodes[country] = tmp_states
 
-    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = state_dropdown_ids, change_ids = state_change_ids)
+    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(state_dropdown_ids), change_ids = json.dumps(state_change_ids))
 
 
 @app.route("/address_approve")

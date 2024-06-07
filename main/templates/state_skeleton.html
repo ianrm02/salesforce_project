@@ -3,6 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
@@ -34,37 +35,6 @@
           <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
           <th>Custom</th>
         </tr>
-        <!--Populate table based on database-->
-        {% for change_id in change_ids if change_id[0] == 'S' and change_id[5] == ccode and change_id[2] == scode %}
-        <tr>
-          <td><!--String variable here--> {{change_id[1]}}</td>
-          <td><!--Occurence variable here--> {{change_id[3]}}</td>
-          <td><!--Confidence variable here--> {{change_id[4]}}</td>
-          <td><!--Custom Dropdown here-->
-            <form action="" method="get">
-              <input type="checkbox" name='check{{scode}}{{ccode}}' onchange="checkApproved(); enableButton(); displayNotif()" {% if change_id[4] >= conf_threshold %} 
-              checked {%endif%}>
-            </form>
-          </td>
-          <td><!--Populate the dropdown based on standardized country-->
-            <form action="" method="get">
-              <select id='cdropdown{{ccode}}{{change_id[1]}}' onchange = "repopulate_statedropdown('{{ccode}}', '{{change_id[1]}}')">
-                <option disabled value> -- select a country -- </option>
-                {% for drop_id in cdropdown_ids %}
-                <option {% if drop_id==ccode %} selected {% endif %}>{{drop_id}}</option>
-                {% endfor %}
-              </select>
-              <form action="" method="get">
-                <select id='sdropdown{{ccode}}{{change_id[1]}}'>
-                  <option disabled value> -- select a state -- </option>
-                  {% for drop_id in sdropdown_ids[ccode] %}
-                  <option {% if drop_id==scode %} selected {% endif %}>{{drop_id}}</option>
-                  {% endfor %}
-                </select>
-              </form>
-          </td>
-        </tr>
-        {% endfor %}
       </table>
     </div>
     {% endfor %}

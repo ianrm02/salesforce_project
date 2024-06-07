@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name = "init_data" data-change_ids = "{{change_ids|escape}}", data-cdropdown_ids ="{{ cdropdown_ids|escape }}">
+  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
   
 </head>
@@ -45,10 +45,4 @@
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
-<!-- <script>
-  var change_ids = {{change_ids}};
-  var dropdown_ids = {{dropdown_ids}};
-  initOnPageLoad(change_ids, dropdown_ids);
-
-</script> -->
 </html>

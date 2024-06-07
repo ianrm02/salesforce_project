@@ -15,19 +15,24 @@ var emptyStateDropdown = null;
 initOnPageLoad();
 // initialize variables and call page load
 function initOnPageLoad(){
-  this.change_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('data-change_ids'));
-  this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('data-cdropdown_ids'));
-  //this.sdropdown_id_map = sdropdown_ids;
+  var fileName = location.href.split("/").slice(-1); 
+
+  this.change_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('change_ids'));
+  this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('cdropdown_ids'));
+  if(fileName == "state_approve"){
+    this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
+  }
 
   // Init additional page elements
   emptyStateDropdown = document.createElement("select");
   var emptyoption = document.createElement("option");
   emptyoption.text = "No states available";
   emptyStateDropdown.appendChild(emptyoption);
+  emptyStateDropdown.setAttribute("id", "defaultempty");
 
   activateAccordions();
   fillAllAccordions();
-  checkApproved();
+  
   displayRows();
   displayNotif();
 }
@@ -61,12 +66,15 @@ function fillAllAccordions(isCountry){
   for(var i = 0; i < change_ids.length; i++){
     change_id = change_ids[i]; // Get current id
     if(change_id[0] == 'S'){
-      countryCode = change_id[2];
-      stateCode = change_id[4];
+      countryCode = change_id[5];
+      if(countryCode == null){
+        countryCode = "None";
+      }
+      stateCode = change_id[2];
       tableId =  stateCode + countryCode; // id to find the table element
-      oldField = change_id[3]; // Original field found in the db
-      occurrences = change_id[5]; // Number of occurrences
-      confidence = change_id[6]; // Conversion confidence
+      oldField = change_id[1]; // Original field found in the db
+      occurrences = change_id[3]; // Number of occurrences
+      confidence = change_id[4]; // Conversion confidence
     }
     else if(change_id[0] == 'C'){
       countryCode = change_id[2];
@@ -76,9 +84,6 @@ function fillAllAccordions(isCountry){
       confidence = change_id[4];
     }
     var curTable = document.getElementById(tableId);
-    if(curTable == null){
-      document.write(tableId);
-    }
     // Create and fill row for current change id
     var newRow = curTable.insertRow();
     var newCell = newRow.insertCell();
@@ -92,38 +97,45 @@ function fillAllAccordions(isCountry){
     //onchange="checkApproved(); enableButton(); displayNotif()"
     var checkbox = document.createElement("INPUT");
     checkbox.setAttribute("type", "checkbox");
-    checkbox.setAttribute("id", "checkbox"+countryCode+oldField);
-    checkbox.setAttribute("onchange", "checkApproved(); enableButton(); displayNotif()");
-    // Autoselect entries above the confidence threshold
-    if(confidence >= conf_threshold){
+    checkbox.setAttribute("id", "check"+tableId+oldField);
+    checkbox.setAttribute("class", "check"+tableId);
+    checkbox.onclick = function(){ checkApproved(this.attributes["class"].value); enableButton(); displayNotif(); };
+    // Autoselect entries above the confidence threshold(don't select ones with invalid country)
+    if(confidence >= conf_threshold && countryCode != "None"){
       checkbox.checked = true;
     }
     newCell.appendChild(checkbox);
+
     // Create country dropdown
     newCell = newRow.insertCell();
-    var curcdropdown = cdropdown.cloneNode(true);
-    curcdropdown.setAttribute("id", "cdropdown" + countryCode + oldField);
-    curcdropdown.selectedIndex = cdropdown_ids.indexOf(countryCode);
-    newCell.appendChild(curcdropdown);
-    // Create state dropdown
+    // Create state dropdown (populated based on country)
     if(change_id[0] == 'S'){
       // If no states are available
-      if(!(countryCode in sdropdown_id_map)){
-        newCell.appendChild(emptyStateDropdown);
+      if(countryCode == "None" || !(countryCode in sdropdown_id_map)){
+        var dupEmpty = emptyStateDropdown.cloneNode(true);
+        dupEmpty.setAttribute("id", "sdropdown" + tableId + oldField);
+        newCell.appendChild(dupEmpty);
       }
-      // Create and populate state dropdown
+     // Create and populate state dropdown
       else{
         var sdropdown = document.createElement("select");
-        for(var i = 0; i < sdropdown_id_map[countryCode].length; i++){
+        sdropdown.setAttribute("id", "sdropdown" + tableId + oldField)
+        for(var x = 0; x < sdropdown_id_map[countryCode].length; x++){
           var newOption = document.createElement("option");
-          newOption.text = sdropdown_id_map[countryCode][i];
+          newOption.text = sdropdown_id_map[countryCode][x];
           sdropdown.appendChild(newOption);
         }
-        sdropdown.selectedIndex = sdropdown_id_map[countryCode].findIndex(stateCode); // Make selected state code match accordion title code
+        sdropdown.selectedIndex = sdropdown_id_map[countryCode].indexOf(stateCode); // Make selected state code match accordion title code
         newCell.appendChild(sdropdown);
       }
     }
-
+    // Create Country dropdown
+    var curcdropdown = cdropdown.cloneNode(true);
+    curcdropdown.setAttribute("id", "cdropdown" + tableId + oldField);
+    curcdropdown.selectedIndex = cdropdown_ids.indexOf(countryCode);
+    newCell.appendChild(curcdropdown);
+    
+    checkApproved("check"+tableId);
   }
 }
 
@@ -158,34 +170,31 @@ function repopulate_statedropdown(ccode, fieldstring){
 }
 
 // Allows for "Approve All" feature called by upper checkbox
-// Should only apply to all in the accordion(matching country code in the tag)
-function selectAll(ccode){
+// Should only apply to all in the accordion(matching table id (ccode) or (ccode+scode))
+function selectAll(tableId){
   //Auto select feature
-  var newCheckVal = document.getElementById("approveall"+ccode).checked;
-  var checks = document.getElementsByTagName("check"+ccode);
+  var newCheckVal = document.getElementById("approveall"+tableId).checked;
+  var checks = document.getElementsByClassName("check"+tableId);
   for(var i = 0; i < checks.length; i++){
     checks[i].checked = newCheckVal;
   }
 }
 
-// Check approve all button if all checkmarks in table approved
-function checkApproved() {
-  var tables = document.getElementsByTagName("table");
-
-  for (var i = 0; i < tables.length; i++) {
-    var approveAllButton = document.getElementById("approveall" + tables[i].id);
-    var checks = document.getElementsByName("check" + tables[i].id);
-    var setChecked = true;
-
-    for (var j = 0; j < checks.length; j++) {
-      if (!(checks[j].checked)) {
-        setChecked = false;
-        break;
-      }
+// Check approve all button if all checkmarks in current table approved
+function checkApproved(tableId) {
+  tableId = tableId.substring(5); //remove "check" from the id
+  var approveAllButton = document.getElementById("approveall" + tableId);
+  // Get all checkboxes from the same table
+  var checks = document.getElementsByClassName("check" + tableId);
+  var setChecked = true;
+  for (var j = 0; j < checks.length; j++) {
+    if (!(checks[j].checked)) {
+      setChecked = false;
+      break;
     }
-
-    approveAllButton.checked = setChecked;
   }
+  
+  approveAllButton.checked = setChecked;
 }
 
 // Display notification if not all addresses approved
@@ -215,21 +224,15 @@ function displayNotif() {
 function enableButton() {
   var allCheckedList = document.getElementsByClassName("approveall");
   var nextButton = document.getElementById("nextPage");
-  var numChecked = 0;
+  var allApproved = true;
 
   for (var i = 0; i < allCheckedList.length; i++) {
-    if (allCheckedList[i].checked) {
-      numChecked++;
-      if (numChecked == allCheckedList.length) {
-        nextButton.disabled = false;
-      }
-    } else {
-      numChecked--;
-      if (numChecked != allCheckedList.length) {
-        nextButton.disabled = true;
-      }
-    }
+    if (!allCheckedList[i].checked) {
+      allApproved = false;
+      break;
+    } 
   }
+  nextButton.disabled = !allApproved;
 }
 
 // Display number of items in each table
