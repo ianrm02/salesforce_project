@@ -36,6 +36,7 @@ function initOnPageLoad(){
   displayRows();
   displayNotif();
 }
+
 // Allows accordions to actually extend and function
 function activateAccordions(){
   var acc = document.getElementsByClassName("accordion");
@@ -65,7 +66,8 @@ function fillAllAccordions(isCountry){
   // Fill accordions
   for(var i = 0; i < change_ids.length; i++){
     change_id = change_ids[i]; // Get current id
-    if(change_id[0] == 'S'){
+    // change_id format may differ based on country or state
+    if(change_id[0] == 'S'){ // State
       countryCode = change_id[5];
       if(countryCode == null){
         countryCode = "None";
@@ -76,7 +78,7 @@ function fillAllAccordions(isCountry){
       occurrences = change_id[3]; // Number of occurrences
       confidence = change_id[4]; // Conversion confidence
     }
-    else if(change_id[0] == 'C'){
+    else if(change_id[0] == 'C'){ // Country
       countryCode = change_id[2];
       tableId = countryCode;
       oldField = change_id[1];
@@ -133,6 +135,9 @@ function fillAllAccordions(isCountry){
     var curcdropdown = cdropdown.cloneNode(true);
     curcdropdown.setAttribute("id", "cdropdown" + tableId + oldField);
     curcdropdown.selectedIndex = cdropdown_ids.indexOf(countryCode);
+    if(change_id[0] == 'S'){
+      curcdropdown.onchange = function(){repopulate_statedropdown(this.attributes["id"].value)};
+    }
     newCell.appendChild(curcdropdown);
     
     checkApproved("check"+tableId);
@@ -145,11 +150,13 @@ function redirect(next_page) {
   window.location.href = "/"+next_page;
 }
 // Repopulates state dropdowns to match country selection
-function repopulate_statedropdown(ccode, fieldstring){
+function repopulate_statedropdown(dropId, fieldstring){
+  // Remove "sdropdown"
+  dropId = dropId.substring(9);
   // Find matching dropdown using accordion country code and the associated string in the row
-  var cdropdown = document.getElementById("cdropdown" + ccode + fieldstring);
+  var cdropdown = document.getElementById("cdropdown" + dropId);
   var nccode = cdropdown.options[cdropdown.selectedIndex].text; // The newly selected code
-  var sdropdown = document.getElementById("sdropdown" + ccode + fieldstring);
+  var sdropdown = document.getElementById("sdropdown" + dropId);
   // Clear dropdown
   while(sdropdown.options.length > 0){
     sdropdown.remove(0);
@@ -193,7 +200,6 @@ function checkApproved(tableId) {
       break;
     }
   }
-  
   approveAllButton.checked = setChecked;
 }
 
