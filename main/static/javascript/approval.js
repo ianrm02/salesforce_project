@@ -1,8 +1,3 @@
-// Initialize JQuery
-// var jQueryScript = document.createElement('script');
-// jQueryScript.setAttribute('src', 'https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/');
-// document.head.appendChild(jQueryScript);
-
 // Data from jinja
 var cdropdown_ids = null;
 var sdropdown_id_map = null;
@@ -257,4 +252,15 @@ function openForm() {
 
 function closeForm() {
   document.getElementById("settingsForm").style.display = "none";
+}
+
+// Download text file after export clicked
+function exportSettings(file) {
+  var element = document.createElement('a');
+  var text = "Settings exported"; // change this to get the changed dropdown values
+  element.setAttribute('href', 'data:text/plain;charset=utf-8, ' + encodeURIComponent(text));
+  element.setAttribute('download', file);
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
 }
