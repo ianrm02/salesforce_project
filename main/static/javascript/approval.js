@@ -9,12 +9,12 @@ var emptyStateDropdown = null;
 
 initOnPageLoad();
 // initialize variables and call page load
-function initOnPageLoad(){
-  var fileName = location.href.split("/").slice(-1); 
+function initOnPageLoad() {
+  var fileName = location.href.split("/").slice(-1);
 
   this.change_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('change_ids'));
   this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('cdropdown_ids'));
-  if(fileName == "state_approve"){
+  if (fileName == "state_approve") {
     this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
   }
 
@@ -27,53 +27,53 @@ function initOnPageLoad(){
 
   activateAccordions();
   fillAllAccordions();
-  
+
   displayRows();
   displayNotif();
 }
 
 // Allows accordions to actually extend and function
-function activateAccordions(){
+function activateAccordions() {
   var acc = document.getElementsByClassName("accordion");
   for (var i = 0; i < acc.length; i++) {
     acc[i].addEventListener("click", function () {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling
-    if (panel.style.display === "block") {
-      panel.style.display = "none";
-    } else {
-      panel.style.display = "block";
-    }
+      this.classList.toggle("active");
+      var panel = this.nextElementSibling
+      if (panel.style.display === "block") {
+        panel.style.display = "none";
+      } else {
+        panel.style.display = "block";
+      }
     });
   }
 }
 //id type | statechangeid | newcountry |   oldstate    | newstate | occurrences | confidence
 //id type | countrychangeid |   oldcountry   | newcountry | occurrences | confidence
-function fillAllAccordions(isCountry){
+function fillAllAccordions(isCountry) {
   // Initialize country dropdown (only needed on page load)
   var cdropdown = document.createElement("select");
-  for(var i = 0; i < cdropdown_ids.length; i++){
+  for (var i = 0; i < cdropdown_ids.length; i++) {
     var opt = document.createElement("option");
     opt.text = cdropdown_ids[i];
     cdropdown.appendChild(opt)
   }
   var countryCode, stateCode, tableId, oldField, occurrences, confidence;
   // Fill accordions
-  for(var i = 0; i < change_ids.length; i++){
+  for (var i = 0; i < change_ids.length; i++) {
     change_id = change_ids[i]; // Get current id
     // change_id format may differ based on country or state
-    if(change_id[0] == 'S'){ // State
+    if (change_id[0] == 'S') { // State
       countryCode = change_id[5];
-      if(countryCode == null){
+      if (countryCode == null) {
         countryCode = "None";
       }
       stateCode = change_id[2];
-      tableId =  stateCode + countryCode; // id to find the table element
+      tableId = stateCode + countryCode; // id to find the table element
       oldField = change_id[1]; // Original field found in the db
       occurrences = change_id[3]; // Number of occurrences
       confidence = change_id[4]; // Conversion confidence
     }
-    else if(change_id[0] == 'C'){ // Country
+    else if (change_id[0] == 'C') { // Country
       countryCode = change_id[2];
       tableId = countryCode;
       oldField = change_id[1];
@@ -86,7 +86,7 @@ function fillAllAccordions(isCountry){
     var newCell = newRow.insertCell();
     newCell.innerText = oldField;
     newCell = newRow.insertCell();
-    newCell.innerText = occurrences; 
+    newCell.innerText = occurrences;
     newCell = newRow.insertCell();
     newCell.innerText = confidence;
     newCell = newRow.insertCell();
@@ -94,11 +94,11 @@ function fillAllAccordions(isCountry){
     //onchange="checkApproved(); enableButton(); displayNotif()"
     var checkbox = document.createElement("INPUT");
     checkbox.setAttribute("type", "checkbox");
-    checkbox.setAttribute("id", "check"+tableId+oldField);
-    checkbox.setAttribute("class", "check"+tableId);
-    checkbox.onclick = function(){ checkApproved(this.attributes["class"].value); enableButton(); displayNotif(); };
+    checkbox.setAttribute("id", "check" + tableId + oldField);
+    checkbox.setAttribute("class", "check" + tableId);
+    checkbox.onclick = function () { checkApproved(this.attributes["class"].value); enableButton(); displayNotif(); };
     // Autoselect entries above the confidence threshold(don't select ones with invalid country)
-    if(confidence >= conf_threshold && countryCode != "None"){
+    if (confidence >= conf_threshold && countryCode != "None") {
       checkbox.checked = true;
     }
     newCell.appendChild(checkbox);
@@ -106,18 +106,18 @@ function fillAllAccordions(isCountry){
     // Create country dropdown
     newCell = newRow.insertCell();
     // Create state dropdown (populated based on country)
-    if(change_id[0] == 'S'){
+    if (change_id[0] == 'S') {
       // If no states are available
-      if(countryCode == "None" || !(countryCode in sdropdown_id_map)){
+      if (countryCode == "None" || !(countryCode in sdropdown_id_map)) {
         var dupEmpty = emptyStateDropdown.cloneNode(true);
         dupEmpty.setAttribute("id", "sdropdown" + tableId + oldField);
         newCell.appendChild(dupEmpty);
       }
-     // Create and populate state dropdown
-      else{
+      // Create and populate state dropdown
+      else {
         var sdropdown = document.createElement("select");
         sdropdown.setAttribute("id", "sdropdown" + tableId + oldField)
-        for(var x = 0; x < sdropdown_id_map[countryCode].length; x++){
+        for (var x = 0; x < sdropdown_id_map[countryCode].length; x++) {
           var newOption = document.createElement("option");
           newOption.text = sdropdown_id_map[countryCode][x];
           sdropdown.appendChild(newOption);
@@ -130,22 +130,22 @@ function fillAllAccordions(isCountry){
     var curcdropdown = cdropdown.cloneNode(true);
     curcdropdown.setAttribute("id", "cdropdown" + tableId + oldField);
     curcdropdown.selectedIndex = cdropdown_ids.indexOf(countryCode);
-    if(change_id[0] == 'S'){
-      curcdropdown.onchange = function(){repopulate_statedropdown(this.attributes["id"].value)};
+    if (change_id[0] == 'S') {
+      curcdropdown.onchange = function () { repopulate_statedropdown(this.attributes["id"].value) };
     }
     newCell.appendChild(curcdropdown);
-    
-    checkApproved("check"+tableId);
+
+    checkApproved("check" + tableId);
   }
 }
 
 // Takes input for the next page and makes the url. We don't have pages sorted into folders so using the root(/) allow us to make the url work
 // More complex webapp would need to utilize url_for or something similar
 function redirect(next_page) {
-  window.location.href = "/"+next_page;
+  window.location.href = "/" + next_page;
 }
 // Repopulates state dropdowns to match country selection
-function repopulate_statedropdown(dropId, fieldstring){
+function repopulate_statedropdown(dropId, fieldstring) {
   // Remove "sdropdown"
   dropId = dropId.substring(9);
   // Find matching dropdown using accordion country code and the associated string in the row
@@ -153,18 +153,18 @@ function repopulate_statedropdown(dropId, fieldstring){
   var nccode = cdropdown.options[cdropdown.selectedIndex].text; // The newly selected code
   var sdropdown = document.getElementById("sdropdown" + dropId);
   // Clear dropdown
-  while(sdropdown.options.length > 0){
+  while (sdropdown.options.length > 0) {
     sdropdown.remove(0);
   }
   // Mark as empty if there are no associated states
-  if(!(nccode in sdropdown_id_map)){
+  if (!(nccode in sdropdown_id_map)) {
     var emptyoption = document.createElement("option");
     emptyoption.text = "No states available";
     sdropdown.appendChild(emptyoption);
     return;
   }
   // Repopulate with new options matching new states
-  for(var i = 0; i < sdropdown_id_map[nccode].length; i++){
+  for (var i = 0; i < sdropdown_id_map[nccode].length; i++) {
     var newOption = document.createElement("option");
     newOption.text = sdropdown_id_map[nccode][i];
     sdropdown.appendChild(newOption);
@@ -173,11 +173,11 @@ function repopulate_statedropdown(dropId, fieldstring){
 
 // Allows for "Approve All" feature called by upper checkbox
 // Should only apply to all in the accordion(matching table id (ccode) or (ccode+scode))
-function selectAll(tableId){
+function selectAll(tableId) {
   //Auto select feature
-  var newCheckVal = document.getElementById("approveall"+tableId).checked;
-  var checks = document.getElementsByClassName("check"+tableId);
-  for(var i = 0; i < checks.length; i++){
+  var newCheckVal = document.getElementById("approveall" + tableId).checked;
+  var checks = document.getElementsByClassName("check" + tableId);
+  for (var i = 0; i < checks.length; i++) {
     checks[i].checked = newCheckVal;
   }
 }
@@ -212,7 +212,7 @@ function displayNotif() {
     if (!(approveAllList[i].checked)) {
       displayNotif = "block";
       highlightTab = "#f24e6c";
-    } 
+    }
     tab.style.backgroundColor = highlightTab;
   }
 
@@ -231,7 +231,7 @@ function enableButton() {
     if (!allCheckedList[i].checked) {
       allApproved = false;
       break;
-    } 
+    }
   }
   nextButton.disabled = !allApproved;
 }
@@ -239,15 +239,16 @@ function enableButton() {
 // Display number of items in each table
 function displayRows() {
   var tables = document.getElementsByTagName("table");
-  
+
   for (var i = 0; i < tables.length; i++) {
-    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length-1);
+    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length - 1);
   }
 }
 
 // Open and close import settings form
 function openForm() {
   document.getElementById("settingsForm").style.display = "block";
+
 }
 
 function closeForm() {
@@ -256,11 +257,17 @@ function closeForm() {
 
 // Download text file after export clicked
 function exportSettings(file) {
-  var element = document.createElement('a');
+  var exportFile = document.createElement('a');
   var text = "Settings exported"; // change this to get the changed dropdown values
-  element.setAttribute('href', 'data:text/plain;charset=utf-8, ' + encodeURIComponent(text));
-  element.setAttribute('download', file);
-  document.body.appendChild(element);
-  element.click();
-  document.body.removeChild(element);
+  exportFile.setAttribute('href', 'data:text/plain;charset=utf-8, ' + encodeURIComponent(text));
+  exportFile.setAttribute('download', file);
+  document.body.appendChild(exportFile);
+  exportFile.click();
+  document.body.removeChild(exportFile);
 }
+
+function uploadSettings() {
+  alert("File uploaded");
+  // please implement settings reading here
+}
+
