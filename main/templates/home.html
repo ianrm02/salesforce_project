@@ -66,13 +66,13 @@ Please enter your information to begin processing. You will be notified when you
 <br><br>
 
 <div class="settings-popup" id="settingsForm">
-  <form action="" class="settings-container">
+  <form method="post" action="" class="settings-container">
     <h1>Import Settings</h1>
 
-    <label for="selectFile"><b>Upload File</b></label>
-    <button type="button" class="btn" name="selectFile">Select File</button>
+    <label for="importSettings"><b>Upload Custom Settings</b></label>
+    <input id="fileToLoad" name="importSettings" type="file" accept=".txt" multiple />
     <br>
-    <button type="submit" class="btn" name="uploadFile">Upload</button>
+    <button type="button" style="float: inline-start" onclick="uploadSettings(); closeForm()">Upload</button>
     <button type="button" class="btn cancel" style="float: right;" onclick="closeForm()">Close</button>
   </form>
 </div>
@@ -96,11 +96,8 @@ Please enter your information to begin processing. You will be notified when you
 
 <button onclick="redirect('country_approve')">Next page</button>
 <br>
-
-<script>
-</script>
-
 </body>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
+
 </html>
