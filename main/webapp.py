@@ -25,6 +25,17 @@ address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT'
 # Change Type: C|A|S
 change_ids = [['C', 'Arroz', 'AR', 1200, 10], ['C', 'ArGE', 'AR', 30, 10], ['C', 'United States', 'US', 100000, 100], ['S', 'Colorado', 'CO', 10000, 100, 'US'], ['S', 'Entree Reo', 'ER', 12500, 80, 'AR'], ['S', 'Entre Rios', 'ER', 10000, 100, 'AR']]
 
+def search(formdata):
+    if(not ('sdropdown_form' in formdata and 'cdropdown_form' in formdata)):
+        return "Error: Missing required fields"
+    search_address = formdata['addsearch']
+    search_state = formdata['sdropdown_form']
+    search_country = formdata['cdropdown_form']
+    results = clfApp.db_handler.search_db((search_address, search_state, search_country))
+    if(len(results) == 0):
+        return
+    return results
+
 # connect URL endpoints
 @app.route("/", methods=('GET', 'POST'))
 def home():
@@ -44,8 +55,16 @@ def home():
     return render_template('home.html')
 
 
-@app.route("/country_approve") # define path component
+@app.route("/country_approve", methods=('GET', 'POST')) # define path component
 def country_approve():
+    search_response = None
+    if(request.method == 'POST'):
+        search_response = search(request.form)
+        if(isinstance(search_response, str)):
+            flash(search_response)
+        flash(search_response)
+    
+
     #TODO loading screen to show it's in processing
     country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")]
     country_changes.sort(key=lambda x: x[3])
@@ -59,7 +78,7 @@ def country_approve():
 
     country_change_ids = [['C'] + code[1:] for code in country_changes]
 
-    return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, cdropdown_ids = json.dumps(country_dropdown_ids), change_ids = json.dumps(country_change_ids))
+    return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, cdropdown_ids = json.dumps(country_dropdown_ids), change_ids = json.dumps(country_change_ids), sdropdown_ids = json.dumps(state_dropdown_ids), search_response = search_response)
 
 
 @app.route("/state_approve")
@@ -119,10 +138,6 @@ def statistics():
 @app.route("/end")
 def end():
     return render_template('endscreen.html')
-
-
-
-
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8080, debug=True)

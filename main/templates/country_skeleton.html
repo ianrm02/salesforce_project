@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}">
+  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
   
 </head>
@@ -35,13 +35,41 @@
     </table>
   </div>
   {% endfor %}
-
-  <input type="text" name="search">
-  <input type="submit" value="Search"> <br><br>
-
+  
   <div class="notification">Items still pending approval</div>
 
   <button id="nextPage" onclick="redirect('state_approve')" disabled>Next page</button>
+
+  <br><br>
+  {% for message in get_flashed_messages() %}
+  <div class="notification">{{ message }}</div>
+  {% endfor %}
+  <form action="{{ url_for('country_approve') }}" method="post">
+    <input type="text" name="addsearch" id="addsearch">
+    <select name = "sdropdown_form" id="sdropdown_form">
+    </select>
+    <select name = "cdropdown_form" id="cdropdown_form">
+    </select>
+    <input type="submit" value="Search">
+  </form>
+  {% if search_response %}
+  <div class="panel">
+    <table id="search_results_table">
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+      {% for case in search_response %}
+        <tr>
+          <td>{{case[0]}}</td>
+          <td>{{case[1]}}</td>
+          <td>{{case[2]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>

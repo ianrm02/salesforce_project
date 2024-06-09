@@ -19,9 +19,7 @@ function initOnPageLoad(){
 
   this.change_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('change_ids'));
   this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('cdropdown_ids'));
-  if(fileName == "state_approve"){
-    this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
-  }
+  this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
 
   // Init additional page elements
   emptyStateDropdown = document.createElement("select");
@@ -32,6 +30,7 @@ function initOnPageLoad(){
 
   activateAccordions();
   fillAllAccordions();
+  populateSearchDrops();
   
   displayRows();
   displayNotif();
@@ -144,13 +143,32 @@ function fillAllAccordions(isCountry){
   }
 }
 
+// Populates the search bar dropdowns at the bottom
+function populateSearchDrops(){
+  // populate country dropdown
+  var cdropdown = document.getElementById("cdropdown_form");
+  var opt = document.createElement("option");
+  opt.disabled = true;
+  opt.text = "Country";
+  cdropdown.appendChild(opt);
+  cdropdown.selectedIndex = 0;
+  for(var i = 0; i < cdropdown_ids.length; i++){
+    opt = document.createElement("option");
+    opt.text = cdropdown_ids[i];
+    cdropdown.appendChild(opt)
+  }
+  var sdropdown = document.getElementById("sdropdown_form");
+  sdropdown.appendChild(emptyStateDropdown.options[0]);
+  cdropdown.onchange = function(){repopulate_statedropdown(this.attributes["id"].value)};
+}
+
 // Takes input for the next page and makes the url. We don't have pages sorted into folders so using the root(/) allow us to make the url work
 // More complex webapp would need to utilize url_for or something similar
 function redirect(next_page) {
   window.location.href = "/"+next_page;
 }
 // Repopulates state dropdowns to match country selection
-function repopulate_statedropdown(dropId, fieldstring){
+function repopulate_statedropdown(dropId){
   // Remove "sdropdown"
   dropId = dropId.substring(9);
   // Find matching dropdown using accordion country code and the associated string in the row
@@ -165,6 +183,7 @@ function repopulate_statedropdown(dropId, fieldstring){
   if(!(nccode in sdropdown_id_map)){
     var emptyoption = document.createElement("option");
     emptyoption.text = "No states available";
+    emptyoption.disabled = true;
     sdropdown.appendChild(emptyoption);
     return;
   }
@@ -211,6 +230,9 @@ function displayNotif() {
   var displayNotif = "none";
 
   for (var i = 0; i < tables.length; i++) {
+    if(tables[i].id == "search_results_table"){
+      continue;
+    }
     var tab = document.getElementById("tab" + tables[i].id);
     var highlightTab = "";
 
@@ -246,6 +268,9 @@ function displayRows() {
   var tables = document.getElementsByTagName("table");
   
   for (var i = 0; i < tables.length; i++) {
+    if(tables[i].id == "search_results_table"){
+      continue;
+    }
     document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length-1);
   }
 }
