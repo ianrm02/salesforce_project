@@ -154,7 +154,7 @@ class Classifier:
                     #TODO [BLOCKER] how does the state or country get decided by these changes internally? I need some sample user rules I think at this point to progress
 
 
-            if stage == 'O':
+            if stage == 'O' and False: 
                 relevant_text = f"{item[1]} {item[2]} {item[3]}"
                 #TODO Once processing filter is created, decide how its output will update the results for that address
                 represented_countries = set()
@@ -187,7 +187,6 @@ class Classifier:
                             if self.results[sample][0] == None and self.results[sample][1] == 0:
                                 self.results[sample][0] = self.results[cluster_samples[0]][0]
                                 self.results[sample][1] = 2; # only 2/5 confidnece now
-                            print(sample)
                 except:
                     print("Processing filter error")
                     continue
@@ -196,6 +195,7 @@ class Classifier:
                 print(f"{stage} Stage Completed...")
                 print(f"[ENTER] to continue ")
                 _ = input("")
+                
 
     
     def get_results(self):
