@@ -143,44 +143,50 @@ class Classifier:
                     #TODO [BLOCKER] how does the state or country get decided by these changes internally? I need some sample user rules I think at this point to progress
 
 
-            if stage == 'O' and False: 
-                represented_countries = set()
+            if stage == 'O': 
+                rep_cou = set()
 
                 for item in batch:
                     whole_addr = f"{str(item[1]).strip()} {str(item[2]).strip()} {str(item[3]).strip()}" #clean the whole address to use as a key
                     if self.results[whole_addr][1] == config.MAX_CONFIDENCE:
-                        represented_countries.add(self.results[whole_addr][0])
+                        rep_cou.add(self.results[whole_addr][0])
 
                     if self.results[whole_addr][1] == 0:
                         self.clustering_to_place.append(whole_addr)
                 
-                num_clusters = min(len(list(represented_countries)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with max confidence until we find a more adaptive way to determine that metric
-
-                vct = TfidfVectorizer(max_features=10)
-                X = vct.fit_transform(self.clustering_to_place)
-
-                #SVD dimensionality reduction? y/n?
-
-                try: #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
-                    #This is also definetely hurting the runtime of the processing stage of our algorithm
-                    kmModel = KMeans(n_clusters=num_clusters)
-                    self.clusters = kmModel.fit_predict(X)
-
-                    #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
-                    #look into why
-                    """
-                    for cluster_id in range(1, kmModel.n_clusters):
-                        cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
-                        for sample in cluster_samples[:30]:
-                            #print(sample)
-                            """
-                except:
-                    print("Processing filter error")
-
+                
             if stepThroughRuntime == True:
                 print(f"{stage} Stage Completed...")
                 print(f"[ENTER] to continue ")
                 _ = input("")
+
+        self.runKMeansModel(rep_cou)
+
+
+    def runKMeansModel(self, represented_countries):
+        X = self.clustering_to_place
+        num_clusters = min(len(list(represented_countries)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with max confidence until we find a more adaptive way to determine that metric
+
+        vct = TfidfVectorizer(max_features=10)
+        X = vct.fit_transform(self.clustering_to_place)
+
+        #SVD dimensionality reduction? y/n?
+
+        try: #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
+            #This is also definetely hurting the runtime of the processing stage of our algorithm
+            kmModel = KMeans(n_clusters=num_clusters)
+            self.clusters = kmModel.fit_predict(X)
+
+            #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
+            #look into why
+            """
+            for cluster_id in range(1, kmModel.n_clusters):
+                cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
+                for sample in cluster_samples[:30]:
+                    #print(sample)
+                    """
+        except:
+            print("Processing filter error")
                 
     
     def get_results(self):
