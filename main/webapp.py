@@ -89,8 +89,6 @@ def country_approve():
 
 @app.route("/state_approve")
 def state_approve():
-    fetchresults = clfApp.db_handler.get_all_from_table("StateChanges")
-
     state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")]
     state_changes.sort(key=lambda x: x[5]) 
     state_changes.reverse() #highest to lowest confidence
