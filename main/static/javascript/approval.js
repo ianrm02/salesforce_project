@@ -2,7 +2,7 @@
 var cdropdown_ids = null;
 var sdropdown_id_map = null;
 var change_ids = null;
-var conf_threshold = 90;
+var conf_threshold = 4;
 
 // Page elements
 var emptyStateDropdown = null;
