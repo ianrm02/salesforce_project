@@ -2,12 +2,13 @@
 var cdropdown_ids = null;
 var sdropdown_id_map = null;
 var change_ids = null;
-var conf_threshold = 90;
+var conf_threshold = 4;
 
 // Page elements
 var emptyStateDropdown = null;
 
 initOnPageLoad();
+
 // initialize variables and call page load
 function initOnPageLoad() {
   var fileName = location.href.split("/").slice(-1);
@@ -27,8 +28,9 @@ function initOnPageLoad() {
   fillAllAccordions();
   populateSearchDrops();
   
-  displayRows();
+  displayItems();
   displayNotif();
+  enableButton();
 }
 
 // Allows accordions to actually extend and function
@@ -143,6 +145,7 @@ function fillAllAccordions(isCountry) {
 
 // Populates the search bar dropdowns at the bottom
 function populateSearchDrops(){
+  
   // populate country dropdown
   var cdropdown = document.getElementById("cdropdown_form");
   var opt = document.createElement("option");
@@ -150,11 +153,13 @@ function populateSearchDrops(){
   opt.text = "Country";
   cdropdown.appendChild(opt);
   cdropdown.selectedIndex = 0;
-  for(var i = 0; i < cdropdown_ids.length; i++){
+  
+  for (var i = 0; i < cdropdown_ids.length; i++) {
     opt = document.createElement("option");
     opt.text = cdropdown_ids[i];
     cdropdown.appendChild(opt)
   }
+
   var sdropdown = document.getElementById("sdropdown_form");
   sdropdown.appendChild(emptyStateDropdown.options[0]);
   cdropdown.onchange = function(){repopulate_statedropdown(this.attributes["id"].value)};
@@ -265,13 +270,13 @@ function enableButton() {
 }
 
 // Display number of items in each table
-function displayRows() {
+function displayItems() {
   var tables = document.getElementsByTagName("table");
 
   for (var i = 0; i < tables.length; i++) {
-    if(tables[i].id == "search_results_table"){ // May not exist at this time
-      continue;
-    }
+    // if(tables[i].id == "search_results_table"){ // May not exist at this time
+    //   continue;
+    // }
     document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length - 1);
   }
 }

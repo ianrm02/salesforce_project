@@ -78,19 +78,37 @@ class DatabaseHandlerTestCase(unittest.TestCase):
         self.assertEqual(self.db_handler.get_db_size(), 377)
 
 
-    def test_get_freq(self): #TODO: make this more robust
+    def test_get_freq(self):
         self.assertEqual(self.db_handler.get_freq('C', 'US'), 59)
         self.assertEqual(self.db_handler.get_freq('S', 'CA'), 3)
         self.assertEqual(self.db_handler.get_freq('A', '1545 liona street honolulu'), 1)
 
 
-    def test_store_temp_values(self):
+    def test_store_temp_values(self):#1279 Town Centre Dr ;Eagan,US,MN,, #TODO
+        #self.db_handler.insert_address()
+        NewCo = "US"
+        ConfCo = "5"
+        NewSt = "MN"
+        ConfSt = "Ayo you're sus"
+        iD = 260
+        Addr = "1234 "
+        OldSt = "Helm\'s Deep"
+        OldCo = "Rohan"
+        #with self.assertRaises(Exception):#pg8000.DatabaseError
+            #self.db_handler.store_temp_values((NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo))
         pass
 
 
     def test_search_db(self):
+        #testing address only
         self.assertEqual(len(self.db_handler.search_db(("BIGSOLV ADVANCED LABS PRIVATE LIMITED", None, None))), 1)
+        #testing state and country
         self.assertEqual(len(self.db_handler.search_db((None, "karnataka", "IN"))), 2)
+        self.assertEqual(len(self.db_handler.search_db((None, "CA", "US"))), 14)
+        #testing address and state
+        self.assertEqual(len(self.db_handler.search_db(("2500 DEL MONTE 100;W SACRAMENTO", "CA", None))), 1)
+        #testing address and country
+        self.assertEqual(len(self.db_handler.search_db(("2500 DEL MONTE 100;W SACRAMENTO", None, ""))), 1)
 
 
 
