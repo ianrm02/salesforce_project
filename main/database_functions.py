@@ -301,35 +301,42 @@ class DatabaseManager():
         except Exception as e:
             print(f"An error occurred: {e}")
             return 0
-        
+    
     def search_db(self, infoTuple):
         """
-        Pass in a tuple with
+        Pass in a tuple with address, state, country
 
         When writing this I assumed errors would be handled before coming here (ie nothing will happen if you only pass me a state or country)
         """
 
-        address, state, country = infoTuple;
+        address, state, country = infoTuple
 
         match (address, state, country):
             # if only address
             case(_, None, None):
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s;", (address, ))
+                query = "SELECT * FROM Addresses WHERE address=%s;"
+                params = (address, )
             # else if state and country
             case(None, _, _):
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (state, country))
+                query = "SELECT * FROM Addresses WHERE state=%s AND country=%s;"
+                params = (state, country)
             # else if address and country
             case(_, None, _):
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND country=%s;", (address, country))
+                query = "SELECT * FROM Addresses WHERE address=%s AND country=%s;"
+                params = (address, country)
             # else if address and state
             case(_, _, None):
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND state=%s;", (address, state))
+                query = "SELECT * FROM Addresses WHERE address=%s AND state=%s;"
+                params = (address, state)
             # else if all
             case (_, _, _):
-                self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE address=%s AND state=%s AND country=%s;", (address, state, country))
+                query = "SELECT * FROM Addresses WHERE address=%s AND state=%s AND country=%s;"
+                params = (address, state, country)
 
+        self.cur.execute(query, params)
         results = self.cur.fetchall()
         return results
+    
 
     def get_all_from_table(self, table_name):
         """
