@@ -162,12 +162,12 @@ class DatabaseManager():
         """
         sets default/expected db shape
 
-        future work: setup_database_extension should be called at runtime
+        future work: setup_databae_extension should b e called at runtime
         """
         self.drop_all_tables()
         self.address_table()
         self.upload_csv_entries("./data/test_data.txt")
-        self.setup_database_extension() # this should be called at runtime, but we do not know how to solve this
+        self.setup_database_extension() # this should be called at runtime, but we do now know how to solve this
     
     def setup_database_extension(self):
         self.country_changes_table()
@@ -360,6 +360,3 @@ class DatabaseManager():
             return results
         except Exception as e:
             print("An error occurred:", e)
-
-#temp = DatabaseManager()
-#temp.setup_test_database()
