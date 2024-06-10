@@ -29,6 +29,7 @@ function initOnPageLoad() {
   
   displayRows();
   displayNotif();
+  enableButton();
 }
 
 // Allows accordions to actually extend and function
