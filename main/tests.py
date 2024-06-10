@@ -89,8 +89,9 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
 
     def test_search_db(self):
-        
-        pass
+        self.assertEqual(len(self.db_handler.search_db(("BIGSOLV ADVANCED LABS PRIVATE LIMITED", None, None))), 1)
+        self.assertEqual(len(self.db_handler.search_db((None, "karnataka", "IN"))), 2)
+
 
 
     def test_get_all_from_table(self):
