@@ -161,10 +161,13 @@ class DatabaseManager():
     def setup_test_database(self):
         """
         sets default/expected db shape
+
+        Future work: this function calls setup_database_extension whereas it should be done by web app at runtime
         """
         self.drop_all_tables()
         self.address_table()
         self.upload_csv_entries("./data/test_data.txt")
+        self.setup_database_extension() # should be called at runtime, not when database is created
     
     def setup_database_extension(self):
         self.country_changes_table()
