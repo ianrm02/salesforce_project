@@ -48,7 +48,6 @@ class ClassifierApp(object):
         num_max_confident_country = 0
         num_fully_converted = 0
         for _, mappings in results.items(): 
-            #print(f"{mappings[4]} {mappings[5]} {mappings[6]} {mappings[7]} NewCo:{mappings[0]} CoConf:{mappings[1]} NewSt:{mappings[2]} StConf:{mappings[3]} {"[FULLY MAPPED]" if mappings[1]+mappings[3] == 200 else ""}")
             total_country_confidence += mappings[1]
             total_state_confidence += mappings[3]
             if mappings[1] == config.MAX_CONFIDENCE: 
@@ -57,18 +56,18 @@ class ClassifierApp(object):
                 if mappings[3] == config.MAX_CONFIDENCE:
                     if mappings[0] in config.STATED_COUNTRIES: num_fully_converted += 1
 
+
         print("")
         print(f"AVG COUNTRY CONF: {total_country_confidence/self._total_db_size:.2f}")
         print(f"AVG STATE   CONF: {total_state_confidence/self._total_db_size:.2f}")
 
-        print(f"%DB with 100% Country Confidence: {num_max_confident_country/self._total_db_size*100:.2f}")
+        print(f"%DB with Max Country Confidence: {num_max_confident_country/self._total_db_size*100:.2f}")
         print("")
-        print(f"% Entries Fully Converted (with 100% confidence): {num_fully_converted/self._total_db_size*100:.2f}")
+        print(f"% Entries Fully Converted (with Max confidence): {num_fully_converted/self._total_db_size*100:.2f}")
 
 
     def uploadProcessedToDB(self):
         for _, mappings in self.clf.get_results().items():
-            print(mappings)
             self.db_handler.store_temp_values(mappings)
 
 
@@ -77,12 +76,9 @@ class ClassifierApp(object):
         self.db_handler = self._create_db_manager(payload=self._payload)
         self._total_db_size = self.db_handler.get_db_size()
 
-        print(self.db_handler.get_db_size())
-
 
     def _create_db_manager(self, payload):
-        print(payload)
-        #TODO with custom payload, for now just default to config
+        #TODO with custom payload, for now just default to config. Would need to add security / authentication to protect user data
         db_handler = DatabaseManager()
         return db_handler
 
@@ -99,15 +95,6 @@ class ClassifierApp(object):
         self.uploadProcessedToDB()
 
         del self.db_handler #TODO test if the connection is still open
-
-        """Test Cases to observe / processing filter?
-        198 "Hospital; Bangalore; 560099" "" "IN" Maps to India correctly but not Bangalore because
-            Bangalore was ^^^ in the address field. 
-            
-            Should the address filter check every element of the address field against all of the common_state_alternates and common_country_alterantes?
-            That would be pretty expensive computationally, but assuming relatively clean user data most states should get filtered to 100% and not get to this stage of filters before this and only really crummy user data get to this stage. Or is it the
-            responsibility of the user to then manually find this in the UI stages of the solution and correct it because they had poor data quality?
-        """
 
         logging.info('[Finished ClassifierApp.run()]')       
 

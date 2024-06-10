@@ -18,12 +18,6 @@ conf_threshold = 4
 country_dropdown_ids = clfApp.clf.iso_standard_df["alpha-2"].to_list()
 state_dropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES
 
-address_batch = [['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '12 ARROZ CT', 80], ['US', 'CO', '4 Littleton Dr', 12], ['US', 'CO', '400 Colo St.', 20], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', '123 Arentin Ln.', 50], ['AR', 'ER', 'DO NOT DISPLAY', 50]]
-# LIST MUST BE SORTED BY CONFIDENCE BEFORE PASSED TO PAGE
-
-# 0=Type 1=New 2=Occurences 3=Confidence
-# Change Type: C|A|S
-change_ids = [['C', 'Arroz', 'AR', 1200, 10], ['C', 'ArGE', 'AR', 30, 10], ['C', 'United States', 'US', 100000, 100], ['S', 'Colorado', 'CO', 10000, 100, 'US'], ['S', 'Entree Reo', 'ER', 12500, 80, 'AR'], ['S', 'Entre Rios', 'ER', 10000, 100, 'AR']]
 
 def search(formdata):
     if(not ('sdropdown_form' in formdata and 'cdropdown_form' in formdata)):
@@ -69,6 +63,8 @@ def country_approve():
     country_changes = [item for item in clfApp.db_handler.get_all_from_table("CountryChanges")]
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
+
+    print(country_changes)
 
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
