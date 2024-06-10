@@ -27,6 +27,7 @@ class Classifier:
         self.countries_that_require_states = config.STATED_COUNTRIES
         self.results = {}
         self.clustering_to_place = []
+        self.clusters = []
 
         #Filter System:
         userCountry_f   = UserFilter(  filterRule={}, appliesTo='C', name="user_ctry")
@@ -36,7 +37,7 @@ class Classifier:
         exactState_f    = StateExactFilter(                appliesTo='S', name="exct_stte")
         fuzzyState_f    = FuzzyFilter(                appliesTo='S', order=1, name="fzzy_stte") #Order of 1 so that not every alpha 2 maps to every other alpha 2 within 2 order.
         userAddress_f   = UserFilter(  filterRule={}, appliesTo='A', name="user_addr")
-        proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
+        #proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
         self.filters = [
             userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, #proccessing_f
@@ -50,21 +51,6 @@ class Classifier:
 
     def applyFilterStack(self, rowInput):
         #If the system ever returns max confidence, it should break out of the filter stack for that specific input
-        """
-            Operational Order:
-            1. User Country Filter
-            2. Exact Country Filter
-            3. Fuzzy Country Filter
-            ----- UI Break: Country
-            4. User State Filter
-            5. Exact State Filter
-            6. Fuzzy State Filter.
-            ----- UI Break: State
-            7. User Address Filter
-            8. Processing Filter
-            ----- UI Break: Address
-            ----- UI Confirm Screen
-        """
         probable_mapping = None
         confidence = 0
 
@@ -103,6 +89,9 @@ class Classifier:
         state_filter = [filter for filter in self.filters if filter._name == "exct_stte"][0]
         probable_state, _ = state_filter.applyFilter(item, identifiedCountry=True, probableCountry=country)
         return probable_state
+    
+    def getClusters(self):
+        return self.clusters
 
     
     def batch_process(self, batch, stepThroughRuntime=False):
@@ -155,8 +144,6 @@ class Classifier:
 
 
             if stage == 'O' and False: 
-                relevant_text = f"{item[1]} {item[2]} {item[3]}"
-                #TODO Once processing filter is created, decide how its output will update the results for that address
                 represented_countries = set()
 
                 for item in batch:
@@ -169,34 +156,32 @@ class Classifier:
                 
                 num_clusters = min(len(list(represented_countries)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with max confidence until we find a more adaptive way to determine that metric
 
-
                 vct = TfidfVectorizer(max_features=10)
                 X = vct.fit_transform(self.clustering_to_place)
 
                 #SVD dimensionality reduction? y/n?
 
-                try:
+                try: #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
+                    #This is also definetely hurting the runtime of the processing stage of our algorithm
                     kmModel = KMeans(n_clusters=num_clusters)
-                    clusters = kmModel.fit_predict(X)
+                    self.clusters = kmModel.fit_predict(X)
 
                     #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
                     #look into why
+                    """
                     for cluster_id in range(1, kmModel.n_clusters):
                         cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
                         for sample in cluster_samples[:30]:
-                            if self.results[sample][0] == None and self.results[sample][1] == 0:
-                                self.results[sample][0] = self.results[cluster_samples[0]][0]
-                                self.results[sample][1] = 2; # only 2/5 confidnece now
+                            #print(sample)
+                            """
                 except:
                     print("Processing filter error")
-                    continue
 
             if stepThroughRuntime == True:
                 print(f"{stage} Stage Completed...")
                 print(f"[ENTER] to continue ")
                 _ = input("")
                 
-
     
     def get_results(self):
         return self.results
