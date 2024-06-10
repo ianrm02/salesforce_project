@@ -26,7 +26,6 @@ class Classifier:
         self.filterOrder = config.FILTER_ORDER
         self.countries_that_require_states = config.STATED_COUNTRIES
         self.results = {}
-        self.clustering_examplars = []
         self.clustering_to_place = []
 
         #Filter System:
@@ -40,7 +39,7 @@ class Classifier:
         proccessing_f   = ProcessingFilter(name="proc_mgic", appliesTo='O')
 
         self.filters = [
-            userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, proccessing_f
+            userCountry_f, exactCountry_f, fuzzyCountry_f, userState_f, exactState_f, fuzzyState_f, userAddress_f, #proccessing_f
         ]
 
     #currently only handles main/ISO3166_1.csv
@@ -50,7 +49,7 @@ class Classifier:
     
 
     def applyFilterStack(self, rowInput):
-        #If the system ever returns 100 confidence, it should break out of the filter stack for that specific input
+        #If the system ever returns max confidence, it should break out of the filter stack for that specific input
         """
             Operational Order:
             1. User Country Filter
@@ -70,11 +69,11 @@ class Classifier:
         confidence = 0
 
         for filter in self.filters:
-            if confidence == 5:
+            if confidence == config.MAX_CONFIDENCE:
                 break
 
             (new_probable_mapping, new_confidence) = filter.applyFilter(rowInput)
-
+            
             if new_confidence > confidence:
                 probable_mapping = new_probable_mapping
                 confidence = new_confidence
@@ -136,8 +135,6 @@ class Classifier:
                             if possible_state is not None: 
                                 self.results[whole_addr][2] = possible_state  
                                 self.results[whole_addr][3] = config.MAX_CONFIDENCE #an exact state match after a confidenct country mapping should result in a confident state
-                                self.clustering_examplars.append(whole_addr) #add to examplars for clustering
-
 
                 elif stage == 'S':
                     relevant_text = item[2]
@@ -164,34 +161,36 @@ class Classifier:
 
                 for item in batch:
                     whole_addr = f"{str(item[1]).strip()} {str(item[2]).strip()} {str(item[3]).strip()}" #clean the whole address to use as a key
-                    if self.results[whole_addr][1] == 100:
+                    if self.results[whole_addr][1] == config.MAX_CONFIDENCE:
                         represented_countries.add(self.results[whole_addr][0])
-
 
                     if self.results[whole_addr][1] == 0:
                         self.clustering_to_place.append(whole_addr)
-                        
-                num_clusters = min(len(list(represented_countries)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with 100 confidence until we find a more adaptive way to determine that metric
+                
+                num_clusters = min(len(list(represented_countries)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with max confidence until we find a more adaptive way to determine that metric
 
-                total_dataset = self.clustering_examplars + self.clustering_to_place
 
                 vct = TfidfVectorizer(max_features=10)
-                X = vct.fit_transform(total_dataset)
+                X = vct.fit_transform(self.clustering_to_place)
 
                 #SVD dimensionality reduction? y/n?
 
-                kmModel = KMeans(n_clusters=num_clusters)
-                clusters = kmModel.fit_predict(X)
+                try:
+                    kmModel = KMeans(n_clusters=num_clusters)
+                    clusters = kmModel.fit_predict(X)
 
-                #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
-                #look into why
-                for cluster_id in range(kmModel.n_clusters):
-                    cluster_samples = [total_dataset[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
-                    for sample in cluster_samples[:30]:
-                        if self.results[sample][0] == None and self.results[sample][1] == 0:
-                            self.results[sample][0] = self.results[cluster_samples[0]][0]
-                            self.results[sample][1] = self.results[cluster_samples[0]][1]
-
+                    #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
+                    #look into why
+                    for cluster_id in range(1, kmModel.n_clusters):
+                        cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
+                        for sample in cluster_samples[:30]:
+                            if self.results[sample][0] == None and self.results[sample][1] == 0:
+                                self.results[sample][0] = self.results[cluster_samples[0]][0]
+                                self.results[sample][1] = 2; # only 2/5 confidnece now
+                            print(sample)
+                except:
+                    print("Processing filter error")
+                    continue
 
             if stepThroughRuntime == True:
                 print(f"{stage} Stage Completed...")
