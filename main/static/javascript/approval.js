@@ -2,7 +2,7 @@
 var cdropdown_ids = null;
 var sdropdown_id_map = null;
 var change_ids = null;
-var conf_threshold = 5;
+var conf_threshold = 4;
 
 // Page elements
 var emptyStateDropdown = null;
@@ -30,6 +30,7 @@ function initOnPageLoad() {
   
   displayItems();
   displayNotif();
+  enableButton();
 }
 
 // Allows accordions to actually extend and function
