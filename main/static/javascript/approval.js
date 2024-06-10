@@ -96,6 +96,9 @@ function fillAllAccordions(isCountry) {
     checkbox.setAttribute("id", "check" + tableId + oldField);
     checkbox.setAttribute("class", "check" + tableId);
     checkbox.onclick = function () { checkApproved(this.attributes["class"].value); enableButton(); displayNotif(); };
+    if(countryCode == "None"){
+      checkbox.disabled = true;
+    }
     // Autoselect entries above the confidence threshold(don't select ones with invalid country)
     if (confidence >= conf_threshold && countryCode != "None") {
       checkbox.checked = true;
@@ -225,15 +228,18 @@ function displayNotif() {
   var displayNotif = "none";
 
   for (var i = 0; i < tables.length; i++) {
-    if(tables[i].id == "search_results_table"){
+    var curid = tables[i].id;
+    if(curid == "search_results_table"){
       continue;
     }
-    var tab = document.getElementById("tab" + tables[i].id);
+    var tab = document.getElementById("tab" + curid);
     var highlightTab = "";
 
     if (!(approveAllList[i].checked)) {
       displayNotif = "block";
       highlightTab = "#f24e6c";
+      var parentAcc = document.getElementById("tab" + curid.substring(curid.length-2));
+      parentAcc.style.backgroundColor = highlightTab;
     }
     tab.style.backgroundColor = highlightTab;
   }

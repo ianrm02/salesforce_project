@@ -43,7 +43,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
         You can do this be running 'CREATE DATABASE test_db;' from the postgres shell
     """
     def setUp(self):
-        self.db_handler = DatabaseManager(db_name='test_db')
+        self.db_handler = DatabaseManager(db_name='bobby_db')
         self.db_handler.setup_test_database()
 
 
@@ -53,7 +53,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
             self.db_handler = DatabaseManager(db_name='fake_db')
 
         # Testing if connection made when a good database is passed
-        self.db_handler = DatabaseManager(db_name='test_db')
+        self.db_handler = DatabaseManager(db_name='bobby_db')
         self.assertIsNot(self.db_handler.conn, None)
         self.assertIsNot(self.db_handler.cur, None)
 

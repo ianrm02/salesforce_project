@@ -48,7 +48,36 @@
 
   <button id="nextPage" onclick="redirect('address_approve')" disabled>Next page</button>
 
-  
+  {% for message in get_flashed_messages() %}
+  <div class="notification">{{ message }}</div>
+  {% endfor %}
+  <form action="{{ url_for('country_approve') }}" method="post">
+    <input type="text" name="addsearch" id="addsearch">
+    <select name = "sdropdown_form" id="sdropdown_form">
+    </select>
+    <select name = "cdropdown_form" id="cdropdown_form">
+    </select>
+    <input type="submit" value="Search">
+  </form>
+  {% if search_response %}
+  <div class="panel">
+    <table id="search_results_table">
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+      {% for case in search_response %}
+        <tr>
+          <td>{{case[0]}}</td>
+          <td>{{case[1]}}</td>
+          <td>{{case[2]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>

@@ -3,70 +3,18 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <style>
-    body {
-      font-family: "Lato", sans-serif;
-    }
-
-    p {
-      font-family: "Lato", sans-serif;
-    }
-
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td,
-    th {
-      border: 1px solid #dddddd;
-      text-align: center;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
-
-    .accordion {
-      background-color: #eee;
-      color: #444;
-      cursor: pointer;
-      padding: 18px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 15px;
-      transition: 0.4s;
-    }
-
-    .active,
-    .accordion:hover {
-      background-color: #ccc;
-    }
-
-    .panel {
-      padding: 0 18px;
-      display: none;
-      background-color: white;
-      overflow: hidden;
-    }
-  </style>
+  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
+  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
 <body>
 
   <h2>Review Address Placement</h2>
-  Based on your rules and our own filters, the addresses below have been sorted into countries and states.<br>
-  Some addresses may be improperly placed due to conversion difficulties.<br>
-  Please review these placements before moving to the last step.<br>
+  We have applied a general algorithm to sort some of the remaining addresses.<br>
+  Some addresses may be improperly placed due to conversion difficulties<br>
+  Please review these placements before moving to the last step<br>
 
   <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
-
-  <br>
 
   {% for ccode in aff_country_codes%}
   <button class="accordion">{{ccode}}</button>
@@ -79,39 +27,10 @@
           <th>Address</th>
           <th>Confidence</th>
           <th>Approved<input type="checkbox" id=checkall name="approve" value="approved"
-              onclick="selectAll(this.parentNode.parentNode.parentNode, this)"></th>
+              input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
           <th>Custom</th>
         </tr>
-        <!--Populate table based on database-->
-        {% for add_case in address_info if loop.index < 10 and add_case[0]==ccode and add_case[1]==scode %} <tr>
-          <td><!--String variable here--> {{add_case[2]}}</td>
-          <td><!--Confidence variable here--> {{add_case[3]}}</td>
-          <td><!--Custom Dropdown here-->
-            <form action="" method="get">
-              <input type="checkbox" id=ccode name="approve" value={{add_case[3]}} class=ccode>
-            </form>
-          </td>
-          <td><!--Populate the dropdown based on standardized country-->
-            <form action="" method="get">
-              <select name="states" id="states">
-                <option disabled selected value> -- select a country -- </option>
-                {% for drop_id in cdropdown_ids %}
-                <option value={{drop_id}}>{{drop_id}}</option>
-                {% endfor %}
-              </select>
-              <form action="" method="get">
-                <select name="states" id="states">
-                  <option disabled selected value> -- select a state -- </option>
-                  {% for drop_id in sdropdown_ids[ccode] %}
-                  <option value={{drop_id}}>{{drop_id}}</option>
-                  {% endfor %}
-                </select>
-              </form>
-          </td>
-          </tr>
-          {% endfor %}
       </table>
-      <input type="button" value="Load Next 10" style="float: right;">
     </div>
     {% endfor %}
   </div>
@@ -120,46 +39,8 @@
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
 
-  <button onclick="redirect()">Next page</button>
-
-  <script>
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-
-    for (i = 0; i < acc.length; i++) {
-      acc[i].addEventListener("click", function () {
-        this.classList.toggle("active");
-        var panel = this.nextElementSibling;
-        if (panel.style.display === "block") {
-          panel.style.display = "none";
-        } else {
-          panel.style.display = "block";
-        }
-      });
-    }
-
-    function redirect() {
-      window.location.href = "{{url_for('statistics')}}"
-    }
-
-    function selectAll(table, bx) {
-      for (var bxs = table.getElementsByTagName('input'), j = bxs.length; j--;) {
-        if (bxs[j].type == "checkbox") {
-          bxs[j].checked = bx.checked;
-        }
-      }
-    }
-
-    // Auto select feature
-    $(document).ready(function () {
-      $('[type="checkbox"]').each(function () {
-        if ($(this).attr('value') === '100') {
-          $(this).attr("checked", "checked");
-        }
-      })
-    })
-  </script>
+  <button onclick="redirect('statistics')">Next page</button>
 
 </body>
-
+<script type="text/javascript" src="/static/javascript/approval.js"></script>
 </html>

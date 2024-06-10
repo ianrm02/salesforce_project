@@ -29,11 +29,21 @@ def search(formdata):
     if(not ('sdropdown_form' in formdata and 'cdropdown_form' in formdata)):
         return "Error: Missing required fields"
     search_address = formdata['addsearch']
-    search_state = formdata['sdropdown_form']
-    search_country = formdata['cdropdown_form']
+    if(search_address == ""):
+        search_address = None
+    if(not 'sdropdown_form' in formdata):
+        search_state = None
+    else:
+        search_state = formdata['sdropdown_form']
+    if(not 'cdropdown_form' in formdata):
+        search_country = None
+    else:
+        search_country = formdata['cdropdown_form']
+        
     results = clfApp.db_handler.search_db((search_address, search_state, search_country))
     if(len(results) == 0):
         return
+    print(results)
     return results
 
 # connect URL endpoints
