@@ -350,3 +350,7 @@ class DatabaseManager():
             return results
         except Exception as e:
             print("An error occurred:", e)
+
+#temp = DatabaseManager()
+#temp.setup_test_database()
+#temp.setup_database_extension()

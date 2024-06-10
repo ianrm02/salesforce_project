@@ -3,8 +3,9 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
-  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
+  <meta name="init_data" change_ids="{{change_ids|escape}}" , cdropdown_ids="{{ cdropdown_ids|escape }}" ,
+    sdropdown_ids="{{ sdropdown_ids|escape }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
 <body>
@@ -17,7 +18,8 @@
 
   <div class="notification">Items still pending approval</div>
 
-  <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
+  <input type="button" id="export" value="Export Settings" style="float: right;"
+    onclick="exportSettings('settings.txt')">
 
   <br>
 
@@ -25,14 +27,16 @@
   <button id="tab{{ccode}}" class="accordion">{{ccode}}</button>
   <div class="panel">
     {% for scode in aff_state_codes[ccode] %}
-    <button id="tab{{scode}}{{ccode}}" class="accordion">{{scode}}<span id="itemNum{{scode}}{{ccode}}" class="itemNum"></span></button>
+    <button id="tab{{scode}}{{ccode}}" class="accordion">{{scode}}<span id="itemNum{{scode}}{{ccode}}"
+        class="itemNum"></span></button>
     <div class="panel">
       <table id="{{scode}}{{ccode}}" class="state">
         <tr>
           <th>State Field</th>
           <th>Occurences</th>
           <th>Alpha2 Confidence</th>
-          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
+          <th>Approved<input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall"
+              onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
           <th>Custom</th>
         </tr>
       </table>
@@ -48,8 +52,37 @@
 
   <button id="nextPage" onclick="redirect('address_approve')" disabled>Next page</button>
 
-  
+  {% for message in get_flashed_messages() %}
+  <div class="notification">{{ message }}</div>
+  {% endfor %}
+  <form action="{{ url_for('country_approve') }}" method="post">
+    <input type="text" name="addsearch" id="addsearch">
+    <select name="sdropdown_form" id="sdropdown_form">
+    </select>
+    <select name="cdropdown_form" id="cdropdown_form">
+    </select>
+    <input type="submit" value="Search">
+  </form>
+  {% if search_response %}
+  <div class="panel">
+    <table id="search_results_table">
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+      {% for case in search_response %}
+      <tr>
+        <td>{{case[0]}}</td>
+        <td>{{case[1]}}</td>
+        <td>{{case[2]}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
+
 </html>
