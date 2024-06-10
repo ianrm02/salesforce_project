@@ -68,6 +68,7 @@ class ClassifierApp(object):
 
     def uploadProcessedToDB(self):
         for _, mappings in self.clf.get_results().items():
+            print(mappings)
             self.db_handler.store_temp_values(mappings)
 
 
