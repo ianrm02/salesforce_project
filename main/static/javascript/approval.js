@@ -224,11 +224,11 @@ function displayNotif() {
       continue;
     }
     var tab = document.getElementById("tab" + curid);
-    var highlightTab = "";
+    var highlightTab = "#0d9dda";
 
     if (!(approveAllList[i].checked)) {
       displayNotif = "block";
-      highlightTab = "#f24e6c";
+      highlightTab = "";
       var countryCode = curid.substring(curid.length-2);
       if(countryCode == "ne"){ // Handle None case. Need better solution
         countryCode = "None";
