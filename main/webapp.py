@@ -61,7 +61,6 @@ def country_approve():
         search_response = search(request.form)
         if(isinstance(search_response, str)):
             flash(search_response)
-        flash(search_response)
     
 
     #TODO loading screen to show it's in processing
@@ -81,8 +80,14 @@ def country_approve():
     return render_template('country_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, cdropdown_ids = json.dumps(country_dropdown_ids), change_ids = json.dumps(country_change_ids), sdropdown_ids = json.dumps(state_dropdown_ids), search_response = search_response)
 
 
-@app.route("/state_approve")
+@app.route("/state_approve", methods=('GET', 'POST'))
 def state_approve():
+    search_response = None
+    if(request.method == 'POST'):
+        search_response = search(request.form)
+        if(isinstance(search_response, str)):
+            flash(search_response)
+    
     state_changes = [item for item in clfApp.db_handler.get_all_from_table("StateChanges")]
     state_changes.sort(key=lambda x: x[5]) 
     state_changes.reverse() #highest to lowest confidence
@@ -108,10 +113,10 @@ def state_approve():
         tmp_states = sorted(states)
         affected_scodes[country] = tmp_states
 
-    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(state_dropdown_ids), change_ids = json.dumps(state_change_ids))
+    return render_template('state_skeleton.html', conf_threshold = conf_threshold, aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(state_dropdown_ids), change_ids = json.dumps(state_change_ids), search_response = search_response)
 
 
-@app.route("/address_approve")
+@app.route("/address_approve", methods=('GET','POST'))
 def address_approve():
     #address_changes = [item for item in clfApp.db_handler.get_all_from_table("AddressChanges")]
     #address_changes.sort(key=lambda x: x[3])
@@ -122,11 +127,17 @@ def address_approve():
     #affected_ccodes = list(set([code[1] for code in address_changes]))
     #affected_scodes = list(set([code[1] for code in address_changes]))
 
+    search_response = None
+    if(request.method == 'POST'):
+        search_response = search(request.form)
+        if(isinstance(search_response, str)):
+            flash(search_response)
+
     affected_ccodes = []
     affected_scodes = []
     print("CLUSTERS")
     print(clfApp.clf.getClusters())
-    return render_template('address_skeleton.html', clusters = clfApp.clf.getClusters(), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES))
+    return render_template('address_skeleton.html', clusters = clfApp.clf.getClusters(), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), search_response = search_response)
 
 
 @app.route("/statistics")
