@@ -18,7 +18,7 @@ class DatabaseManager():
             )
             self.cur = self.conn.cursor()
             self.LAST_ID = 1
-        except pg8000.DatabaseError as e: #TODO: comnfirm this is the right functionality
+        except pg8000.DatabaseError as e:
             raise pg8000.DatabaseError(f"Failed to connect to the database: {e}")
         
     
@@ -174,21 +174,6 @@ class DatabaseManager():
         self.state_changes_table()
         self.address_changes_table()
 
-    def upload_n_entries(self, n): #TODO: delete this outdated method
-        """
-        upload n random entries to the database
-        """
-        address = 1000
-        state = ["TX", "CT", "Buenos Aires", "Bahumbug"]
-        country = ["United States", "Merica", "Arg", "Iran"]
-        one_twentieth = n // 20
-
-        for i in range(n):
-            self.insert_address(address, state[i % 4], country[i % 4])
-            address = ((address + i - 1000) % 9000) + 1000
-            if (i % one_twentieth == 0):
-                print(i)
-
     def upload_csv_entries(self, filename):
         """
         upload csv entries to the database
@@ -217,9 +202,8 @@ class DatabaseManager():
         """
         NewCo, ConfCo, NewSt, ConfSt, iD, Addr, OldSt, OldCo = values
         OccCo = self.get_freq('C', OldCo)
-        OccSt = self.get_freq('S', OldSt, OldCo) #changed from NewCo
-        #TODO: I can just make this an if statement that separates the necessary cases 
-        #TODO: THIS IS STILL NOT RIGHT, PLEASE WRITE THIS OUT ON THE BOARD
+        OccSt = self.get_freq('S', OldSt, OldCo) # this potentially incorrect, but was not sure how to solve it. We should add the occurences of all country spellings that are associated to that old state for the new state
+        # Solution: just make this an if statement that separates the necessary cases 
 
         try:
             # Country table
@@ -287,7 +271,7 @@ class DatabaseManager():
                 self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country=%s;", (value,))
             elif appliesTo == 'S':
                 if country is None:
-                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,)) #TODO: potential bug here as what if country is null?
+                    self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country='';", (value,)) #potential bug here as what if country is null?
                 else:
                     self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state=%s AND country=%s;", (value, country))
             elif appliesTo == 'A':
