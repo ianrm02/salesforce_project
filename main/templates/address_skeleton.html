@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name = "init_data" change_ids = "{{change_ids|escape}}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
+  <meta name = "init_data" change_ids = "{{ change_ids|escape }}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
@@ -16,19 +16,24 @@
 
   <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
 
-  {% for ccode in aff_country_codes%}
-  <button class="accordion">{{ccode}}</button>
+  {% for cluster in clusters %}
+  <button class="accordion"></button>
   <div class="panel">
-    {% for scode in aff_state_codes[ccode] %}
+    <table>
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+    </table>
+    {% for addcase in cluster %}
     <button class="accordion">{{scode}}</button>
     <div class="panel">
       <table>
         <tr>
-          <th>Address</th>
-          <th>Confidence</th>
-          <th>Approved<input type="checkbox" id=checkall name="approve" value="approved"
-              input type="checkbox" id='approveall{{scode}}{{ccode}}' class="approveall" onclick="selectAll('{{scode}}{{ccode}}')" onchange="enableButton(); displayNotif()"></th>
-          <th>Custom</th>
+          <td>{{addcase[0]}}</td>
+          <td>{{addcase[1]}}</td>
+          <td>{{addcase[2]}}</td>
         </tr>
       </table>
     </div>
@@ -40,7 +45,37 @@
   <input type="submit" value="Search"> <br><br>
 
   <button onclick="redirect('statistics')">Next page</button>
-
+<br><br>
+  Search for sets of addresses to assist in the approval process.<br>
+  Provide at least two fields for a search. Spaces are considered not empty and the search is case sensitive.<br>
+  {% for message in get_flashed_messages() %}
+  <div class="notification">{{ message }}</div>
+  {% endfor %}
+  <form action="{{ url_for('address_approve') }}" method="post">
+    <input type="text" name="addsearch" id="addsearch">
+    <input type="text" name="statesearch" id="statesearch">
+    <input type="text" name="countrysearch" id="countrysearch">
+    <input type="submit" value="Search">
+  </form>
+  {% if search_response %}
+  <br>
+  <div class="searchTable">
+    <table id="search_results_table">
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+      {% for case in search_response %}
+        <tr>
+          <td>{{case[1]}}</td>
+          <td>{{case[2]}}</td>
+          <td>{{case[3]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
 </body>
-<script type="text/javascript" src="/static/javascript/approval.js"></script>
+<!-- <script type="text/javascript" src="/static/javascript/approval.js"></script> -->
 </html>

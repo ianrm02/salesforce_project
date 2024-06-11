@@ -69,7 +69,6 @@ def country_approve():
     country_changes.sort(key=lambda x: x[3])
     country_changes.reverse()
 
-    print(country_changes)
 
     #Sorted by confidence
     #Each address has [OldCo] [NewCo] [Freq] [Conf]
@@ -125,8 +124,9 @@ def address_approve():
 
     affected_ccodes = []
     affected_scodes = []
-
-    return render_template('address_skeleton.html', aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = country_dropdown_ids, sdropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES, cstate_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES, address_info = address_batch)
+    print("CLUSTERS")
+    print(clfApp.clf.getClusters())
+    return render_template('address_skeleton.html', clusters = clfApp.clf.getClusters(), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES))
 
 
 @app.route("/statistics")
