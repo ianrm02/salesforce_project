@@ -41,7 +41,7 @@ class ClassifierApp(object):
         print("")
 
             
-    def print_intermediate_diagnostics(self, results):
+    def get_intermediate_diagnostics(self, results):
         #TODO add comments
         total_country_confidence = 0
         total_state_confidence = 0
@@ -57,13 +57,21 @@ class ClassifierApp(object):
                     if mappings[0] in config.STATED_COUNTRIES: num_fully_converted += 1
 
 
-        print("")
-        print(f"AVG COUNTRY CONF: {total_country_confidence/self._total_db_size:.2f}")
-        print(f"AVG STATE   CONF: {total_state_confidence/self._total_db_size:.2f}")
+        avg_country_conf = total_country_confidence/self._total_db_size
+        avg_state_conf = total_state_confidence/self._total_db_size
+        percent_max_conf = num_max_confident_country/self._total_db_size*100
+        percent_full_converted = num_fully_converted/self._total_db_size*100
 
-        print(f"%DB with Max Country Confidence: {num_max_confident_country/self._total_db_size*100:.2f}")
         print("")
-        print(f"% Entries Fully Converted (with Max confidence): {num_fully_converted/self._total_db_size*100:.2f}")
+
+        print(f"AVG COUNTRY CONF: {avg_country_conf:.2f}")
+        print(f"AVG STATE   CONF: {avg_state_conf:.2f}")
+
+        print(f"%DB with Max Country Confidence: {percent_max_conf:.2f}")
+        print("")
+        print(f"% Entries Fully Converted (with Max confidence): {percent_full_converted:.2f}")
+
+        return avg_country_conf, avg_state_conf, percent_max_conf, percent_full_converted
 
 
     def uploadProcessedToDB(self):
@@ -89,7 +97,7 @@ class ClassifierApp(object):
         intermediate_results = self.clf.get_results()
         #List elements for each address in intermediate_results:
         #0: New Country, #1: New Country Confidence, #2 New State, #3 New State Confidence, #4 ID, #5 Addr Line, #6 State Line, #7 Country Line
-        self.print_intermediate_diagnostics(intermediate_results)
+        self.get_intermediate_diagnostics(intermediate_results)
 
         #upload the processed to result to intermediate database to await UI stage.
         self.uploadProcessedToDB()

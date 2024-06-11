@@ -142,7 +142,7 @@ def address_approve():
 
 @app.route("/statistics")
 def statistics():
-    return render_template('statistics.html')
+    return render_template('statistics.html', stats = clfApp.get_intermediate_diagnostics(clfApp.clf.get_results()))
 
 
 @app.route("/end")
