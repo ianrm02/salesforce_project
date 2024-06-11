@@ -99,8 +99,8 @@ class DatabaseHandlerTestCase(unittest.TestCase):
     
 
     def test_get_next_n(self):
-        # get addresses
-        pass
+        self.assertEqual(len(self.db_handler.get_next_n(5)), 5)
+        self.assertEqual(len(self.db_handler.get_next_n(400)), 372)
     
 
     def test_get_db_size(self):
