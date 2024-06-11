@@ -111,15 +111,16 @@ function fillAllAccordions(isCountry) {
     newCell = newRow.insertCell();
     // Create state dropdown (populated based on country)
     if (change_id[0] == 'S') {
+      var sdropdown = null;
       // If no states are available
       if (countryCode == "None" || !(countryCode in sdropdown_id_map)) {
         var dupEmpty = emptyStateDropdown.cloneNode(true);
         dupEmpty.setAttribute("id", "sdropdown" + tableId + oldField);
-        newCell.appendChild(dupEmpty);
+        sdropdown = dupEmpty;
       }
       // Create and populate state dropdown
       else {
-        var sdropdown = document.createElement("select");
+        sdropdown = document.createElement("select");
         sdropdown.setAttribute("id", "sdropdown" + tableId + oldField)
         for (var x = 0; x < sdropdown_id_map[countryCode].length; x++) {
           var newOption = document.createElement("option");
@@ -127,15 +128,22 @@ function fillAllAccordions(isCountry) {
           sdropdown.appendChild(newOption);
         }
         sdropdown.selectedIndex = sdropdown_id_map[countryCode].indexOf(stateCode); // Make selected state code match accordion title code
-        newCell.appendChild(sdropdown);
       }
+      sdropdown.setAttribute("data-state", stateCode);
+      sdropdown.setAttribute("data-country", countryCode);
+      sdropdown.onchange = function(){moveToTable(this)};
+      newCell.appendChild(sdropdown);
     }
     // Create Country dropdown
     var curcdropdown = cdropdown.cloneNode(true);
     curcdropdown.setAttribute("id", "cdropdown" + tableId + oldField);
     curcdropdown.selectedIndex = cdropdown_ids.indexOf(countryCode);
+    curcdropdown.setAttribute("data-countrytable", countryCode);
     if (change_id[0] == 'S') {
-      curcdropdown.onchange = function () { repopulate_statedropdown(this.attributes["id"].value) };
+      curcdropdown.onchange = function () { repopulate_statedropdown(this.attributes["id"].value);};
+    }
+    else{
+      curcdropdown.onchange = function() { moveToTable(this); }
     }
     newCell.appendChild(curcdropdown);
 
@@ -303,3 +311,22 @@ function fillSearchBar(text){
   searchBar.value = text;
 }
 
+function moveToTable(cell){
+  // Should change this system to be based on custom attributes
+  countryCode = "";
+  stateCode = "";
+  if(document.location.pathname == "/country_approve"){
+    countryCode = cell[cell.selectedIndex].value;
+  }
+  else if(document.location.pathname == "/state_approve"){
+    cdrop = document.getElementById("c" + cell.id.substring(1));
+    countryCode = cdrop[cdrop.selectedIndex].value;
+    stateCode = cell[cell.selectedIndex].value;
+  }
+  tableId = stateCode + countryCode;
+  var row = cell.closest("tr");
+  var nrow = row.cloneNode(true);
+  row.remove();
+  var ntable = document.getElementById(tableId);
+  ntable.append(nrow);
+}
