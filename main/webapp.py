@@ -20,20 +20,15 @@ state_dropdown_ids = config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES
 
 
 def search(formdata):
-    if(not ('sdropdown_form' in formdata and 'cdropdown_form' in formdata)):
-        return "Error: Missing required fields"
     search_address = formdata['addsearch']
+    search_state = formdata['statesearch']
+    search_country = formdata['countrysearch']
     if(search_address == ""):
         search_address = None
-    if(not 'sdropdown_form' in formdata):
+    if(search_state == ""):
         search_state = None
-    else:
-        search_state = formdata['sdropdown_form']
-    if(not 'cdropdown_form' in formdata):
+    if(search_country == ""):
         search_country = None
-    else:
-        search_country = formdata['cdropdown_form']
-        
     results = clfApp.db_handler.search_db((search_address, search_state, search_country))
     if(len(results) == 0):
         return

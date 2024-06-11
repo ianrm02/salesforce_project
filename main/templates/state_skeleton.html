@@ -49,7 +49,36 @@
   <button id="nextPage" onclick="redirect('address_approve')" disabled>Next page</button>
   <button id="nextPageAdmin" onclick="redirect('address_approve')">Next page</button>
 
-  
+  Search for sets of addresses to assist in the approval process.<br>
+  Provide at least two fields for a search. Spaces are considered not empty and the search is case sensitive.<br>
+  {% for message in get_flashed_messages() %}
+  <div class="notification">{{ message }}</div>
+  {% endfor %}
+  <form action="{{ url_for('state_approve') }}" method="post">
+    <input type="text" name="addsearch" id="addsearch">
+    <input type="text" name="statesearch" id="statesearch">
+    <input type="text" name="countrysearch" id="countrysearch">
+    <input type="submit" value="Search">
+  </form>
+  {% if search_response %}
+  <br>
+  <div class="searchTable">
+    <table id="search_results_table">
+      <tr>
+        <th>Address</th>
+        <th>State</th>
+        <th>Country</th>
+      </tr>
+      {% for case in search_response %}
+        <tr>
+          <td>{{case[1]}}</td>
+          <td>{{case[2]}}</td>
+          <td>{{case[3]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
 
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>

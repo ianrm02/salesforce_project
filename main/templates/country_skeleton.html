@@ -42,19 +42,20 @@
   <button id="nextPageAdmin" onclick="redirect('state_approve')">Next page</button>
 
   <br><br>
+  Search for sets of addresses to assist in the approval process.<br>
+  Provide at least two fields for a search. Spaces are considered not empty and the search is case sensitive.<br>
   {% for message in get_flashed_messages() %}
   <div class="notification">{{ message }}</div>
   {% endfor %}
   <form action="{{ url_for('country_approve') }}" method="post">
     <input type="text" name="addsearch" id="addsearch">
-    <select name = "sdropdown_form" id="sdropdown_form">
-    </select>
-    <select name = "cdropdown_form" id="cdropdown_form">
-    </select>
+    <input type="text" name="statesearch" id="statesearch">
+    <input type="text" name="countrysearch" id="countrysearch">
     <input type="submit" value="Search">
   </form>
   {% if search_response %}
-  <div class="panel">
+  <br>
+  <div class="searchTable">
     <table id="search_results_table">
       <tr>
         <th>Address</th>
@@ -63,15 +64,14 @@
       </tr>
       {% for case in search_response %}
         <tr>
-          <td>{{case[0]}}</td>
           <td>{{case[1]}}</td>
           <td>{{case[2]}}</td>
+          <td>{{case[3]}}</td>
         </tr>
       {% endfor %}
     </table>
   </div>
   {% endif %}
-
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
 

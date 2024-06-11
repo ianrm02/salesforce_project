@@ -307,18 +307,24 @@ class DatabaseManager():
     
     def search_db(self, infoTuple):
         """
-        Pass in a tuple with address, state, country
-
-        When writing this I assumed errors would be handled before coming here (ie nothing will happen if you only pass me a state or country)
+        Pass in a tuple with address, state, country with None for empty items
         """
 
         address, state, country = infoTuple
 
         match (address, state, country):
+            case(None, None, None):
+                return "Please enter something"
             # if only address
             case(_, None, None):
                 query = "SELECT * FROM Addresses WHERE address=%s;"
                 params = (address, )
+            case(None, _, None):
+                query = "SELECT * FROM Addresses WHERE state=%s;"
+                params = (state, )
+            case(None, None, _):
+                query = "SELECT * FROM Addresses WHERE country=%s;"
+                params = (country, )
             # else if state and country
             case(None, _, _):
                 query = "SELECT * FROM Addresses WHERE state=%s AND country=%s;"

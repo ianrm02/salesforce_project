@@ -25,7 +25,6 @@ function initOnPageLoad() {
 
   activateAccordions();
   fillAllAccordions();
-  populateSearchDrops();
   
   displayRows();
   displayNotif();
@@ -140,25 +139,6 @@ function fillAllAccordions(isCountry) {
 
     checkApproved("check" + tableId);
   }
-}
-
-// Populates the search bar dropdowns at the bottom
-function populateSearchDrops(){
-  // populate country dropdown
-  var cdropdown = document.getElementById("cdropdown_form");
-  var opt = document.createElement("option");
-  opt.disabled = true;
-  opt.text = "Country";
-  cdropdown.appendChild(opt);
-  cdropdown.selectedIndex = 0;
-  for(var i = 0; i < cdropdown_ids.length; i++){
-    opt = document.createElement("option");
-    opt.text = cdropdown_ids[i];
-    cdropdown.appendChild(opt)
-  }
-  var sdropdown = document.getElementById("sdropdown_form");
-  sdropdown.appendChild(emptyStateDropdown.options[0]);
-  cdropdown.onchange = function(){repopulate_statedropdown(this.attributes["id"].value)};
 }
 
 // Takes input for the next page and makes the url. We don't have pages sorted into folders so using the root(/) allow us to make the url work
