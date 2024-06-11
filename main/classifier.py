@@ -186,6 +186,14 @@ class Classifier:
                 for sample in cluster_samples:
                     sample_stack.append(sample)
                 self.clusters.append(sample_stack)
+
+            #convert all the 1-element clusters into a merged "unmatchable" cluster
+            unmatchable = []
+            for clust in self.clusters:
+                if len(clust) == 1:
+                    unmatchable.append(clust[0])
+                    self.clusters.remove(clust)
+            self.clusters.append(unmatchable)
                     
         except:
             print("Processing filter error")
