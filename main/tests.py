@@ -115,17 +115,21 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
     def test_store_temp_values(self):
         # push new values
+        self.db_handler.insert_address("3245 S Fortress Ln.", "Helm\'s Deep", "Rohan")
+        self.db_handler.insert_address("5180 Farm Rd.", "Hobbit hole", "Shire")
+        self.db_handler.insert_address("1 Saurons Tower", "Orc Ville", "Mordor")
+
         v1 = ("RO", 5, "HD", 5, 378, "3245 S Fortress Ln.", "Helm\'s Deep", "Rohan")
         v2 = (None, 0, "HH", 5, 379, "5180 Farm Rd.", "Hobbit hole", "Shire")
         v3 = (None, 0, None, 0, 380, "1 Sauron\'s Tower", "Orc Ville", "Mordor")
-        #self.db_handler.store_temp_values(v1)
-        #self.db_handler.store_temp_values(v2)
-        #self.db_handler.store_temp_values(v3)
 
-        # check sizes of AddressChanges etc
-        print( len(self.db_handler.get_all_from_table("AddressChanges")) )
-        print( len(self.db_handler.get_all_from_table("StateChanges")) )
-        print( len(self.db_handler.get_all_from_table("CountryChanges")) )
+        self.db_handler.store_temp_values(v1)
+        self.db_handler.store_temp_values(v2)
+        self.db_handler.store_temp_values(v3)
+
+        self.assertEqual(len(self.db_handler.get_all_from_table("AddressChanges")), 1)
+        self.assertEqual(len(self.db_handler.get_all_from_table("StateChanges")), 2)
+        self.assertEqual(len(self.db_handler.get_all_from_table("CountryChanges")), 1)
 
 
 
