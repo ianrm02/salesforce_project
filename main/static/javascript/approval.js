@@ -84,6 +84,8 @@ function fillAllAccordions(isCountry) {
     var newRow = curTable.insertRow();
     var newCell = newRow.insertCell();
     newCell.innerText = oldField;
+    newCell.name = tableId;
+    newCell.ondblclick = function(){ fillSearchBar(this.innerText)}
     newCell = newRow.insertCell();
     newCell.innerText = occurrences;
     newCell = newRow.insertCell();
@@ -219,7 +221,11 @@ function displayNotif() {
     if (!(approveAllList[i].checked)) {
       displayNotif = "block";
       highlightTab = "#f24e6c";
-      var parentAcc = document.getElementById("tab" + curid.substring(curid.length-2));
+      var countryCode = curid.substring(curid.length-2);
+      if(countryCode == "ne"){ // Handle None case. Need better solution
+        countryCode = "None";
+      }
+      var parentAcc = document.getElementById("tab" + countryCode);
       parentAcc.style.backgroundColor = highlightTab;
     }
     tab.style.backgroundColor = highlightTab;
@@ -281,5 +287,19 @@ function exportSettings(file) {
 function uploadSettings() {
   alert("File uploaded");
   // please implement settings reading here
+}
+
+function fillSearchBar(text){
+  var searchBar;
+  if(window.location.pathname == "/address_approve"){
+    searchBar = document.getElementById("addsearch");
+  }
+  else if(window.location.pathname == "/state_approve"){
+    searchBar = document.getElementById("statesearch");
+  }
+  else if(window.location.pathname == "/country_approve"){
+    searchBar = document.getElementById("countrysearch");
+  }
+  searchBar.value = text;
 }
 
