@@ -190,7 +190,9 @@ class Classifier:
             #convert all the 1-element clusters into a merged "unmatchable" cluster
             unmatchable = []
             for clust in self.clusters:
-                if len(clust) == 1:
+                if len(clust) == 0:
+                    self.clusters.remove(clust)
+                elif len(clust) == 1:
                     unmatchable.append(clust[0])
                     self.clusters.remove(clust)
             self.clusters.append(unmatchable)
