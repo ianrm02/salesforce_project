@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <body>
-<style>
-</style>
+<head>
+  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
+</head>
 
 <h1>Statistics</h1>
 <table>
@@ -13,22 +14,22 @@
   </tr>
   <tr>
     <td>Avg. Country Confidence</td>
-    <td>{{stats[0]}}</td>
+    <td>{{'%0.2f' | format(stats[0])}}</td>
     <td>Average confidence of the addresses successfully converted to a country code.</td>
   </tr>
   <tr>
     <td>Avg. State Confidence</td>
-    <td>{{stats[1]}}</td>
+    <td>{{'%0.2f' | format(stats[1])}}</td>
     <td>Average confidence of the addresses successfully converted to a country code.</td>
   </tr>
   <tr>
     <td>Max Confidence Percentage</td>
-    <td>{{stats[2]}}</td>
+    <td>{{'%0.2f' | format(stats[2])}}</td>
     <td>Percentage of addresses that were converted with maximum confidence.</td>
   </tr>
   <tr>
     <td>Fully Converted Percentage</td>
-    <td>{{stats[3]}}</td>
+    <td>{{'%0.2f' | format(stats[3])}}</td>
     <td>Percentage of addresses that were converted with both Country and State codes.</td>
   </tr>
 </table>
