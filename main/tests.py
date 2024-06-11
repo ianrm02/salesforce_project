@@ -59,18 +59,46 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
 
     def test_db_insert_address(self):
-        pass
+        self.db_handler.insert_address("3245 S Fortress Ln.", "Helm\'s Deep", "Rohan")
+        self.db_handler.insert_address("5180 Farm Rd.", "Hobbit hole", "Shire")
+        self.db_handler.insert_address("1 Saurons Tower", "Orc Ville", "Mordor")
+
+        self.assertEqual(len(self.db_handler.get_all_from_table("Addresses")), 380)
+
+        self.db_handler.delete_address("address=\'3245 S Fortress Ln.\'")
+        self.db_handler.delete_address("address=\'5180 Farm Rd.\'")
+        self.db_handler.delete_address("address=\'1 Saurons Tower\'")
+
+        self.assertEqual(len(self.db_handler.get_all_from_table("Addresses")), 377)
+
+
 
 
     def test_db_delete_address(self):
-        pass
+        self.db_handler.insert_address("3245 S Fortress Ln.", "Helm\'s Deep", "Rohan")
+        self.db_handler.insert_address("5180 Farm Rd.", "Hobbit hole", "Shire")
+        self.db_handler.insert_address("1 Saurons Tower", "Orc Ville", "Mordor")
+
+        self.assertEqual(len(self.db_handler.get_all_from_table("Addresses")), 380)
+
+        self.db_handler.delete_address("address=\'3245 S Fortress Ln.\'")
+        self.db_handler.delete_address("address=\'5180 Farm Rd.\'")
+        self.db_handler.delete_address("address=\'1 Saurons Tower\'")
+
+        self.assertEqual(len(self.db_handler.get_all_from_table("Addresses")), 377)
     
 
     def test_db_re_id_database(self):
-        pass
+        self.db_handler.re_id_database()
+        all_addresses = self.db_handler.get_all_from_table("Addresses")
+        for address in all_addresses:
+            break
+        #make sure biggest id is 377
+        # lowest is 1
     
 
     def test_get_next_n(self):
+        # get addresses
         pass
     
 
@@ -85,7 +113,19 @@ class DatabaseHandlerTestCase(unittest.TestCase):
 
 
     def test_store_temp_values(self):
-        pass
+        # push new values
+        v1 = ("RO", 5, "HD", 5, 378, "3245 S Fortress Ln.", "Helm\'s Deep", "Rohan")
+        v2 = (None, 0, "HH", 5, 379, "5180 Farm Rd.", "Hobbit hole", "Shire")
+        v3 = (None, 0, None, 0, 380, "1 Sauron\'s Tower", "Orc Ville", "Mordor")
+        #self.db_handler.store_temp_values(v1)
+        #self.db_handler.store_temp_values(v2)
+        #self.db_handler.store_temp_values(v3)
+
+        # check sizes of AddressChanges etc
+        print( len(self.db_handler.get_all_from_table("AddressChanges")) )
+        print( len(self.db_handler.get_all_from_table("StateChanges")) )
+        print( len(self.db_handler.get_all_from_table("CountryChanges")) )
+
 
 
     def test_search_db(self):

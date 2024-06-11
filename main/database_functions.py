@@ -43,8 +43,6 @@ class DatabaseManager():
             self.cur.execute(delete_query)
             self.conn.commit()
             
-            print("Deleted successfully")
-
         except Exception as e:
             print(f"An error occurred: {e}")
 
