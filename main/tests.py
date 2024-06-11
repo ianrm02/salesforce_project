@@ -91,10 +91,11 @@ class DatabaseHandlerTestCase(unittest.TestCase):
     def test_db_re_id_database(self):
         self.db_handler.re_id_database()
         all_addresses = self.db_handler.get_all_from_table("Addresses")
-        for address in all_addresses:
-            break
-        #make sure biggest id is 377
-        # lowest is 1
+        minID = 1
+        maxID = 377
+        for i, address in enumerate(all_addresses):
+            self.assertTrue(address[0] <= maxID)
+            self.assertTrue(address[0] >= minID)
     
 
     def test_get_next_n(self):
