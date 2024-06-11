@@ -78,7 +78,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
         self.assertEqual(self.db_handler.get_db_size(), 377)
 
 
-    def test_get_freq(self): #TODO: make this more robust
+    def test_get_freq(self):
         self.assertEqual(self.db_handler.get_freq('C', 'US'), 59)
         self.assertEqual(self.db_handler.get_freq('S', 'CA'), 3)
         self.assertEqual(self.db_handler.get_freq('A', '1545 liona street honolulu'), 1)
@@ -93,10 +93,8 @@ class DatabaseHandlerTestCase(unittest.TestCase):
         self.assertEqual(len(self.db_handler.search_db((None, "karnataka", "IN"))), 2)
 
 
-
     def test_get_all_from_table(self):
-        pass
-
+        self.assertEqual(len(self.db_handler.get_all_from_table("Addresses")), 377)
     
 
 
