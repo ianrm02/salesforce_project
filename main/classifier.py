@@ -175,16 +175,18 @@ class Classifier:
         try: #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
             #This is also definetely hurting the runtime of the processing stage of our algorithm
             kmModel = KMeans(n_clusters=num_clusters)
-            self.clusters = kmModel.fit_predict(X)
+            tmp_clusters = kmModel.fit_predict(X)
 
             #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
             #look into why
-            """
+            
             for cluster_id in range(1, kmModel.n_clusters):
-                cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(clusters) if cluster == cluster_id]
-                for sample in cluster_samples[:30]:
-                    #print(sample)
-                    """
+                sample_stack = []
+                cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(tmp_clusters) if cluster == cluster_id]
+                for sample in cluster_samples:
+                    sample_stack.append(sample)
+                self.clusters.append(sample_stack)
+                    
         except:
             print("Processing filter error")
                 
