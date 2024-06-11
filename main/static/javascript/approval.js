@@ -7,7 +7,62 @@ var conf_threshold = 4;
 // Page elements
 var emptyStateDropdown = null;
 
-initOnPageLoad();
+if(window.location.pathname == "/address_approve"){
+  initAddressPage();
+}
+else{
+  initOnPageLoad();
+}
+
+function initAddressPage(){
+  clusters = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('clusters'));
+  this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('cdropdown_ids'));
+  this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
+  // Init additional page elements
+  var addTable = document.getElementById("addtable");
+
+  emptyStateDropdown = document.createElement("select");
+  var emptyoption = document.createElement("option");
+  emptyoption.text = "No states available";
+  emptyStateDropdown.appendChild(emptyoption);
+  emptyStateDropdown.setAttribute("id", "defaultempty");
+
+  var cdropdown = document.createElement("select");
+  for (var i = 0; i < cdropdown_ids.length; i++) {
+    var opt = document.createElement("option");
+    opt.text = cdropdown_ids[i];
+    cdropdown.appendChild(opt);
+  }
+  for(var i = 0; i < clusters.length; i++){
+    var curTable = document.createElement("table");
+    var row = curTable.insertRow();
+    var newCell = row.insertCell();
+    newCell.innerText = "Address Field";
+    newCell = row.insertCell();
+    newCell.innerText = "Custom";
+    for(var x = 0; x < clusters[i].length; x++){
+      row = curTable.insertRow();
+      newCell = row.insertCell();
+      newCell.innerText = clusters[i][x];
+      newCell = row.insertCell();
+
+      var sdropdown = null;
+      // If no states are available
+      var dupEmpty = emptyStateDropdown.cloneNode(true);
+      dupEmpty.setAttribute("id", "sdropdown" + clusters[i][x]);
+      sdropdown = dupEmpty;
+      newCell.appendChild(sdropdown);
+    
+      // Create Country dropdown
+      var curcdropdown = cdropdown.cloneNode(true);
+      curcdropdown.onchange = function () { repopulate_statedropdown(this.attributes["id"].value);};
+      curcdropdown.setAttribute("id", "cdropdown" + clusters[i][x]);
+      newCell.appendChild(curcdropdown);
+    }
+    addTable.appendChild(curTable);
+  }
+}
+
 // initialize variables and call page load
 function initOnPageLoad() {
   var fileName = location.href.split("/").slice(-1);

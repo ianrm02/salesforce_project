@@ -137,7 +137,7 @@ def address_approve():
     affected_scodes = []
     print("CLUSTERS")
     print(clfApp.clf.getClusters())
-    return render_template('address_skeleton.html', clusters = clfApp.clf.getClusters(), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), search_response = search_response)
+    return render_template('address_skeleton.html', clusters = json.dumps(clfApp.clf.getClusters()), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), search_response = search_response)
 
 
 @app.route("/statistics")

@@ -3,39 +3,39 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name = "init_data" change_ids = "{{ change_ids|escape }}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}">
+  <meta name = "init_data" change_ids = "{{ change_ids|escape }}", cdropdown_ids ="{{ cdropdown_ids|escape }}", sdropdown_ids = "{{ sdropdown_ids|escape }}", clusters = "{{ clusters|escape }}">
   <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
 <body>
 
   <h2>Review Address Placement</h2>
-  We have applied a general algorithm to sort some of the remaining addresses.<br>
+  We have applied a general algorithm to sort some of the remaining addresses by similarity.<br>
   Some addresses may be improperly placed due to conversion difficulties<br>
   Please review these placements before moving to the last step<br>
 
   <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
-
-  {% for cluster in clusters %}
-  <!-- <button class="accordion"></button>
-  <div class="panel"> -->
+  <div id = "addtable"></div>
+  <!-- {% for cluster in clusters %}
+  <button class="accordion"></button>
+  <div class="panel">
     <table>
       <tr>
         <th>Address</th>
-        <th>State</th>
-        <th>Country</th>
+        <th>Custom</th>
       </tr>
     </table>
     {% for addcase in cluster %}
-    <!-- <button class="accordion">{{scode}}</button> -->
-    <!-- <div class="panel"> -->
+    <<button class="accordion">{{scode}}</button>
+    <div class="panel">
       <tr>
         <td>{{addcase}}</td>
       </tr>
-    <!-- </div> -->
+      <br>
+     </div>
     {% endfor %}
-  <!-- </div> -->
-  {% endfor %}
+  </div> 
+  {% endfor %} -->
 
   <input type="text" name="search">
   <input type="submit" value="Search"> <br><br>
@@ -73,5 +73,5 @@
   </div>
   {% endif %}
 </body>
-<!-- <script type="text/javascript" src="/static/javascript/approval.js"></script> -->
+<script type="text/javascript" src="/static/javascript/approval.js"></script>
 </html>
