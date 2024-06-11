@@ -17,8 +17,8 @@
   <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
 
   {% for cluster in clusters %}
-  <button class="accordion"></button>
-  <div class="panel">
+  <!-- <button class="accordion"></button>
+  <div class="panel"> -->
     <table>
       <tr>
         <th>Address</th>
@@ -27,18 +27,14 @@
       </tr>
     </table>
     {% for addcase in cluster %}
-    <button class="accordion">{{scode}}</button>
-    <div class="panel">
-      <table>
-        <tr>
-          <td>{{addcase[0]}}</td>
-          <td>{{addcase[1]}}</td>
-          <td>{{addcase[2]}}</td>
-        </tr>
-      </table>
-    </div>
+    <!-- <button class="accordion">{{scode}}</button> -->
+    <!-- <div class="panel"> -->
+      <tr>
+        <td>{{addcase}}</td>
+      </tr>
+    <!-- </div> -->
     {% endfor %}
-  </div>
+  <!-- </div> -->
   {% endfor %}
 
   <input type="text" name="search">
