@@ -164,43 +164,44 @@ class Classifier:
 
 
     def runKMeansModel(self):
-        print("[RUNNING K MEANS]")
+        print("[RUNNING MODEL]")
         X = self.clustering_to_place
         num_clusters = min(len(list(self.rep_cou)) + 5, 25) #arbitrarily set amount of clusters, having it be +5 of the countries represented with max confidence until we find a more adaptive way to determine that metric
 
-        print(self.clustering_to_place)
         vct = TfidfVectorizer(max_features=10)
         X = vct.fit_transform(self.clustering_to_place)
 
-        #SVD dimensionality reduction? y/n?
+        #SVD dimensionality reduction? Implement it here if you want to do that.
 
-        try: #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
-            #This is also definetely hurting the runtime of the processing stage of our algorithm
-            #model = KMeans(n_clusters=num_clusters)
-            model = DBSCAN(eps=1.0, min_samples=5) #eps is distance to consider same cluster, min_samples is minimum addresses for a cluster to form
-            tmp_clusters = model.fit_predict(X)
+        #realistically a ml model should NOT be a cluster so structuring it here in the code is more a remnant of the fact that we arent hosting a model on a 3rd party service. 
+        #This is also definetely hurting the runtime of the processing stage of our algorithm
+        model = KMeans(n_clusters=num_clusters)
+        #model = DBSCAN(eps=0.25, min_samples=2) #eps is distance to consider same cluster, min_samples is minimum addresses for a cluster to form
+        tmp_clusters = model.fit_predict(X)
 
 
-            #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
-            #look into why
+        print(tmp_clusters)
+        #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
+        #look into why
             
-            for cluster_id in range(1, model.n_clusters):
+        try:
+            for cluster_id in range(model.n_clusters):
                 sample_stack = []
                 cluster_samples = [self.clustering_to_place[i] for i, cluster in enumerate(tmp_clusters) if cluster == cluster_id]
                 for sample in cluster_samples:
                     sample_stack.append(sample)
                 self.clusters.append(sample_stack)
 
-
-            #convert all the 1-element clusters into a merged "unmatchable" cluster
-            unmatchable = []
-            for clust in self.clusters:
-                if len(clust) == 0:
-                    self.clusters.remove(clust)
-                elif len(clust) == 1:
-                    unmatchable.append(clust[0])
-                    self.clusters.remove(clust)
-            self.clusters.append(unmatchable)
+            if type(model) == KMeans:
+                #convert all the 1-element clusters into a merged "unmatchable" cluster
+                unmatchable = []
+                for clust in self.clusters:
+                    if len(clust) == 0:
+                        self.clusters.remove(clust)
+                    elif len(clust) == 1:
+                        unmatchable.append(clust[0])
+                        self.clusters.remove(clust)
+                self.clusters.append(unmatchable)
                     
         except:
             print("Processing filter error")
