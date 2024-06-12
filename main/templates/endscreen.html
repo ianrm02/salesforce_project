@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <body>
-<style>
-</style>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
+</head>
 
 <h1>Your data is ready for picklist conversion!</h1>
 
@@ -15,6 +17,15 @@
   <button>Review Database</button>
 </a> 
 
+<br><br>
+
+<button type="button" onclick="openForm('feedback')">Send Feedback</button>
+<div id="feedback" class="feedback">
+  <form>
+    <textarea id="feedbackText" rows="10" cols="40" placeholder="Enter feedback here..."></textarea>
+    <button type="button" onclick="closeForm('feedback')">Close</button>
+  </form>
+</div>
 <br>
 
 <script>

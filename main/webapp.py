@@ -5,8 +5,10 @@ from flask import Flask, render_template, request, flash, url_for
 from ClassifierApp import ClassifierApp
 import config
 import json
+from database_functions import DatabaseManager
 
 clfApp = ClassifierApp()
+dbMan = DatabaseManager()
 
 # create instance of flask
 clfApp = ClassifierApp()
@@ -142,7 +144,14 @@ def address_approve():
 
 @app.route("/statistics")
 def statistics():
-    return render_template('statistics.html', stats = [clfApp.get_intermediate_diagnostics(clfApp.clf.get_results())])
+    stats = clfApp.get_intermediate_diagnostics(clfApp.clf.get_results())
+    country_stats = dbMan.country_db_statistics()
+    state_stats = dbMan.state_db_statistics()
+    
+    stats.append(["Country DRIFT", country_stats, "Percentage of addresses that have countries that got converted."])
+    stats.append(["State DRIFT", state_stats, "Percentage of addresses that have states that got converted."])
+
+    return render_template('statistics.html', overallStats = stats)
 
 
 @app.route("/end")

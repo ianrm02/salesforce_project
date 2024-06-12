@@ -12,14 +12,12 @@
     <th>Value</th>
     <th>Description</th>
   </tr>
-  {% for metric in stats %}
-    {% for item in metric %}
+  {% for metric in overallStats %}
     <tr>
-      <td>{{item[0]}}</td>
-      <td>{{'%0.2f' | format(item[1])}}</td>
-      <td>{{item[2]}}</td>
+      <td>{{metric[0]}}</td>
+      <td>{{'%0.2f' | format(metric[1])}}</td>
+      <td>{{metric[2]}}</td>
     </tr>
-    {% endfor %}
   {% endfor %}
 </table>
 <button onclick="redirect()">Next page</button>

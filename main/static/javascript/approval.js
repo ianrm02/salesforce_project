@@ -337,13 +337,13 @@ function displayRecords() {
 }
 
 // Open and close import settings form
-function openForm() {
-  document.getElementById("settingsForm").style.display = "block";
+function openForm(id) {
+  document.getElementById(id).style.display = "block";
 
 }
 
-function closeForm() {
-  document.getElementById("settingsForm").style.display = "none";
+function closeForm(id) {
+  document.getElementById(id).style.display = "none";
 }
 
 // Download text file after export clicked

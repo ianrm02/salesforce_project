@@ -72,8 +72,8 @@ Please enter your information to begin processing. You will be notified when you
     <label for="importSettings"><b>Upload Custom Settings</b></label>
     <input id="fileToLoad" name="importSettings" type="file" accept=".txt" multiple />
     <br>
-    <button type="button" style="float: inline-start" onclick="uploadSettings(); closeForm()">Upload</button>
-    <button type="button" class="btn cancel" style="float: right;" onclick="closeForm()">Close</button>
+    <button type="button" style="float: inline-start" onclick="uploadSettings(); closeForm('settingsForm')">Upload</button>
+    <button type="button" class="btn cancel" style="float: right;" onclick="closeForm('settingsForm')">Close</button>
   </form>
 </div>
 
