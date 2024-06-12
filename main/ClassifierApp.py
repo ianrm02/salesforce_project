@@ -94,6 +94,8 @@ class ClassifierApp(object):
     def run(self):
         self.process_entries()
 
+        self.clf.runKMeansModel()
+
         intermediate_results = self.clf.get_results()
         #List elements for each address in intermediate_results:
         #0: New Country, #1: New Country Confidence, #2 New State, #3 New State Confidence, #4 ID, #5 Addr Line, #6 State Line, #7 Country Line
