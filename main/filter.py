@@ -32,13 +32,17 @@ class Filter:
             relevantText = userIn[3]
             text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|^rt|http\S+"," ",str(relevantText)).split())
             text = re.sub(r"[0-9]", "", text)
+            text = text.upper().replace("COUNTRY", "")
         elif self.appliesTo == 'S':
             relevantText = userIn[2]
             text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
             text = re.sub(r"[0-9]", "", text) #Might become problematic for Japan's number based state system, but TODO for now.
+            text = text.upper().replace("STATE", "")
         elif self.appliesTo == 'A':
             relevantText = userIn[1]
             text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
+            text = text.upper().replace("COUNTRY", "")
+            text = text.replace("STATE", "")
         elif self.appliesTo == 'O':
             relevantText == userIn[1]
             text = ''.join(re.sub(r"(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)"," ",str(relevantText)).split())
