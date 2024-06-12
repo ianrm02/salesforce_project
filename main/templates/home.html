@@ -3,55 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: "Lato", sans-serif;
-    }
-
-    p {
-      font-family: "Lato", sans-serif;
-    }
-
-    table {
-      font-family: arial, sans-serif;
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    td,
-    th {
-      border: 1px solid #dddddd;
-      text-align: center;
-      padding: 8px;
-    }
-
-    tr:nth-child(even) {
-      background-color: #dddddd;
-    }
-
-    .alert {
-      padding: 15px;
-      margin: 5px;
-      color: #970020;
-      background-color: #ffd5de;
-    }
-
-    .panel {
-      padding: 0 18px;
-      display: none;
-      background-color: white;
-      overflow: hidden;
-    }
-
-    .settings-popup {
-      display: none;
-      position: fixed;
-      bottom: 100;
-      right: 15px;
-      border: 3px solid #f1f1f1;
-      z-index: 9;
-    }
-  </style>
+  <link rel="stylesheet" href = "{{ url_for('static', filename='styles/accordionstylesheet.css' )}}">
 </head>
 
 <h1>Welcome to the ISO Conversion Tool</h1>
@@ -62,7 +14,7 @@ Please enter your information to begin processing. You will be notified when you
   {% endfor %}
 </div>
 
-<button class="Import Settings" style="float: right;" onclick="openForm()">Import Settings</button>
+<button style="float: right;" onclick="openForm('settingsForm')">Import Settings</button>
 <br><br>
 
 <div class="settings-popup" id="settingsForm">

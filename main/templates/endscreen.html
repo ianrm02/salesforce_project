@@ -19,17 +19,27 @@
 
 <br><br>
 
-<button type="button" onclick="openForm('feedback')">Send Feedback</button>
-<div id="feedback" class="feedback">
-  <form>
+<button style="float: left" onclick="openForm('feedbackForm')">Send Feedback</button>
+
+<br><br>
+
+<div class="feedback-popup" id="feedbackForm">
+  <form method="post" action="" class="feedback-container">
+    <h1>Give us some feedback!</h1>
+    <h3>How would you like us to improve?</h3>
+
+    <label for="sendFeedback"><b>Send Feedback</b></label>
+    <br>
     <textarea id="feedbackText" rows="10" cols="40" placeholder="Enter feedback here..."></textarea>
-    <button type="button" onclick="closeForm('feedback')">Close</button>
+    <br>
+    <button style="float: left" type="button" onclick="closeForm('feedbackForm')">Send</button> <!--add implementation to send feedback here-->
+    <button style="float: right" type="button" onclick="closeForm('feedbackForm')">Close</button>
   </form>
 </div>
 <br>
 
-<script>
-</script>
+<script src="/static/javascript/approval.js"></script>
+
 
 </body>
 </html>
