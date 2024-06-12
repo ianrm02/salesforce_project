@@ -57,6 +57,7 @@ class ClassifierApp(object):
                     if mappings[0] in config.STATED_COUNTRIES: num_fully_converted += 1
 
 
+        statistics = []
         avg_country_conf = total_country_confidence/self._total_db_size
         avg_state_conf = total_state_confidence/self._total_db_size
         percent_max_conf = num_max_confident_country/self._total_db_size*100
@@ -71,7 +72,12 @@ class ClassifierApp(object):
         print("")
         print(f"% Entries Fully Converted (with Max confidence): {percent_full_converted:.2f}")
 
-        return avg_country_conf, avg_state_conf, percent_max_conf, percent_full_converted
+        statistics.append(["Avg. Country Confidence", avg_country_conf, "Average confidence of the addresses successfully converted to a country code."])
+        statistics.append(["Avg. State Confidence", avg_state_conf, "Average confidence of the addresses successfully converted to a state code."])
+        statistics.append(["Max Confidence Percentage", percent_max_conf, "Percentage of addresses that were converted with maximum confidence."])
+        statistics.append(["Fully Converted Percentage", percent_full_converted, "Percentage of addresses that were converted with both country and state codes."])
+
+        return statistics
 
 
     def uploadProcessedToDB(self):

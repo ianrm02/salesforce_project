@@ -64,3 +64,7 @@ body {
     font-size: 15px;
     transition: 0.4s;
   }
+
+  .feedback {
+    display: none;
+  }

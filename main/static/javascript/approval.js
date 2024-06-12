@@ -81,7 +81,7 @@ function initOnPageLoad() {
   activateAccordions();
   fillAllAccordions();
   
-  displayRows();
+  displayRecords();
   displayNotif();
   enableButton();
 }
@@ -315,25 +315,35 @@ function enableButton() {
 }
 
 // Display number of items in each table
-function displayRows() {
+function displayRecords() {
   var tables = document.getElementsByTagName("table");
+  var col = 1; // Occurences column
 
   for (var i = 0; i < tables.length; i++) {
-    if(tables[i].id == "search_results_table"){ // May not exist at this time
+    var sum = 0;
+    if (tables[i].id == "search_results_table") { // May not exist at this time
       continue;
     }
-    document.getElementById("itemNum" + tables[i].id).textContent = "Items: " + (tables[i].rows.length - 1);
+    
+    for (var row = 1; row < tables[i].rows.length; row++) {
+      
+      if (tables[i].rows[row].cells.length > col) {
+        sum += parseInt(tables[i].rows[row].cells[col].innerText);
+      }
+    }
+
+    document.getElementById("itemNum" + tables[i].id).textContent = "Records: " + sum;
   }
 }
 
 // Open and close import settings form
-function openForm() {
-  document.getElementById("settingsForm").style.display = "block";
+function openForm(id) {
+  document.getElementById(id).style.display = "block";
 
 }
 
-function closeForm() {
-  document.getElementById("settingsForm").style.display = "none";
+function closeForm(id) {
+  document.getElementById(id).style.display = "none";
 }
 
 // Download text file after export clicked

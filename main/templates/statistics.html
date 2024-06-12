@@ -12,26 +12,13 @@
     <th>Value</th>
     <th>Description</th>
   </tr>
-  <tr>
-    <td>Avg. Country Confidence</td>
-    <td>{{'%0.2f' | format(stats[0])}}</td>
-    <td>Average confidence of the addresses successfully converted to a country code.</td>
-  </tr>
-  <tr>
-    <td>Avg. State Confidence</td>
-    <td>{{'%0.2f' | format(stats[1])}}</td>
-    <td>Average confidence of the addresses successfully converted to a country code.</td>
-  </tr>
-  <tr>
-    <td>Max Confidence Percentage</td>
-    <td>{{'%0.2f' | format(stats[2])}}</td>
-    <td>Percentage of addresses that were converted with maximum confidence.</td>
-  </tr>
-  <tr>
-    <td>Fully Converted Percentage</td>
-    <td>{{'%0.2f' | format(stats[3])}}</td>
-    <td>Percentage of addresses that were converted with both Country and State codes.</td>
-  </tr>
+  {% for metric in overallStats %}
+    <tr>
+      <td>{{metric[0]}}</td>
+      <td>{{'%0.2f' | format(metric[1])}}</td>
+      <td>{{metric[2]}}</td>
+    </tr>
+  {% endfor %}
 </table>
 <button onclick="redirect()">Next page</button>
 <script>
