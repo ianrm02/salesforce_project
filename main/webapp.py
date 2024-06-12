@@ -145,9 +145,9 @@ def address_approve():
 @app.route("/statistics")
 def statistics():
     stats = clfApp.get_intermediate_diagnostics(clfApp.clf.get_results())
-    country_stats = dbMan.country_db_statistics()
-    state_stats = dbMan.state_db_statistics()
-    
+    country_stats = dbMan.country_db_statistics() * 100
+    state_stats = dbMan.state_db_statistics() * 100
+
     stats.append(["Country DRIFT", country_stats, "Percentage of addresses that have countries that got converted."])
     stats.append(["State DRIFT", state_stats, "Percentage of addresses that have states that got converted."])
 

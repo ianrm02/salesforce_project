@@ -72,8 +72,8 @@ class ClassifierApp(object):
         print("")
         print(f"% Entries Fully Converted (with Max confidence): {percent_full_converted:.2f}")
 
-        statistics.append(["Avg. Country Confidence", avg_country_conf, "Average confidence of the addresses successfully converted to a country code."])
-        statistics.append(["Avg. State Confidence", avg_state_conf, "Average confidence of the addresses successfully converted to a state code."])
+        statistics.append(["Avg. Country Confidence", avg_country_conf, "Average confidence of the addresses successfully converted to a country code. (Graded 1-5)"])
+        statistics.append(["Avg. State Confidence", avg_state_conf, "Average confidence of the addresses successfully converted to a state code. (Graded 1-5)"])
         statistics.append(["Max Confidence Percentage", percent_max_conf, "Percentage of addresses that were converted with maximum confidence."])
         statistics.append(["Fully Converted Percentage", percent_full_converted, "Percentage of addresses that were converted with both country and state codes."])
 
