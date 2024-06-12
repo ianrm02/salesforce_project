@@ -348,3 +348,38 @@ class DatabaseManager():
             return results
         except Exception as e:
             print("An error occurred:", e)
+
+    def country_db_statistics(self):
+        """
+        Returns the percentage of addresses that have countries that got converted
+        """
+        self.cur.execute("SELECT * FROM CountryChanges;")
+        results = self.cur.fetchall()
+        
+        total_converted_countries = 0
+        for addr in results:
+            total_converted_countries += addr[3]
+
+        self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE country!='';")
+        total_country_entries = self.cur.fetchone()[0]
+
+        return (total_converted_countries / total_country_entries)
+
+    def state_db_statistics(self):
+        """
+        Returns the percentage of addresses that have states that got converted
+        """
+        self.cur.execute("SELECT * FROM StateChanges;")
+        results = self.cur.fetchall()
+        
+        total_converted_states = 0
+        for addr in results:
+            total_converted_states += addr[4]
+
+        self.cur.execute("SELECT COUNT(*) FROM Addresses WHERE state!='';")
+        total_state_entries = self.cur.fetchone()[0]
+
+        return (total_converted_states / total_state_entries)
+    
+temp = DatabaseManager()
+temp.country_db_statistics()
