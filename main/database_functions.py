@@ -380,6 +380,3 @@ class DatabaseManager():
         total_state_entries = self.cur.fetchone()[0]
 
         return (total_converted_states / total_state_entries)
-    
-temp = DatabaseManager()
-temp.country_db_statistics()
