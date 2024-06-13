@@ -164,7 +164,7 @@ class DatabaseManager():
         """
         self.drop_all_tables()
         self.address_table()
-        self.upload_csv_entries("./data/test_data.txt")
+        self.upload_csv_entries("./datasets/test_data.txt")
         self.setup_database_extension() # this should be called at runtime, but we do now know how to solve this
     
     def setup_database_extension(self):
