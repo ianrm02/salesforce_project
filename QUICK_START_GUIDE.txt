@@ -1,0 +1,33 @@
+1. Install postgres on your device (please use a password that you have never used before and will never use in the future, '1234' for example)
+2. Confirm access to postgres
+	- Open 'psql shell' and hit enter until you are prompted for your password. Then enter your password.
+	- If you see 'postgres=# ' as your command prompt you are in
+3. Please run the below commands in postgres
+	- 'DATABASE CREATE test_db;'
+	- '\\c test_db'
+4. Change the 'config.py' file to have your password for postgres
+5. Add and run these lines of code in the bottom of 'database_functions.py'
+	- temp = DatabaseManager()
+	- temp.setup_test_db()
+6. Go back to postgres and run the below commands
+	- 'SELECT COUNT(\*) FROM Addresses;'
+	- 'SELECT COUNT(\*) FROM StateChanges;'
+7. If you received an output of a few hundred for the first one and 0 for the second one, then it has worked properly. If you did not get this please retry the above steps.
+8. Remove those lines from "database_functions.py"
+9. To setup virtual environments please run the below commands
+	- 'python3 -m venv venv'
+	- Windows:
+		- 'venv/Scripts/activate'
+		- If this doesn't work:
+			- Run windows powershell as admin on your computer
+	            - Run 'Set-Executionpolicy unrestricted'
+	            - Go back to VS Code and try the command again
+	- Mac/Linux:
+		- 'chmod +x venv/bin/activate'
+		- 'source venv/bin/activate'
+10. You should now see a '(venv)' at the front of your command prompt, if not please retry the above steps
+11. In the venv please run ''python3 -m pip install -r requirements.txt'
+12. Run 'web_app.py'
+13. Open the website 'http://127.0.0.1:8080'
+14. You should now see a website and will be able to follow the prompts as expected!
+15. Good luck with the future work!
