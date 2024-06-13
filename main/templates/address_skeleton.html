@@ -10,48 +10,34 @@
 <body>
 
   <h2>Review Address Placement</h2>
-  We have applied a general algorithm to sort some of the remaining addresses by similarity.<br>
-  Some addresses may be improperly placed due to conversion difficulties<br>
-  Please review these placements before moving to the last step<br>
+  We have applied a general algorithm to group some of the remaining addresses by similarity.<br>
+  Please sort the remaining addresses individually, or in batches<br><br>
 
   <input type="button" id="export" value="Export Settings" style="float: right;" onclick="exportSettings('settings.txt')">
-  <div id = "addtable"></div>
-  <!-- {% for cluster in clusters %}
-  <button class="accordion"></button>
-  <div class="panel">
-    <table>
-      <tr>
-        <th>Address</th>
-        <th>Custom</th>
-      </tr>
+  
+  <div id="clusterText">clusters remaining</div>
+  <button id="tabCluster" class="accordion">Unsorted</button>
+  <div class="panel" id="panelCluster">
+    <table id = "clusterTable">
     </table>
-    {% for addcase in cluster %}
-    <<button class="accordion">{{scode}}</button>
-    <div class="panel">
-      <tr>
-        <td>{{addcase}}</td>
-      </tr>
-      <br>
-     </div>
-    {% endfor %}
-  </div> 
-  {% endfor %} -->
-
-  <input type="text" name="search">
-  <input type="submit" value="Search"> <br><br>
+  </div>
+  <br>
+  <div id="accordiongroup"></div>
+  <br><br>
 
   <button onclick="redirect('statistics')">Next page</button>
   <button id="nextPageAdmin" onclick="redirect('statistics')">Next page Admin</button>
 <br><br>
   Search for sets of addresses to assist in the approval process.<br>
-  Provide at least two fields for a search. Spaces are considered not empty and the search is case sensitive.<br>
+  Spaces are considered not empty and the search is case sensitive.
+  Double click on a field above to auto-populate the search bar<br>
   {% for message in get_flashed_messages() %}
   <div class="notification">{{ message }}</div>
   {% endfor %}
   <form action="{{ url_for('address_approve') }}" method="post">
-    <input type="text" name="addsearch" id="addsearch">
-    <input type="text" name="statesearch" id="statesearch">
-    <input type="text" name="countrysearch" id="countrysearch">
+    <input type="text" placeholder="Address" name="addsearch" id="addsearch">
+    <input type="text" placeholder="State" name="statesearch" id="statesearch">
+    <input type="text" placeholder="Country" name="countrysearch" id="countrysearch">
     <input type="submit" value="Search">
   </form>
   {% if search_response %}

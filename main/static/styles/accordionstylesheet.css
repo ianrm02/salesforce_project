@@ -43,6 +43,10 @@ body {
     transition: 0.4s;
   }
 
+  .finished{
+    background-color: #0d9dda;
+    color: #eee;
+  }
   .active,
   .accordion:hover {
     background-color: #ccc;

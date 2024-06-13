@@ -23,10 +23,10 @@
 
   {% for ccode in aff_country_codes%}
   <button id="tab{{ccode}}" class="accordion">{{ccode}}</button>
-  <div class="panel">
+  <div id="panel{{ccode}}" class="panel">
     {% for scode in aff_state_codes[ccode] %}
     <button id="tab{{scode}}{{ccode}}" class="accordion">{{scode}}<span id="itemNum{{scode}}{{ccode}}" class="itemNum"></span></button>
-    <div class="panel">
+    <div id = "panel{{scode}}{{ccode}}" class="panel">
       <table id="{{scode}}{{ccode}}" class="state">
         <tr>
           <th>State Field</th>
@@ -52,14 +52,15 @@
   <br><br>
   
   Search for sets of addresses to assist in the approval process.<br>
-  Provide at least two fields for a search. Spaces are considered not empty and the search is case sensitive.<br>
+  Spaces are considered not empty and the search is case sensitive.
+  Double click on a field above to auto-populate the search bar<br>
   {% for message in get_flashed_messages() %}
   <div class="notification">{{ message }}</div>
   {% endfor %}
-  <form action="{{ url_for('state_approve') }}" method="post">
-    <input type="text" name="addsearch" id="addsearch">
-    <input type="text" name="statesearch" id="statesearch">
-    <input type="text" name="countrysearch" id="countrysearch">
+  <form action="{{ url_for('address_approve') }}" method="post">
+    <input type="text" placeholder="Address" name="addsearch" id="addsearch">
+    <input type="text" placeholder="State" name="statesearch" id="statesearch">
+    <input type="text" placeholder="Country" name="countrysearch" id="countrysearch">
     <input type="submit" value="Search">
   </form>
   {% if search_response %}
@@ -81,7 +82,6 @@
     </table>
   </div>
   {% endif %}
-
 </body>
 <script type="text/javascript" src="/static/javascript/approval.js"></script>
 </html>

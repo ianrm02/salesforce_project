@@ -34,7 +34,6 @@ def search(formdata):
     results = clfApp.db_handler.search_db((search_address, search_state, search_country))
     if(len(results) == 0):
         return
-    print(results)
     return results
 
 # connect URL endpoints
@@ -137,8 +136,6 @@ def address_approve():
 
     affected_ccodes = []
     affected_scodes = []
-    print("CLUSTERS")
-    print(clfApp.clf.getClusters())
     return render_template('address_skeleton.html', clusters = json.dumps(clfApp.clf.getClusters()), aff_country_codes = affected_ccodes, aff_state_codes = affected_scodes, cdropdown_ids = json.dumps(country_dropdown_ids), sdropdown_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), cstate_ids = json.dumps(config.COUNTRY_WITH_REQUIRED_STATES_ALL_STATES), search_response = search_response)
 
 
