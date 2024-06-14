@@ -57,7 +57,7 @@
   {% for message in get_flashed_messages() %}
   <div class="notification">{{ message }}</div>
   {% endfor %}
-  <form action="{{ url_for('address_approve') }}" method="post">
+  <form action="{{ url_for('state_approve') }}" method="post">
     <input type="text" placeholder="Address" name="addsearch" id="addsearch">
     <input type="text" placeholder="State" name="statesearch" id="statesearch">
     <input type="text" placeholder="Country" name="countrysearch" id="countrysearch">
