@@ -180,7 +180,6 @@ class Classifier:
         tmp_clusters = model.fit_predict(X)
 
 
-        print(tmp_clusters)
         #cluster 0 is consistently one of the less "dense" and less accurate clusters, 
         #look into why
             
@@ -205,6 +204,7 @@ class Classifier:
                     
         except:
             print("Processing filter error")
+            #TODO, but the classifier approach should be reconsidered too do that first
                 
     
     def get_results(self):

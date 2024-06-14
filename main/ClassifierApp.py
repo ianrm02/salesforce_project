@@ -63,15 +63,6 @@ class ClassifierApp(object):
         percent_max_conf = num_max_confident_country/self._total_db_size*100
         percent_full_converted = num_fully_converted/self._total_db_size*100
 
-        print("")
-
-        print(f"AVG COUNTRY CONF: {avg_country_conf:.2f}")
-        print(f"AVG STATE   CONF: {avg_state_conf:.2f}")
-
-        print(f"%DB with Max Country Confidence: {percent_max_conf:.2f}")
-        print("")
-        print(f"% Entries Fully Converted (with Max confidence): {percent_full_converted:.2f}")
-
         statistics.append(["Avg. Country Confidence", avg_country_conf, "Average confidence of the addresses successfully converted to a country code. (Graded 1-5)"])
         statistics.append(["Avg. State Confidence", avg_state_conf, "Average confidence of the addresses successfully converted to a state code. (Graded 1-5)"])
         statistics.append(["Max Confidence Percentage", percent_max_conf, "Percentage of addresses that were converted with maximum confidence."])
