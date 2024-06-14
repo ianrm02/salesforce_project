@@ -4,7 +4,7 @@ var sdropdown_id_map = null;
 var change_ids = null;
 var conf_threshold = 4;
 
-// Page elements
+// Common page elements
 var emptyStateDropdown = null;
 var emptyAccordion = null;
 var emptyAccPanel = null;
@@ -25,13 +25,14 @@ else if(window.location.pathname == "/country_approve" || window.location.pathna
 }
 
 function initCommonElements(){
-  // Data from jinja
+  // Data from Jinja(from flask)
   this.cdropdown_ids = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('cdropdown_ids'));
   this.sdropdown_id_map = JSON.parse(document.head.querySelector('meta[name="init_data"]').getAttribute('sdropdown_ids'));
   // State dropdown for countries with none listed
   emptyStateDropdown = document.createElement("select");
   var emptyoption = document.createElement("option");
   emptyoption.text = "No states available";
+  emptyoption.disabled = true;
   emptyStateDropdown.appendChild(emptyoption);
   emptyStateDropdown.setAttribute("id", "defaultempty");
   // Country dropdown
@@ -48,9 +49,9 @@ function initAddressPage(){
   // Init additional page elements
   emptyAccordion = (document.getElementById("tabCluster")).cloneNode(true); 
   emptyAccPanel = (document.getElementById("panelCluster")).cloneNode(true);;
-  
   clusterText = document.getElementById("clusterText");
   clusterTable = document.getElementById("clusterTable");
+  // Fill first two rows (label and affect all)
   var row = clusterTable.insertRow();
   var newCell = row.insertCell();
   newCell.innerText = "Address Field";
@@ -71,8 +72,7 @@ function initAddressPage(){
   curcdropdown.onchange = function () { repopulate_statedropdown(this.attributes["id"].value);};
   curcdropdown.setAttribute("id", "cdropdownAll");
   newCell.appendChild(curcdropdown);
-
-  
+  //Activate cluster accordion and load first cluster
   document.getElementById("tabCluster").addEventListener("click", function () {
     this.classList.toggle("active");
     var panel = this.nextElementSibling;
@@ -82,7 +82,7 @@ function initAddressPage(){
       panel.style.display = "block";
     }
   });
-  loadCluster(0);
+  loadCluster();
 }
 
 // initialize variables and call page load
@@ -225,12 +225,6 @@ function repopulate_statedropdown(dropId){
   dropId = dropId.substring(9);
   // Find matching dropdown using accordion country code and the associated string in the row
   var cdropdown = document.getElementById("cdropdown" + dropId);
-  if(cdropdown.options == null){
-    alert(dropId);
-  }
-  if(cdropdown.options[cdropdown.selectedIndex] == null){
-    alert(cdropdown.selectedIndex);
-  }
   var nccode = cdropdown.options[cdropdown.selectedIndex].value; // The newly selected code
   var sdropdown = document.getElementById("sdropdown" + dropId);
   // Clear dropdown
@@ -495,8 +489,8 @@ function insertAccordion(parentId, currentId, insAcc, insPanel){
   // Find spot alphabetically
   for(var i = 0; i < parentObj.childNodes.length; i++){
     if(parentObj.childNodes[i].id > "tab" + currentId){
-      parentObj.insertBefore(insAcc, parentObj.childNodes[i]);
-      parentObj.insertBefore(insPanel, parentObj.childNodes[i+1]);
+      parentObj.insertBefore(insPanel, parentObj.childNodes[i]);
+      parentObj.insertBefore(insAcc, insPanel);
       found = true;
       break;
     }
@@ -542,6 +536,7 @@ function createAccordion(accId, accTitle, parentId){
       panel.style.display = "block";
     }
   });
+  // Insert into page and pass back for table population
   insertAccordion(parentId, accId, newAcc, newAccPanel);
   return newAcc;
 }
