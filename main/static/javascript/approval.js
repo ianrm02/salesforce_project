@@ -408,12 +408,13 @@ function moveToTable(callingDropdown){
   row.remove();
   // Delete table if empty
   if(oldTable.querySelectorAll("tr").length == 1){
-    oldTable = oldTable.closest("div");
-    oldTable.innerHTML = "";
-    oldTable.remove();
     var oldAcc = (oldTable.closest("div")).previousElementSibling;
     oldAcc.innerHTML = "";
     oldAcc.remove();
+    oldTable = oldTable.closest("div");
+    oldTable.innerHTML = "";
+    oldTable.remove();
+    
   }
   // Update all row values
   var fieldBox = nrow.querySelector("td");
