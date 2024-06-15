@@ -5,6 +5,7 @@ import config
 import unittest
 import pandas as pd
 from filter import *
+from ClassifierApp import ClassifierApp
 
 class ClassifierInitTestCase(unittest.TestCase):
     def setUp(self):
@@ -24,7 +25,7 @@ class ClassifierInitTestCase(unittest.TestCase):
 
 
     def test_classifier_filter_application_types(self):
-        expected_filter_appliesTo_types = ['C', 'C', 'C', 'S', 'S', 'S', 'A', 'O']
+        expected_filter_appliesTo_types = ['C', 'C', 'C', 'S', 'S', 'S', 'A']
 
         for i, filter in enumerate(self.clf.filters):
             self.assertIs(filter.getAppliesTo(), expected_filter_appliesTo_types[i], f"{i}th filter of type {type(filter)} was applied to {filter.getAppliesTo()}but was expected to be {expected_filter_appliesTo_types[i]}")
@@ -43,7 +44,7 @@ class DatabaseHandlerTestCase(unittest.TestCase):
         You can do this be running 'CREATE DATABASE test_db;' from the postgres shell
     """
     def setUp(self):
-        self.db_handler = DatabaseManager(db_name='test_db')
+        self.db_handler = DatabaseManager(db_name='bobby_db')
         self.db_handler.setup_test_database()
 
 
@@ -148,6 +149,9 @@ class CountryExactFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.cef = CountryExactFilter(appliesTo='C', name="Test Country Exact Filter")
 
+    """
+        These tests should test that expected common spellings of generic countries and edge cases map properly IE Canada is properly mapped to CA, FR is mapped to FR, etc in the country stage.
+    """
 
     def test_ukraina(self):
         pass
@@ -157,20 +161,45 @@ class StateExactFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.sef = StateExactFilter(appliesTo='S', name="Test State Exact Filter")
 
+    """
+        These tests should test that expected common spellings of generic states and edge cases map properly IE Chihuahua is properly mapped to CHH, Florida is mapped to FL, etc in the state stage.
+    """
+
 
 class CountryFuzzyFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.cff = FuzzyFilter(appliesTo='C', name="Test Country Fuzzy Filter")
+
+    """
+        These tests should test that expected common TYPOS OF spellings of generic countries and edge cases map properly IE CanSda is properly mapped to CA, FRANZE is mapped to FR, etc in the country stage.
+    """
 
 
 class StateFuzzyFilterTestCase(unittest.TestCase):
     def setUp(self):
         self.sff = FuzzyFilter(appliesTo='S', name="Test State Fuzzy Filter")
 
+    """
+        These tests should test that expected common TYPOS OF spellings of generic states and edge cases map properly IE ChihuahuR is properly mapped to CHH, FlUrida is mapped to FL, etc in the state stage.
+    """
+
 
 class ProcessingFiltertestCase(unittest.TestCase):
     def setUp(self):
         self.pf = ProcessingFilter(appliesTo='o', name="Test Processing Filter")
 
+    """
+        We did not learn enough about machine learning by the time we implemented this stage of the filtering system and thus don't know how to accurately write unit tests for it, or if that is possible.
+    """
+
+
+class ClassifierMetricsTestCase(unittest.TestCase):
+    def setUp(self):
+        _clfApp = ClassifierApp()
+
+    def test_metrics_as_expected(self):
+        #TODO check that the metrics are printing, of the right type, and of the amount expected
+        # This is in essence implemented by the UI Manual User Test of the Statistics page
+        pass
 
 unittest.main()
